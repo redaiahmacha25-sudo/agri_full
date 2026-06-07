@@ -3,8 +3,8 @@
 -- Production-Grade E-Governance Platform
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS agriconnect CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE agriconnect;
+
+USE freedb_EY9gzDam;
 
 -- ============================================================
 -- USERS TABLE

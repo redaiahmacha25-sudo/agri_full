@@ -22,7 +22,10 @@ app.use('/api/dashboard', require('./routes/dashboard'));
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'AgriConnect API is running', timestamp: new Date().toISOString() });
 });
-
+app.get('/', (req, res) => {
+  res.json({
+    success: true, message: 'AgriConnect Backend Running'});
+});
 // Error handling
 app.use(notFound);
 app.use(errorHandler);
