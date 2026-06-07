@@ -261,4 +261,3 @@ Farmer notified of resolution
 *Built for real citizens. Zero compromise on quality.*
 =======
 # agri_full
->>>>>>> 4fb4d23635bd9b6e1571d8941bbba7a664cddb25
