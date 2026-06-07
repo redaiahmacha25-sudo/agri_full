@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Government Schemes — AgriConnect | Andhra Pradesh</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&family=Noto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#003580;--blue-mid:#1a4f9c;--blue-pale:#e8f0ff;--orange:#FF6B00;--green:#1a7a3c;--green-pale:#e6f7ec;--gold:#c8960c;--white:#fff;--gray-50:#f8f9fb;--gray-100:#eef0f4;--gray-200:#dde1e9;--gray-400:#9aa3b2;--gray-500:#6b7585;--gray-600:#4a5568;--gray-700:#2d3748;--gray-800:#1a202c;--font:'Noto Sans',sans-serif;--serif:'Noto Serif',serif;--shadow-sm:0 1px 4px rgba(0,0,0,.08);--shadow-md:0 4px 16px rgba(0,0,0,.10);--shadow-lg:0 8px 32px rgba(0,0,0,.13);--radius:8px;--radius-lg:16px}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--gray-800);background:var(--gray-50);font-size:15px;line-height:1.7}
+.gov-strip{background:#0a0a1a;color:rgba(255,255,255,.75);padding:7px 40px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px}
+.gov-strip a{color:rgba(255,255,255,.6);text-decoration:none;margin-left:16px}
+header{background:var(--blue);border-bottom:4px solid var(--orange);position:sticky;top:0;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.header-inner{max-width:1280px;margin:auto;padding:0 40px;display:flex;align-items:center;gap:18px;min-height:72px}
+.header-logo{width:52px;height:52px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.header-title{flex:1;color:#fff}
+.header-title h1{font-family:var(--serif);font-size:22px;font-weight:700}
+.header-title p{font-size:11px;opacity:.75;letter-spacing:.6px}
+.header-nav a{color:rgba(255,255,255,.8);text-decoration:none;padding:10px 16px;font-size:13px;font-weight:500;border-bottom:3px solid transparent;transition:all .2s}
+.header-nav a:hover,.header-nav a.active{color:#fff;border-bottom-color:var(--orange)}
+.btn-login{background:var(--orange);color:#fff;border:none;padding:8px 18px;border-radius:4px;font-size:13px;font-weight:600;text-decoration:none}
+.breadcrumb-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:10px 40px}
+.breadcrumb{max-width:1280px;margin:auto;font-size:13px;color:var(--gray-500)}
+.breadcrumb a{color:var(--blue);text-decoration:none}
+.breadcrumb span{margin:0 8px;color:var(--gray-400)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0a3d1a,#1a7a3c,#27a250);color:#fff;padding:64px 40px}
+.hero-inner{max-width:1280px;margin:auto;display:grid;grid-template-columns:1fr auto;align-items:center;gap:40px}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px}
+.hero h2{font-family:var(--serif);font-size:36px;font-weight:700;margin-bottom:12px}
+.hero p{font-size:15px;opacity:.85;max-width:540px;line-height:1.7}
+.hero-meta{display:flex;gap:24px;margin-top:24px}
+.hero-meta-item{text-align:center;background:rgba(255,255,255,.12);border-radius:10px;padding:14px 20px}
+.hero-meta-item .val{font-size:26px;font-weight:800;color:#ffee99}
+.hero-meta-item .lbl{font-size:11px;opacity:.8;margin-top:2px}
+
+/* SEARCH + FILTER BAR */
+.filter-section{background:#fff;border-bottom:1px solid var(--gray-200);padding:24px 40px;position:sticky;top:72px;z-index:100;box-shadow:var(--shadow-sm)}
+.filter-inner{max-width:1280px;margin:auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:240px}
+.search-wrap input{width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:14px;font-family:var(--font);outline:none;transition:border .2s}
+.search-wrap input:focus{border-color:var(--blue)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:15px}
+.filter-select{padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:13.5px;font-family:var(--font);color:var(--gray-700);background:#fff;cursor:pointer;outline:none;transition:border .2s;min-width:150px}
+.filter-select:focus{border-color:var(--blue)}
+.filter-count{font-size:13px;color:var(--gray-500);white-space:nowrap;margin-left:auto}
+
+/* FEATURED SCHEMES */
+.featured-section{padding:48px 40px 0}
+.featured-inner{max-width:1280px;margin:auto}
+.section-label{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:6px}
+.section-title{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--gray-800);margin-bottom:24px}
+.featured-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.featured-card{background:linear-gradient(135deg,#003580,#1a4f9c);color:#fff;border-radius:var(--radius-lg);padding:28px;position:relative;overflow:hidden;cursor:pointer;transition:transform .3s,box-shadow .3s}
+.featured-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,53,128,.3)}
+.featured-card::after{content:'';position:absolute;bottom:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.06)}
+.featured-card.green{background:linear-gradient(135deg,#0a4d2a,#1a7a3c)}
+.featured-card.orange{background:linear-gradient(135deg,#7a2a00,#c84400)}
+.fc-badge{display:inline-block;background:rgba(255,255,255,.15);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px}
+.featured-card h3{font-size:17px;font-weight:700;margin-bottom:8px}
+.featured-card p{font-size:13px;opacity:.8;line-height:1.6;margin-bottom:16px}
+.fc-benefit{background:rgba(255,255,255,.12);border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600}
+
+/* SCHEMES GRID */
+.schemes-section{padding:40px}
+.schemes-inner{max-width:1280px;margin:auto}
+.schemes-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.scheme-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;transition:box-shadow .3s,transform .3s}
+.scheme-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.scheme-header{padding:20px 24px;display:flex;align-items:flex-start;gap:14px;cursor:pointer;border-bottom:1px solid var(--gray-100)}
+.scheme-icon{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.scheme-icon.blue{background:var(--blue-pale)}
+.scheme-icon.green{background:var(--green-pale)}
+.scheme-icon.orange{background:#fff3e0}
+.scheme-icon.purple{background:#f3e8ff}
+.scheme-info{flex:1}
+.scheme-name{font-size:15px;font-weight:700;color:var(--gray-800);margin-bottom:4px}
+.scheme-ministry{font-size:12px;color:var(--gray-500)}
+.scheme-badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:600}
+.badge-blue{background:var(--blue-pale);color:var(--blue-mid)}
+.badge-green{background:var(--green-pale);color:var(--green)}
+.badge-orange{background:#fff3e0;color:#c84400}
+.badge-gold{background:#fef9e7;color:#8a6500}
+.scheme-toggle{background:none;border:1px solid var(--gray-200);border-radius:6px;padding:5px 10px;font-size:12px;color:var(--blue);cursor:pointer;font-family:var(--font);font-weight:600;white-space:nowrap;transition:all .2s}
+.scheme-toggle:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.scheme-body{display:none;padding:20px 24px;border-bottom:1px solid var(--gray-100);background:var(--gray-50)}
+.scheme-body.open{display:block}
+.scheme-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.scheme-detail-item .dl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);margin-bottom:4px}
+.scheme-detail-item .dv{font-size:13.5px;color:var(--gray-700)}
+.scheme-desc{font-size:13.5px;color:var(--gray-600);line-height:1.7;margin-bottom:16px}
+.scheme-docs{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius);padding:12px 16px}
+.scheme-docs h5{font-size:12px;font-weight:700;color:var(--gray-700);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.scheme-docs ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.scheme-docs ul li{background:var(--gray-100);padding:3px 10px;border-radius:20px;font-size:12px;color:var(--gray-600)}
+.scheme-footer{padding:14px 24px;display:flex;gap:8px;align-items:center}
+.btn-apply{background:var(--blue);color:#fff;padding:8px 18px;border-radius:4px;font-size:13px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:background .2s}
+.btn-apply:hover{background:var(--blue-mid)}
+.btn-download{background:transparent;color:var(--blue);padding:8px 18px;border-radius:4px;font-size:13px;font-weight:600;border:1.5px solid var(--blue);cursor:pointer;transition:all .2s}
+.btn-download:hover{background:var(--blue-pale)}
+.scheme-status{margin-left:auto;font-size:12px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:5px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:60px 24px;color:var(--gray-500)}
+.empty-state .ei{font-size:48px;margin-bottom:12px;opacity:.6}
+.empty-state h3{font-size:16px;font-weight:600;color:var(--gray-700);margin-bottom:6px}
+
+/* FOOTER */
+footer{background:#0a0a1a;color:rgba(255,255,255,.7);margin-top:60px}
+.footer-bottom{padding:20px 40px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-wrap:wrap;gap:8px}
+
+@media(max-width:900px){.featured-grid,.schemes-grid{grid-template-columns:1fr}.hero-inner{grid-template-columns:1fr}.scheme-detail-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.hero{padding:48px 20px}.filter-section,.schemes-section,.featured-section{padding-left:20px;padding-right:20px}.filter-inner{flex-direction:column}.filter-count{margin-left:0}}
+</style>
+</head>
+<body>
+
+<div class="gov-strip">
+  <span>🇮🇳 Government of Andhra Pradesh · Department of Agriculture, Cooperation & Farmers Welfare</span>
+  <span><a href="#">Screen Reader</a><a href="#">తెలుగు</a><a href="#">हिन्दी</a></span>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-logo">🌾</div>
+    <div class="header-title">
+      <h1>AgriConnect</h1>
+      <p>INTEGRATED FARMER SERVICES PORTAL · GOVT. OF ANDHRA PRADESH</p>
+    </div>
+    <nav class="header-nav" style="display:flex">
+      <a href="../index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="schemes.html" class="active">Schemes</a>
+      <a href="crop-prices.html">Crop Prices</a>
+      <a href="helpdesk.html">Help Desk</a>
+      <a href="downloads.html">Downloads</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <a href="../index.html" class="btn-login">Login / Register</a>
+  </div>
+</header>
+
+<div class="breadcrumb-bar">
+  <div class="breadcrumb"><a href="../index.html">Home</a><span>›</span><a href="about.html">About</a><span>›</span>Government Schemes</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">🌾 Central & State Government Schemes</div>
+      <h2>Agricultural Welfare Schemes</h2>
+      <p>Access comprehensive information on all central and state government schemes for farmers — subsidies, insurance, credit, income support, and more. Explore eligibility, benefits, and apply directly through AgriConnect.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item"><div class="val">24</div><div class="lbl">Active Schemes</div></div>
+        <div class="hero-meta-item"><div class="val">₹6,000</div><div class="lbl">Min. Annual Benefit</div></div>
+        <div class="hero-meta-item"><div class="val">13M+</div><div class="lbl">Eligible Farmers</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-section">
+  <div class="filter-inner">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="schemeSearch" placeholder="Search schemes by name, benefit, or keyword..." oninput="filterSchemes()">
+    </div>
+    <select class="filter-select" id="categoryFilter" onchange="filterSchemes()">
+      <option value="">All Categories</option>
+      <option value="income">Income Support</option>
+      <option value="insurance">Crop Insurance</option>
+      <option value="credit">Credit & Loan</option>
+      <option value="subsidy">Subsidy</option>
+      <option value="infrastructure">Infrastructure</option>
+      <option value="welfare">Farmer Welfare</option>
+    </select>
+    <select class="filter-select" id="levelFilter" onchange="filterSchemes()">
+      <option value="">Central & State</option>
+      <option value="central">Central Government</option>
+      <option value="state">State Government</option>
+    </select>
+    <select class="filter-select" id="eligFilter" onchange="filterSchemes()">
+      <option value="">All Farmers</option>
+      <option value="small">Small & Marginal</option>
+      <option value="all">All Categories</option>
+    </select>
+    <span class="filter-count" id="schemeCount">Showing 8 schemes</span>
+  </div>
+</div>
+
+<!-- FEATURED SCHEMES -->
+<div class="featured-section">
+  <div class="featured-inner">
+    <div class="section-label">Flagship Schemes</div>
+    <div class="section-title">Priority Government Programmes</div>
+    <div class="featured-grid">
+      <div class="featured-card" onclick="toggleScheme('pmkisan')">
+        <div class="fc-badge">Central Scheme</div>
+        <h3>PM-KISAN Samman Nidhi</h3>
+        <p>Direct income support to all landholding farmer families across the country through direct bank transfer.</p>
+        <div class="fc-benefit">💰 ₹6,000/year in 3 installments</div>
+      </div>
+      <div class="featured-card green" onclick="toggleScheme('pmfby')">
+        <div class="fc-badge">Insurance Scheme</div>
+        <h3>PM Fasal Bima Yojana</h3>
+        <p>Comprehensive crop insurance at minimal premium to protect farmers from losses due to natural calamities, pests & diseases.</p>
+        <div class="fc-benefit">🛡️ Coverage up to ₹2 Lakh per season</div>
+      </div>
+      <div class="featured-card orange" onclick="toggleScheme('kcc')">
+        <div class="fc-badge">Credit Scheme</div>
+        <h3>Kisan Credit Card (KCC)</h3>
+        <p>Flexible revolving credit for agricultural needs at concessional interest rates to meet short-term requirements.</p>
+        <div class="fc-benefit">🏦 Credit up to ₹3 Lakh @ 4% interest</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ALL SCHEMES -->
+<div class="schemes-section">
+  <div class="schemes-inner">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="section-label">All Schemes</div>
+        <div class="section-title" style="margin-bottom:0">Complete Scheme Directory</div>
+      </div>
+    </div>
+    <div class="schemes-grid" id="schemesGrid"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-bottom">
+    <span>© 2024 Government of Andhra Pradesh. All rights reserved.</span>
+    <span>Schemes information is updated regularly. For latest details contact your nearest Sachivalayam.</span>
+  </div>
+</footer>
+
+<script>
+const schemes=[
+  {id:'pmkisan',name:'PM-KISAN Samman Nidhi',ministry:'Ministry of Agriculture & Farmers Welfare, GoI',category:'income',level:'central',icon:'💰',iconClass:'blue',
+   eligibility:'All landholding farmer families',benefit:'₹6,000 per year in 3 equal installments of ₹2,000',subsidy:'₹6,000/year direct bank transfer',
+   desc:'PM-KISAN provides income support of ₹6,000 per year to all landholding farmer families across India. The amount is transferred directly to the bank accounts of the beneficiaries in three equal installments of ₹2,000 each every four months.',
+   docs:['Aadhaar Card','Land Records (Patta/Passbook)','Bank Account Details','Mobile Number'],tags:['income','central','all'],status:'Active · 17th Installment Released'},
+  {id:'pmfby',name:'PM Fasal Bima Yojana',ministry:'Ministry of Agriculture & Farmers Welfare, GoI',category:'insurance',level:'central',icon:'🛡️',iconClass:'green',
+   eligibility:'All farmers growing notified crops',benefit:'Financial support for crop loss due to natural calamities',subsidy:'Premium: 2% (Kharif), 1.5% (Rabi), 5% (Commercial)',
+   desc:'PMFBY provides comprehensive risk coverage for crops against non-preventable natural risks. Premium rates are very low and balance amount is shared by Government. The scheme also stabilises the income of farmers.',
+   docs:['Bank Account','Aadhaar','Sowing Certificate','Land Records'],tags:['insurance','central','all'],status:'Enrollment Open · Kharif 2024'},
+  {id:'kcc',name:'Kisan Credit Card (KCC)',ministry:'Ministry of Agriculture & Farmers Welfare, GoI',category:'credit',level:'central',icon:'💳',iconClass:'blue',
+   eligibility:'All farmers, sharecroppers, tenant farmers',benefit:'Flexible credit for crop cultivation and allied activities',subsidy:'Interest subvention: 3% for timely repayment (effective rate 4%)',
+   desc:'KCC provides farmers with affordable credit at any time to meet their agricultural and allied activities requirements. The credit limit is fixed based on the operational land holding, crops grown and the scale of finance.',
+   docs:['Identity Proof','Address Proof','Land Records','Passport Photo'],tags:['credit','central','all'],status:'Ongoing · Apply at nearest bank'},
+  {id:'ryss',name:'Rythu Sadhikara Samstha (RySS)',ministry:'Dept. of Agriculture, Govt. of Andhra Pradesh',category:'welfare',level:'state',icon:'🌾',iconClass:'green',
+   eligibility:'All farmers in Andhra Pradesh',benefit:'Zero-budget natural farming support and input assistance',subsidy:'Free training and soil health support',
+   desc:'RySS promotes zero-budget natural farming (ZBNF) across Andhra Pradesh. It provides farmers with training, access to natural inputs, and market linkages. The programme aims to reduce input costs while improving soil health.',
+   docs:['AP Farmer Registration','Land Records','Bank Account','Aadhaar'],tags:['welfare','state','all'],status:'Active · Statewide'},
+  {id:'rbbk',name:'Rythu Bharosa Kendras (RBKs)',ministry:'Dept. of Agriculture, Govt. of Andhra Pradesh',category:'subsidy',level:'state',icon:'🏪',iconClass:'orange',
+   eligibility:'All AP farmers',benefit:'Quality seeds, fertilizers, pesticides at subsidized rates at village level',subsidy:'Up to 50% subsidy on certified seeds',
+   desc:'RBKs are one-stop service centers established at village level across Andhra Pradesh to provide quality agricultural inputs, information, and services directly to farmers. Every panchayat has an RBK center.',
+   docs:['AP Farmer ID','Land Records','Aadhaar'],tags:['subsidy','state','all'],status:'Operational · 10,641 RBKs statewide'},
+  {id:'nfsm',name:'National Food Security Mission',ministry:'Ministry of Agriculture & Farmers Welfare, GoI',category:'subsidy',level:'central',icon:'🍚',iconClass:'blue',
+   eligibility:'Farmers in selected districts growing rice, wheat, pulses',benefit:'Seeds, micronutrients, crop protection demonstrations',subsidy:'Subsidized quality inputs and demonstrations',
+   desc:'NFSM aims to increase production of rice, wheat, pulses and coarse cereals through area expansion and productivity enhancement in a sustainable manner. It focuses on restoring soil fertility and productivity.',
+   docs:['Farmer Identity','Land Records','Bank Details'],tags:['subsidy','central','small'],status:'Active · District-specific'},
+  {id:'msme',name:'Agriculture Infrastructure Fund (AIF)',ministry:'Ministry of Agriculture & Farmers Welfare, GoI',category:'infrastructure',level:'central',icon:'🏗️',iconClass:'purple',
+   eligibility:'Farmers, FPOs, PACS, SHGs, Agri-entrepreneurs',benefit:'Loans for post-harvest management and agri-infrastructure',subsidy:'3% interest subvention + credit guarantee',
+   desc:'AIF provides medium to long-term debt financing for investment in viable projects for post-harvest management infrastructure and community farming assets. Targets creation of 1 million infrastructure projects.',
+   docs:['Business Plan','Identity Proof','Land Documents','Bank Statements'],tags:['infrastructure','central','all'],status:'Active · Applications Open'},
+  {id:'mgnregs',name:'MGNREGS for Agriculture',ministry:'Ministry of Rural Development, GoI',category:'welfare',level:'central',icon:'👷',iconClass:'green',
+   eligibility:'All rural households',benefit:'100 days guaranteed wage employment',subsidy:'Market wage rate for agricultural work',
+   desc:'Under MGNREGS, farm-related works like water conservation, drought proofing, micro-irrigation, and land development are eligible activities. Farmers can use this scheme for developing their own land.',
+   docs:['Job Card (from Gram Panchayat)','Aadhaar','Bank Account'],tags:['welfare','central','all'],status:'Ongoing · Year-round'},
+];
+
+let filtered=[...schemes];
+
+function renderSchemes(data){
+  const grid=document.getElementById('schemesGrid');
+  document.getElementById('schemeCount').textContent=`Showing ${data.length} scheme${data.length!==1?'s':''}`;
+  if(!data.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="ei">🔍</div><h3>No schemes found</h3><p>Try adjusting your search or filters.</p></div>`;return}
+  grid.innerHTML=data.map(s=>`
+    <div class="scheme-card" id="card-${s.id}">
+      <div class="scheme-header" onclick="toggleScheme('${s.id}')">
+        <div class="scheme-icon ${s.iconClass}">${s.icon}</div>
+        <div class="scheme-info">
+          <div class="scheme-name">${s.name}</div>
+          <div class="scheme-ministry">${s.ministry}</div>
+          <div class="scheme-badges">
+            <span class="badge badge-${s.iconClass}">${s.category}</span>
+            <span class="badge badge-gold">${s.level==='central'?'Central':'State'} Govt.</span>
+          </div>
+        </div>
+        <button class="scheme-toggle" id="toggle-${s.id}">+ Details</button>
+      </div>
+      <div class="scheme-body" id="body-${s.id}">
+        <p class="scheme-desc">${s.desc}</p>
+        <div class="scheme-detail-grid">
+          <div class="scheme-detail-item"><div class="dl">Eligibility</div><div class="dv">${s.eligibility}</div></div>
+          <div class="scheme-detail-item"><div class="dl">Key Benefit</div><div class="dv">${s.benefit}</div></div>
+          <div class="scheme-detail-item"><div class="dl">Subsidy / Support</div><div class="dv">${s.subsidy}</div></div>
+          <div class="scheme-detail-item"><div class="dl">Current Status</div><div class="dv" style="color:var(--green);font-weight:600;">✅ ${s.status}</div></div>
+        </div>
+        <div class="scheme-docs">
+          <h5>Required Documents</h5>
+          <ul>${s.docs.map(d=>`<li>📄 ${d}</li>`).join('')}</ul>
+        </div>
+      </div>
+      <div class="scheme-footer">
+        <a href="../index.html" class="btn-apply">Apply via AgriConnect</a>
+        <button class="btn-download" onclick="alert('PDF download feature coming soon.')">📥 Download PDF</button>
+        <div class="scheme-status">✅ Active</div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleScheme(id){
+  const body=document.getElementById(`body-${id}`);
+  const btn=document.getElementById(`toggle-${id}`);
+  if(!body)return;
+  const isOpen=body.classList.contains('open');
+  document.querySelectorAll('.scheme-body').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.scheme-toggle').forEach(b=>b.textContent='+ Details');
+  if(!isOpen){body.classList.add('open');if(btn)btn.textContent='− Close'}
+}
+
+function filterSchemes(){
+  const q=document.getElementById('schemeSearch').value.toLowerCase();
+  const cat=document.getElementById('categoryFilter').value;
+  const level=document.getElementById('levelFilter').value;
+  const elig=document.getElementById('eligFilter').value;
+  filtered=schemes.filter(s=>{
+    const matchQ=!q||s.name.toLowerCase().includes(q)||s.desc.toLowerCase().includes(q)||s.benefit.toLowerCase().includes(q);
+    const matchCat=!cat||s.category===cat;
+    const matchLevel=!level||s.level===level;
+    const matchElig=!elig||s.tags.includes(elig);
+    return matchQ&&matchCat&&matchLevel&&matchElig;
+  });
+  renderSchemes(filtered);
+}
+
+renderSchemes(schemes);
+</script>
+</body>
+</html>

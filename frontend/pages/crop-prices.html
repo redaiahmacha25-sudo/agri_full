@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crop MSP Prices — AgriConnect | Andhra Pradesh</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&family=Noto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#003580;--blue-mid:#1a4f9c;--blue-pale:#e8f0ff;--orange:#FF6B00;--green:#1a7a3c;--green-pale:#e6f7ec;--red:#c0392b;--white:#fff;--gray-50:#f8f9fb;--gray-100:#eef0f4;--gray-200:#dde1e9;--gray-400:#9aa3b2;--gray-500:#6b7585;--gray-600:#4a5568;--gray-700:#2d3748;--gray-800:#1a202c;--font:'Noto Sans',sans-serif;--serif:'Noto Serif',serif;--radius:8px;--radius-lg:16px;--shadow-sm:0 1px 4px rgba(0,0,0,.08);--shadow-md:0 4px 16px rgba(0,0,0,.10)}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--gray-800);background:var(--gray-50);font-size:15px;line-height:1.7}
+.gov-strip{background:#0a0a1a;color:rgba(255,255,255,.75);padding:7px 40px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px}
+.gov-strip a{color:rgba(255,255,255,.6);text-decoration:none;margin-left:16px}
+header{background:var(--blue);border-bottom:4px solid var(--orange);position:sticky;top:0;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.header-inner{max-width:1280px;margin:auto;padding:0 40px;display:flex;align-items:center;gap:18px;min-height:72px}
+.header-logo{width:52px;height:52px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.header-title{flex:1;color:#fff}
+.header-title h1{font-family:var(--serif);font-size:22px;font-weight:700}
+.header-title p{font-size:11px;opacity:.75;letter-spacing:.6px}
+.header-nav a{color:rgba(255,255,255,.8);text-decoration:none;padding:10px 16px;font-size:13px;font-weight:500;border-bottom:3px solid transparent;transition:all .2s}
+.header-nav a:hover,.header-nav a.active{color:#fff;border-bottom-color:var(--orange)}
+.btn-login{background:var(--orange);color:#fff;border:none;padding:8px 18px;border-radius:4px;font-size:13px;font-weight:600;text-decoration:none}
+.breadcrumb-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:10px 40px}
+.breadcrumb{max-width:1280px;margin:auto;font-size:13px;color:var(--gray-500)}
+.breadcrumb a{color:var(--blue);text-decoration:none}
+.breadcrumb span{margin:0 8px;color:var(--gray-400)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0a0a2a,#003580,#0a4d6e);color:#fff;padding:60px 40px;position:relative;overflow:hidden}
+.hero::before{content:'📈';position:absolute;right:80px;top:50%;transform:translateY(-50%);font-size:160px;opacity:.05}
+.hero-inner{max-width:1280px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.hero-badge{display:inline-block;background:rgba(255,107,0,.15);border:1px solid rgba(255,107,0,.35);color:#ffaa66;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px}
+.hero h2{font-family:var(--serif);font-size:36px;font-weight:700;margin-bottom:12px}
+.hero p{font-size:15px;opacity:.85;line-height:1.7;max-width:480px}
+.hero-updated{margin-top:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:var(--radius);padding:10px 16px;font-size:13px;display:inline-block}
+.hero-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hero-price-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:16px;text-align:center;backdrop-filter:blur(10px)}
+.hero-price-card .crop{font-size:11px;opacity:.7;margin-bottom:4px}
+.hero-price-card .price{font-size:22px;font-weight:800;color:#ffee99}
+.hero-price-card .unit{font-size:11px;opacity:.6}
+.hero-price-card .trend{margin-top:6px;font-size:12px;font-weight:600}
+.trend-up{color:#66ffaa}
+.trend-down{color:#ff9999}
+.trend-same{color:rgba(255,255,255,.6)}
+
+/* LIVE INDICATOR */
+.live-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:10px 40px}
+.live-inner{max-width:1280px;margin:auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#27ae60;box-shadow:0 0 0 3px rgba(39,174,96,.2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(39,174,96,.2)}50%{box-shadow:0 0 0 6px rgba(39,174,96,.1)}}
+.live-text{font-size:13px;font-weight:600;color:var(--green)}
+.live-info{font-size:12px;color:var(--gray-500);margin-left:8px}
+.last-updated{margin-left:auto;font-size:12px;color:var(--gray-500)}
+
+/* FILTER BAR */
+.filter-section{background:#fff;border-bottom:1px solid var(--gray-200);padding:20px 40px;position:sticky;top:72px;z-index:100;box-shadow:var(--shadow-sm)}
+.filter-inner{max-width:1280px;margin:auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:200px}
+.search-wrap input{width:100%;padding:9px 14px 9px 36px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:13.5px;font-family:var(--font);outline:none;transition:border .2s}
+.search-wrap input:focus{border-color:var(--blue)}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:14px}
+.filter-select{padding:9px 13px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:13px;font-family:var(--font);color:var(--gray-700);background:#fff;cursor:pointer;outline:none;transition:border .2s}
+.filter-select:focus{border-color:var(--blue)}
+
+/* STATS STRIP */
+.stats-strip{padding:24px 40px}
+.stats-inner{max-width:1280px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)}
+.stat-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.stat-icon.blue{background:var(--blue-pale)}
+.stat-icon.green{background:var(--green-pale)}
+.stat-icon.orange{background:#fff3e0}
+.stat-icon.gold{background:#fef9e7}
+.stat-val{font-size:24px;font-weight:800;color:var(--gray-800);line-height:1}
+.stat-lbl{font-size:12px;color:var(--gray-500);margin-top:3px}
+
+/* CHARTS SECTION */
+.charts-section{padding:0 40px 32px}
+.charts-inner{max-width:1280px;margin:auto;display:grid;grid-template-columns:2fr 1fr;gap:20px}
+.chart-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm)}
+.chart-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.chart-card-title{font-size:15px;font-weight:700;color:var(--gray-800)}
+.chart-card-sub{font-size:12px;color:var(--gray-500);margin-top:2px}
+.chart-wrap{height:260px;position:relative}
+
+/* PRICES TABLE */
+.table-section{padding:0 40px 60px}
+.table-inner{max-width:1280px;margin:auto}
+.table-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.table-header{padding:20px 24px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.table-title{font-size:15px;font-weight:700;color:var(--gray-800)}
+.table-sub{font-size:12px;color:var(--gray-500);margin-top:2px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{padding:11px 16px;text-align:left;background:var(--gray-50);font-weight:700;color:var(--gray-600);font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--gray-200);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{background:var(--gray-100)}
+thead th.sort-asc::after{content:' ↑'}
+thead th.sort-desc::after{content:' ↓'}
+tbody tr{border-bottom:1px solid var(--gray-100);transition:background .15s}
+tbody tr:hover{background:var(--gray-50)}
+tbody tr:last-child{border-bottom:none}
+tbody td{padding:14px 16px;color:var(--gray-700);vertical-align:middle}
+.crop-cell{display:flex;align-items:center;gap:10px}
+.crop-emoji{font-size:20px}
+.crop-name{font-weight:600;color:var(--gray-800)}
+.crop-telugu{font-size:12px;color:var(--gray-400)}
+.price-cell{font-size:17px;font-weight:800;color:var(--green)}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-kharif{background:#fff3e0;color:#c84400}
+.badge-rabi{background:var(--blue-pale);color:var(--blue-mid)}
+.badge-all{background:var(--green-pale);color:var(--green)}
+.trend-cell{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600}
+.trend-up-cell{color:var(--green)}
+.trend-down-cell{color:var(--red)}
+.trend-same-cell{color:var(--gray-400)}
+.category-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;background:var(--gray-100);color:var(--gray-600)}
+
+/* PAGINATION */
+.pagination{padding:16px 24px;border-top:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.page-info{font-size:13px;color:var(--gray-500)}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid var(--gray-200);border-radius:var(--radius);font-size:13px;font-weight:600;color:var(--gray-600);background:#fff;cursor:pointer;transition:all .2s}
+.page-btn:hover{border-color:var(--blue);color:var(--blue)}
+.page-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* NOTE BAR */
+.note-bar{background:var(--blue-pale);border:1px solid #c5d8f5;border-radius:var(--radius);padding:12px 16px;margin:0 40px 20px;max-width:1280px;margin-left:auto;margin-right:auto;font-size:13px;color:var(--blue-mid);display:flex;align-items:flex-start;gap:10px}
+
+footer{background:#0a0a1a;color:rgba(255,255,255,.7);margin-top:0}
+.footer-bottom{padding:20px 40px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-wrap:wrap;gap:8px}
+
+@media(max-width:900px){.hero-inner,.charts-inner{grid-template-columns:1fr}.stats-inner{grid-template-columns:1fr 1fr}.hero-cards{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.hero,.filter-section,.stats-strip,.charts-section,.table-section{padding-left:20px;padding-right:20px}.stats-inner{grid-template-columns:1fr}.filter-inner{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div class="gov-strip">
+  <span>🇮🇳 Government of Andhra Pradesh · Department of Agriculture</span>
+  <span><a href="#">Screen Reader</a><a href="#">తెలుగు</a><a href="#">हिन्दी</a></span>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-logo">🌾</div>
+    <div class="header-title">
+      <h1>AgriConnect</h1>
+      <p>INTEGRATED FARMER SERVICES PORTAL · GOVT. OF ANDHRA PRADESH</p>
+    </div>
+    <nav class="header-nav" style="display:flex">
+      <a href="../index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="schemes.html">Schemes</a>
+      <a href="crop-prices.html" class="active">Crop Prices</a>
+      <a href="helpdesk.html">Help Desk</a>
+      <a href="downloads.html">Downloads</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <a href="../index.html" class="btn-login">Login / Register</a>
+  </div>
+</header>
+
+<div class="breadcrumb-bar">
+  <div class="breadcrumb"><a href="../index.html">Home</a><span>›</span>Crop MSP Prices</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">📊 Kharif & Rabi 2024-25 MSP Rates</div>
+      <h2>Government Crop Price Dashboard</h2>
+      <p>Official Minimum Support Prices (MSP) as declared by the Government of India for Kharif 2024-25 and Rabi 2024-25. All procurement on AgriConnect is conducted at these rates.</p>
+      <div class="hero-updated">📅 Last Updated: January 2025 &nbsp;|&nbsp; Source: CACP, GoI</div>
+    </div>
+    <div class="hero-cards">
+      <div class="hero-price-card"><div class="crop">Paddy (Common)</div><div class="price">₹2,183</div><div class="unit">per quintal</div><div class="trend trend-up">↑ +3.6% from 2023</div></div>
+      <div class="hero-price-card"><div class="crop">Groundnut</div><div class="price">₹6,783</div><div class="unit">per quintal</div><div class="trend trend-up">↑ +3.0% from 2023</div></div>
+      <div class="hero-price-card"><div class="crop">Cotton (Medium)</div><div class="price">₹7,121</div><div class="unit">per quintal</div><div class="trend trend-up">↑ +8.3% from 2023</div></div>
+      <div class="hero-price-card"><div class="crop">Black Gram</div><div class="price">₹8,558</div><div class="unit">per quintal</div><div class="trend trend-up">↑ +5.3% from 2023</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE INDICATOR -->
+<div class="live-bar">
+  <div class="live-inner">
+    <div class="live-dot"></div>
+    <span class="live-text">Official MSP Rates Active</span>
+    <span class="live-info">· Prices are government-mandated. All AgriConnect procurement is at declared MSP.</span>
+    <span class="last-updated">🕐 Updated: Jan 2025 · Next update: Apr 2025</span>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-section">
+  <div class="filter-inner">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="cropSearch" placeholder="Search crop by name..." oninput="filterCrops()">
+    </div>
+    <select class="filter-select" id="categoryFilter" onchange="filterCrops()">
+      <option value="">All Categories</option>
+      <option value="cereal">🌾 Cereal</option>
+      <option value="pulse">🫘 Pulse</option>
+      <option value="oilseed">🌻 Oilseed</option>
+      <option value="other">🌿 Other (Cotton etc.)</option>
+    </select>
+    <select class="filter-select" id="seasonFilter" onchange="filterCrops()">
+      <option value="">All Seasons</option>
+      <option value="kharif">🌧️ Kharif</option>
+      <option value="rabi">❄️ Rabi</option>
+    </select>
+    <select class="filter-select" id="sortFilter" onchange="filterCrops()">
+      <option value="name">Sort: Name A-Z</option>
+      <option value="price-high">Sort: Price High-Low</option>
+      <option value="price-low">Sort: Price Low-High</option>
+    </select>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-card"><div class="stat-icon blue">🌾</div><div><div class="stat-val">12</div><div class="stat-lbl">Crops Listed (Kharif)</div></div></div>
+    <div class="stat-card"><div class="stat-icon green">💰</div><div><div class="stat-val">₹8,682</div><div class="stat-lbl">Highest MSP (Green Gram)</div></div></div>
+    <div class="stat-card"><div class="stat-icon orange">📈</div><div><div class="stat-val">+5.8%</div><div class="stat-lbl">Avg MSP Increase 2024-25</div></div></div>
+    <div class="stat-card"><div class="stat-icon gold">🏛️</div><div><div class="stat-val">CACP</div><div class="stat-lbl">Price Authority</div></div></div>
+  </div>
+</div>
+
+<!-- CHARTS -->
+<div class="charts-section">
+  <div class="charts-inner">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-card-title">MSP Price Comparison — Kharif 2024-25</div>
+          <div class="chart-card-sub">₹ per quintal · Source: CACP, Government of India</div>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="priceBarChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-card-title">Crop Category Distribution</div>
+          <div class="chart-card-sub">By number of crops listed</div>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="categoryPieChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTE -->
+<div class="note-bar" style="margin:0 40px 20px;max-width:1240px;display:block;padding:12px 16px;background:var(--blue-pale);border:1px solid #c5d8f5;border-radius:8px;font-size:13px;color:var(--blue-mid);">
+  ℹ️ <strong>Note:</strong> MSP (Minimum Support Price) is the government-guaranteed minimum price for crops. All procurement through AgriConnect is conducted at or above the declared MSP. Prices are reviewed and announced by CACP annually.
+</div>
+
+<!-- PRICES TABLE -->
+<div class="table-section">
+  <div class="table-inner">
+    <div class="table-card">
+      <div class="table-header">
+        <div>
+          <div class="table-title">Complete MSP Price List — 2024-25</div>
+          <div class="table-sub" id="tableSubtext">Showing all 12 crops</div>
+        </div>
+        <button onclick="window.print()" style="background:var(--blue);color:#fff;border:none;padding:8px 16px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer">🖨️ Print / Save PDF</button>
+      </div>
+      <div class="table-wrap">
+        <table id="pricesTable">
+          <thead>
+            <tr>
+              <th onclick="sortTable('name')">#  Crop Name</th>
+              <th onclick="sortTable('telugu')">తెలుగు పేరు</th>
+              <th onclick="sortTable('category')">Category</th>
+              <th onclick="sortTable('season')">Season</th>
+              <th onclick="sortTable('price')">MSP (₹/Quintal)</th>
+              <th>MSP (₹/Tonne)</th>
+              <th>YoY Change</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="pricesBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info" id="pageInfo">Showing 1–12 of 12 crops</div>
+        <div class="page-btns">
+          <button class="page-btn" onclick="changePage(-1)" id="prevBtn" disabled>‹</button>
+          <button class="page-btn active" id="page1Btn" onclick="goPage(1)">1</button>
+          <button class="page-btn" onclick="changePage(1)" id="nextBtn" disabled>›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <span>© 2024 Government of Andhra Pradesh. MSP rates declared by Commission for Agricultural Costs & Prices (CACP), GoI.</span>
+    <span>Source: agricoop.nic.in · Last verified: January 2025</span>
+  </div>
+</footer>
+
+<script>
+const crops=[
+  {id:1,name:'Paddy (Common)',telugu:'వరి (సాధారణ)',category:'cereal',season:'kharif',price:2183,icon:'🌾',change:3.6,changeAmt:76},
+  {id:2,name:'Paddy (Grade A)',telugu:'వరి (గ్రేడ్ A)',category:'cereal',season:'kharif',price:2203,icon:'🌾',change:3.6,changeAmt:76},
+  {id:3,name:'Wheat',telugu:'గోధుమ',category:'cereal',season:'rabi',price:2275,icon:'🫘',change:6.0,changeAmt:150},
+  {id:4,name:'Maize',telugu:'మొక్కజొన్న',category:'cereal',season:'kharif',price:2090,icon:'🌽',change:5.5,changeAmt:109},
+  {id:5,name:'Groundnut',telugu:'వేరుశనగ',category:'oilseed',season:'kharif',price:6783,icon:'🥜',change:3.0,changeAmt:198},
+  {id:6,name:'Sunflower Seed',telugu:'పొద్దుతిరుగుడు',category:'oilseed',season:'kharif',price:6760,icon:'🌻',change:8.3,changeAmt:517},
+  {id:7,name:'Red Gram (Tur)',telugu:'కంది పప్పు',category:'pulse',season:'kharif',price:7000,icon:'🫘',change:3.0,changeAmt:200},
+  {id:8,name:'Black Gram',telugu:'మినప పప్పు',category:'pulse',season:'kharif',price:8558,icon:'🫘',change:5.3,changeAmt:431},
+  {id:9,name:'Green Gram',telugu:'పెసర పప్పు',category:'pulse',season:'kharif',price:8682,icon:'🫘',change:10.4,changeAmt:817},
+  {id:10,name:'Cotton (Medium)',telugu:'పత్తి (మీడియం)',category:'other',season:'kharif',price:7121,icon:'☁️',change:8.3,changeAmt:548},
+  {id:11,name:'Cotton (Long)',telugu:'పత్తి (లాంగ్)',category:'other',season:'kharif',price:7521,icon:'☁️',change:8.3,changeAmt:578},
+  {id:12,name:'Soybean',telugu:'సోయాబీన్',category:'oilseed',season:'kharif',price:4600,icon:'🌱',change:1.8,changeAmt:80},
+];
+
+let filtered=[...crops];
+let currentSort='name';let sortDir=1;
+
+const catEmoji={cereal:'🌾',pulse:'🫘',oilseed:'🌻',other:'🌿'};
+
+function renderTable(data){
+  document.getElementById('tableSubtext').textContent=`Showing ${data.length} crop${data.length!==1?'s':''}`;
+  document.getElementById('pageInfo').textContent=`Showing 1–${data.length} of ${data.length} crops`;
+  const tbody=document.getElementById('pricesBody');
+  tbody.innerHTML=data.map((c,i)=>`
+    <tr>
+      <td><div class="crop-cell"><span class="crop-emoji">${c.icon}</span><div><div class="crop-name">${c.name}</div></div></div></td>
+      <td style="color:var(--gray-500);font-size:13px">${c.telugu}</td>
+      <td><span class="category-badge">${catEmoji[c.category]} ${c.category}</span></td>
+      <td><span class="badge badge-${c.season}">${c.season}</span></td>
+      <td><span class="price-cell">₹ ${c.price.toLocaleString('en-IN')}</span></td>
+      <td style="color:var(--gray-600)">₹ ${(c.price*10).toLocaleString('en-IN')}</td>
+      <td><div class="trend-cell ${c.change>0?'trend-up-cell':'trend-same-cell'}">${c.change>0?'↑':'→'} ${c.change>0?'+':''}${c.change}% (₹${c.changeAmt})</div></td>
+      <td><span style="color:var(--green);font-size:12px;font-weight:600">✅ Active</span></td>
+    </tr>`).join('');
+}
+
+function filterCrops(){
+  const q=document.getElementById('cropSearch').value.toLowerCase();
+  const cat=document.getElementById('categoryFilter').value;
+  const season=document.getElementById('seasonFilter').value;
+  const sort=document.getElementById('sortFilter').value;
+  filtered=crops.filter(c=>{
+    const mQ=!q||c.name.toLowerCase().includes(q)||c.telugu.toLowerCase().includes(q);
+    const mC=!cat||c.category===cat;
+    const mS=!season||c.season===season;
+    return mQ&&mC&&mS;
+  });
+  if(sort==='price-high')filtered.sort((a,b)=>b.price-a.price);
+  else if(sort==='price-low')filtered.sort((a,b)=>a.price-b.price);
+  else filtered.sort((a,b)=>a.name.localeCompare(b.name));
+  renderTable(filtered);
+}
+
+function sortTable(col){
+  if(currentSort===col)sortDir*=-1; else{currentSort=col;sortDir=1}
+  filtered.sort((a,b)=>{
+    if(col==='price')return(a.price-b.price)*sortDir;
+    return a[col].localeCompare(b[col])*sortDir;
+  });
+  renderTable(filtered);
+}
+
+// Charts
+const ctx1=document.getElementById('priceBarChart').getContext('2d');
+new Chart(ctx1,{
+  type:'bar',
+  data:{
+    labels:crops.map(c=>c.name.length>15?c.name.substring(0,14)+'…':c.name),
+    datasets:[{label:'MSP ₹/Quintal',data:crops.map(c=>c.price),backgroundColor:crops.map(c=>c.category==='cereal'?'#003580':c.category==='pulse'?'#1a7a3c':c.category==='oilseed'?'#FF6B00':'#8e44ad'),borderRadius:4}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:false,min:1500,ticks:{callback:v=>'₹'+v.toLocaleString('en-IN')}}}}
+});
+
+const ctx2=document.getElementById('categoryPieChart').getContext('2d');
+new Chart(ctx2,{
+  type:'doughnut',
+  data:{
+    labels:['Cereal','Pulse','Oilseed','Other'],
+    datasets:[{data:[4,3,3,2],backgroundColor:['#003580','#1a7a3c','#FF6B00','#8e44ad'],borderWidth:3,borderColor:'#fff'}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:12}}}}}
+});
+
+renderTable(crops);
+</script>
+</body>
+</html>

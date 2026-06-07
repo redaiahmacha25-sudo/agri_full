@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — AgriConnect | Andhra Pradesh</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&family=Noto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#003580;--blue-mid:#1a4f9c;--blue-pale:#e8f0ff;--orange:#FF6B00;--green:#1a7a3c;--green-pale:#e6f7ec;--white:#fff;--gray-50:#f8f9fb;--gray-100:#eef0f4;--gray-200:#dde1e9;--gray-400:#9aa3b2;--gray-500:#6b7585;--gray-600:#4a5568;--gray-700:#2d3748;--gray-800:#1a202c;--font:'Noto Sans',sans-serif;--serif:'Noto Serif',serif;--radius:8px;--radius-lg:16px;--shadow-sm:0 1px 4px rgba(0,0,0,.08);--shadow-md:0 4px 16px rgba(0,0,0,.10);--shadow-lg:0 8px 32px rgba(0,0,0,.13)}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--gray-800);background:var(--gray-50);font-size:15px;line-height:1.7}
+.gov-strip{background:#0a0a1a;color:rgba(255,255,255,.75);padding:7px 40px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px}
+.gov-strip a{color:rgba(255,255,255,.6);text-decoration:none;margin-left:16px}
+header{background:var(--blue);border-bottom:4px solid var(--orange);position:sticky;top:0;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.header-inner{max-width:1280px;margin:auto;padding:0 40px;display:flex;align-items:center;gap:18px;min-height:72px}
+.header-logo{width:52px;height:52px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.header-title{flex:1;color:#fff}
+.header-title h1{font-family:var(--serif);font-size:22px;font-weight:700}
+.header-title p{font-size:11px;opacity:.75;letter-spacing:.6px}
+.header-nav a{color:rgba(255,255,255,.8);text-decoration:none;padding:10px 16px;font-size:13px;font-weight:500;border-bottom:3px solid transparent;transition:all .2s}
+.header-nav a:hover,.header-nav a.active{color:#fff;border-bottom-color:var(--orange)}
+.btn-login{background:var(--orange);color:#fff;border:none;padding:8px 18px;border-radius:4px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap}
+.breadcrumb-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:10px 40px}
+.breadcrumb{max-width:1280px;margin:auto;font-size:13px;color:var(--gray-500)}
+.breadcrumb a{color:var(--blue);text-decoration:none}
+.breadcrumb span{margin:0 8px;color:var(--gray-400)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#001228,#003580,#005096);color:#fff;padding:72px 40px;position:relative;overflow:hidden;text-align:center}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='0.03'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")}
+.hero-inner{max-width:680px;margin:auto;position:relative}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:5px 16px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:16px}
+.hero h2{font-family:var(--serif);font-size:40px;font-weight:700;margin-bottom:14px;line-height:1.2}
+.hero p{font-size:16px;opacity:.85;line-height:1.7;margin-bottom:32px}
+.hero-contact-strip{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;padding-top:28px;border-top:1px solid rgba(255,255,255,.15)}
+.hcs-item{display:flex;align-items:center;gap:10px;font-size:14px}
+.hcs-icon{font-size:20px}
+.hcs-label{opacity:.7;font-size:12px;margin-bottom:1px}
+.hcs-val{font-weight:700}
+
+/* CONTACT METHODS CARDS */
+.methods-section{padding:56px 40px}
+.methods-inner{max-width:1280px;margin:auto}
+.section-label{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:6px}
+.section-title{font-family:var(--serif);font-size:30px;font-weight:700;color:var(--gray-800);margin-bottom:32px}
+.methods-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.method-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:28px 20px;text-align:center;transition:all .3s;position:relative;overflow:hidden}
+.method-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:var(--gray-200);transition:background .3s}
+.method-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
+.method-card:hover::before{background:var(--blue)}
+.method-card.highlight::before{background:var(--orange)}
+.method-icon{font-size:40px;margin-bottom:14px;display:block}
+.method-card h3{font-size:15px;font-weight:700;color:var(--gray-800);margin-bottom:8px}
+.method-value{font-size:16px;font-weight:700;color:var(--blue);margin:10px 0;line-height:1.3}
+.method-card p{font-size:13px;color:var(--gray-500);line-height:1.6}
+.method-hours{margin-top:10px;font-size:12px;color:var(--gray-400);display:flex;align-items:center;justify-content:center;gap:5px}
+.free-badge{display:inline-block;background:var(--green-pale);color:var(--green);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;margin-top:8px}
+.method-btn{display:inline-block;margin-top:14px;background:var(--blue);color:#fff;padding:8px 18px;border-radius:4px;font-size:13px;font-weight:600;text-decoration:none;transition:background .2s}
+.method-btn:hover{background:var(--blue-mid)}
+
+/* MAIN CONTACT LAYOUT */
+.contact-main{padding:0 40px 60px}
+.contact-inner{max-width:1280px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:28px}
+
+/* CONTACT FORM */
+.form-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.form-card-header{padding:24px 28px;border-bottom:1px solid var(--gray-100);background:linear-gradient(135deg,#003580,#1a4f9c);color:#fff}
+.form-card-header h3{font-size:18px;font-weight:700;margin-bottom:4px}
+.form-card-header p{font-size:13px;opacity:.8}
+.form-card-body{padding:28px}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:6px}
+.form-label .req{color:#c0392b;margin-left:2px}
+.form-control{width:100%;padding:10px 13px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:13.5px;font-family:var(--font);color:var(--gray-800);background:#fff;outline:none;transition:border .2s,box-shadow .2s}
+.form-control:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,53,128,.08)}
+textarea.form-control{resize:vertical;min-height:110px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.char-count{text-align:right;font-size:11px;color:var(--gray-400);margin-top:3px}
+.btn-submit{width:100%;background:var(--blue);color:#fff;border:none;padding:13px;border-radius:var(--radius);font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-submit:hover{background:var(--blue-mid);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,53,128,.3)}
+.form-success{display:none;background:var(--green-pale);border:1px solid #a3d9b5;border-radius:var(--radius);padding:16px;margin-top:16px;text-align:center}
+.form-success.show{display:block}
+.form-success .si{font-size:32px;margin-bottom:8px}
+.form-success h4{font-size:15px;font-weight:700;color:var(--green);margin-bottom:4px}
+.form-success p{font-size:13px;color:var(--gray-600)}
+.form-note{font-size:12px;color:var(--gray-400);margin-top:12px;text-align:center;line-height:1.6}
+
+/* INFO PANEL */
+.info-panel{display:flex;flex-direction:column;gap:20px}
+.info-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.info-card-header{padding:16px 20px;background:var(--gray-50);border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:10px}
+.info-card-header h3{font-size:14px;font-weight:700;color:var(--gray-800)}
+.info-card-body{padding:20px}
+.address-block{display:flex;gap:14px;align-items:flex-start}
+.address-icon{font-size:24px;flex-shrink:0;margin-top:2px}
+.address-text strong{display:block;font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:4px}
+.address-text p{font-size:13px;color:var(--gray-600);line-height:1.7}
+.hours-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hours-item{background:var(--gray-50);border-radius:var(--radius);padding:10px 12px}
+.hours-day{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);margin-bottom:3px}
+.hours-time{font-size:13px;font-weight:600;color:var(--gray-700)}
+.hours-time.closed{color:var(--gray-400)}
+.social-links{display:flex;gap:10px;flex-wrap:wrap}
+.social-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:13px;font-weight:600;color:var(--gray-700);text-decoration:none;transition:all .2s;cursor:pointer;background:#fff}
+.social-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-pale)}
+
+/* MAP */
+.map-section{padding:0 40px 56px}
+.map-inner{max-width:1280px;margin:auto}
+.map-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.map-header{padding:20px 24px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.map-title{font-size:15px;font-weight:700;color:var(--gray-800)}
+.map-sub{font-size:12px;color:var(--gray-500);margin-top:2px}
+.map-frame{width:100%;height:380px;border:none;display:block;background:var(--gray-50)}
+.map-placeholder{height:380px;background:linear-gradient(135deg,#e8f0ff,#f0f5ff);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--blue-mid);position:relative;overflow:hidden}
+.map-placeholder::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(0,53,128,.05) 39px,rgba(0,53,128,.05) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(0,53,128,.05) 39px,rgba(0,53,128,.05) 40px)}
+.map-pin{font-size:48px;margin-bottom:12px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.2));position:relative;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.map-placeholder h3{font-size:16px;font-weight:700;position:relative}
+.map-placeholder p{font-size:13px;opacity:.7;position:relative;margin-top:4px}
+.map-directions{padding:16px 24px;border-top:1px solid var(--gray-100);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.map-address{font-size:13px;color:var(--gray-600);flex:1}
+.btn-directions{background:var(--green);color:#fff;padding:9px 18px;border-radius:4px;font-size:13px;font-weight:600;text-decoration:none;transition:background .2s;border:none;cursor:pointer}
+.btn-directions:hover{background:var(--green-light)}
+
+/* REGIONAL OFFICES */
+.offices-section{padding:0 40px 60px}
+.offices-inner{max-width:1280px;margin:auto}
+.offices-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.office-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:22px;transition:all .3s}
+.office-card:hover{box-shadow:var(--shadow-md);border-color:var(--blue-pale)}
+.office-district{font-size:15px;font-weight:700;color:var(--gray-800);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.office-badge{background:var(--blue-pale);color:var(--blue-mid);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.office-detail{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;color:var(--gray-600)}
+.office-detail:last-child{margin-bottom:0}
+.office-icon{flex-shrink:0;font-size:14px;margin-top:2px}
+.office-status{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-100);font-size:12px;font-weight:600;color:var(--green)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+/* FOOTER */
+footer{background:#0a0a1a;color:rgba(255,255,255,.7)}
+.footer-main{max-width:1280px;margin:auto;padding:52px 40px 36px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+.footer-brand h3{font-family:var(--serif);font-size:20px;color:#fff;margin-bottom:12px}
+.footer-brand p{font-size:13px;line-height:1.7;max-width:280px}
+.footer-col h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);margin-bottom:16px}
+.footer-col a{display:block;font-size:13px;color:rgba(255,255,255,.6);text-decoration:none;margin-bottom:9px;transition:color .2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding:20px 40px;max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-wrap:wrap;gap:8px}
+
+@media(max-width:1024px){.methods-grid{grid-template-columns:1fr 1fr}.offices-grid{grid-template-columns:1fr 1fr}.footer-main{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.contact-inner{grid-template-columns:1fr}.methods-grid{grid-template-columns:1fr 1fr}.form-row{grid-template-columns:1fr}.hero h2{font-size:28px}.hero-contact-strip{flex-direction:column;gap:16px}.methods-section,.contact-main,.map-section,.offices-section{padding-left:20px;padding-right:20px}.offices-grid{grid-template-columns:1fr}.footer-main{grid-template-columns:1fr;padding:36px 20px}.footer-bottom{padding:16px 20px}}
+@media(max-width:480px){.methods-grid{grid-template-columns:1fr}.gov-strip{padding:6px 16px;font-size:10px}}
+</style>
+</head>
+<body>
+
+<div class="gov-strip">
+  <span>🇮🇳 Government of Andhra Pradesh · Department of Agriculture, Cooperation & Farmers Welfare</span>
+  <span><a href="#">Screen Reader</a><a href="#">తెలుగు</a><a href="#">हिन्दी</a></span>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-logo">🌾</div>
+    <div class="header-title">
+      <h1>AgriConnect</h1>
+      <p>INTEGRATED FARMER SERVICES PORTAL · GOVT. OF ANDHRA PRADESH</p>
+    </div>
+    <nav class="header-nav" style="display:flex">
+      <a href="../index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="schemes.html">Schemes</a>
+      <a href="crop-prices.html">Crop Prices</a>
+      <a href="helpdesk.html">Help Desk</a>
+      <a href="downloads.html">Downloads</a>
+      <a href="contact.html" class="active">Contact</a>
+    </nav>
+    <a href="../index.html" class="btn-login">Login / Register</a>
+  </div>
+</header>
+
+<div class="breadcrumb-bar">
+  <div class="breadcrumb"><a href="../index.html">Home</a><span>›</span>Contact Us</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">📞 Citizen Support</div>
+    <h2>We're Here to Help</h2>
+    <p>Reach out to the AgriConnect support team through any of our channels. Our dedicated officers are committed to resolving your queries and grievances promptly.</p>
+    <div class="hero-contact-strip">
+      <div class="hcs-item">
+        <div class="hcs-icon">📞</div>
+        <div>
+          <div class="hcs-label">Toll-Free Helpline</div>
+          <div class="hcs-val">1800-425-1551</div>
+        </div>
+      </div>
+      <div class="hcs-item">
+        <div class="hcs-icon">📧</div>
+        <div>
+          <div class="hcs-label">Email Support</div>
+          <div class="hcs-val">support@agriconnect.ap.gov.in</div>
+        </div>
+      </div>
+      <div class="hcs-item">
+        <div class="hcs-icon">⏰</div>
+        <div>
+          <div class="hcs-label">Office Hours</div>
+          <div class="hcs-val">Mon–Sat · 9AM–6PM</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT METHODS -->
+<div class="methods-section">
+  <div class="methods-inner">
+    <div class="section-label">Get in Touch</div>
+    <div class="section-title">Contact Channels</div>
+    <div class="methods-grid">
+      <div class="method-card highlight">
+        <span class="method-icon">📞</span>
+        <h3>Toll-Free Helpline</h3>
+        <div class="method-value">1800-425-1551</div>
+        <p>Speak to a support officer in Telugu or English. Available for all farmer queries, complaints, and scheme information.</p>
+        <span class="free-badge">FREE CALL · ALL NETWORKS</span>
+        <div class="method-hours">⏰ Mon–Sat: 8AM–8PM</div>
+      </div>
+      <div class="method-card">
+        <span class="method-icon">📧</span>
+        <h3>Email Support</h3>
+        <div class="method-value" style="font-size:13px">support@agriconnect.ap.gov.in</div>
+        <p>Email us your query with your request reference number. Our team responds within 1 working day.</p>
+        <div class="method-hours">⏰ Response within 24 hours</div>
+      </div>
+      <div class="method-card">
+        <span class="method-icon">🏪</span>
+        <h3>Sachivalayam Visit</h3>
+        <div class="method-value" style="font-size:14px">Nearest Center</div>
+        <p>Walk in to your village-level Sachivalayam for in-person support, document submission, and E-KYC verification.</p>
+        <div class="method-hours">⏰ Mon–Sat: 9AM–5PM</div>
+        <a href="#offices" class="method-btn" style="margin-top:12px;display:inline-block">Find Office →</a>
+      </div>
+      <div class="method-card">
+        <span class="method-icon">💬</span>
+        <h3>Online Portal</h3>
+        <div class="method-value" style="font-size:14px">agriconnect.ap.gov.in</div>
+        <p>Login to submit service requests, track your complaints, and get real-time updates on all your portal activities.</p>
+        <div class="method-hours">⏰ Available 24×7</div>
+        <a href="../index.html" class="method-btn" style="margin-top:12px;display:inline-block">Go to Portal →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT FORM + INFO -->
+<div class="contact-main">
+  <div class="contact-inner">
+
+    <!-- FORM -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <h3>📩 Send Us a Message</h3>
+        <p>Fill in the form below. Our support team will respond within 1 working day.</p>
+      </div>
+      <div class="form-card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name <span class="req">*</span></label>
+            <input type="text" class="form-control" id="contactName" placeholder="Your full name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mobile Number <span class="req">*</span></label>
+            <input type="tel" class="form-control" id="contactPhone" placeholder="10-digit number" maxlength="10">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="contactEmail" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject <span class="req">*</span></label>
+          <select class="form-control" id="contactSubject">
+            <option value="">— Select subject —</option>
+            <option>Procurement Query</option>
+            <option>Payment Issue</option>
+            <option>Subsidy / Scheme Information</option>
+            <option>Technical Support</option>
+            <option>Complaint / Grievance</option>
+            <option>Feedback / Suggestion</option>
+            <option>Media / Press Enquiry</option>
+            <option>RTI Information Request</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">District</label>
+          <select class="form-control" id="contactDistrict">
+            <option value="">— Select your district —</option>
+            <option>Nellore</option><option>Guntur</option><option>Krishna</option>
+            <option>East Godavari</option><option>West Godavari</option><option>Kurnool</option>
+            <option>Kadapa</option><option>Anantapur</option><option>Chittoor</option>
+            <option>Visakhapatnam</option><option>Vizianagaram</option><option>Srikakulam</option>
+            <option>Prakasam</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Message <span class="req">*</span></label>
+          <textarea class="form-control" id="contactMessage" placeholder="Please describe your query or issue in detail. Include any relevant reference numbers (e.g., AGR-0024)..." maxlength="1000" oninput="updateCharCount(this)"></textarea>
+          <div class="char-count"><span id="charCount">0</span>/1000 characters</div>
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-start;gap:10px">
+          <input type="checkbox" id="contactConsent" style="margin-top:4px;accent-color:var(--blue);width:16px;height:16px">
+          <label for="contactConsent" style="font-size:13px;color:var(--gray-600);cursor:pointer">I consent to AgriConnect processing my contact details to respond to this query, in accordance with the Government of Andhra Pradesh data privacy policy.</label>
+        </div>
+        <button class="btn-submit" onclick="submitContactForm()">
+          <span>📤</span> Send Message
+        </button>
+        <div class="form-success" id="formSuccess">
+          <div class="si">✅</div>
+          <h4>Message Sent Successfully!</h4>
+          <p>Thank you for contacting AgriConnect. Our support team will respond within 1 working day. Reference: <strong id="formRef">—</strong></p>
+        </div>
+        <div class="form-note">
+          🔒 Your information is secure and will only be used to respond to your query.<br>
+          For urgent issues, please call our toll-free helpline: <strong>1800-425-1551</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO PANEL -->
+    <div class="info-panel">
+
+      <!-- HEAD OFFICE -->
+      <div class="info-card">
+        <div class="info-card-header">
+          <span style="font-size:20px">🏛️</span>
+          <h3>Head Office — AgriConnect</h3>
+        </div>
+        <div class="info-card-body">
+          <div class="address-block">
+            <div class="address-icon">📍</div>
+            <div class="address-text">
+              <strong>Department of Agriculture, Cooperation & Farmers Welfare</strong>
+              <p>AgriConnect Programme Office<br>
+              Commissionerate of Agriculture<br>
+              Rajasekhar Road, Ibrahimpatnam<br>
+              Amaravati, Andhra Pradesh — 522 020</p>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;">
+            <div style="background:var(--gray-50);border-radius:6px;padding:10px 12px;">
+              <div style="font-size:11px;color:var(--gray-400);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Phone</div>
+              <div style="font-weight:600;color:var(--gray-800)">0863-2340123</div>
+            </div>
+            <div style="background:var(--gray-50);border-radius:6px;padding:10px 12px;">
+              <div style="font-size:11px;color:var(--gray-400);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Fax</div>
+              <div style="font-weight:600;color:var(--gray-800)">0863-2340124</div>
+            </div>
+            <div style="background:var(--gray-50);border-radius:6px;padding:10px 12px;grid-column:1/-1">
+              <div style="font-size:11px;color:var(--gray-400);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Official Email</div>
+              <div style="font-weight:600;color:var(--blue)">commr.agri@ap.gov.in</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OFFICE HOURS -->
+      <div class="info-card">
+        <div class="info-card-header">
+          <span style="font-size:20px">⏰</span>
+          <h3>Office Hours</h3>
+        </div>
+        <div class="info-card-body">
+          <div class="hours-grid">
+            <div class="hours-item"><div class="hours-day">Monday</div><div class="hours-time">9:00 AM – 6:00 PM</div></div>
+            <div class="hours-item"><div class="hours-day">Tuesday</div><div class="hours-time">9:00 AM – 6:00 PM</div></div>
+            <div class="hours-item"><div class="hours-day">Wednesday</div><div class="hours-time">9:00 AM – 6:00 PM</div></div>
+            <div class="hours-item"><div class="hours-day">Thursday</div><div class="hours-time">9:00 AM – 6:00 PM</div></div>
+            <div class="hours-item"><div class="hours-day">Friday</div><div class="hours-time">9:00 AM – 6:00 PM</div></div>
+            <div class="hours-item"><div class="hours-day">Saturday</div><div class="hours-time">9:00 AM – 1:00 PM</div></div>
+            <div class="hours-item"><div class="hours-day">Sunday</div><div class="hours-time closed">Closed</div></div>
+            <div class="hours-item"><div class="hours-day">Public Holidays</div><div class="hours-time closed">Closed</div></div>
+          </div>
+          <div style="margin-top:14px;padding:12px;background:#fff3e0;border-radius:6px;font-size:12.5px;color:#8a4500;border-left:3px solid var(--orange)">
+            📞 Toll-free helpline (1800-425-1551) is available Mon–Sat 8AM–8PM
+          </div>
+        </div>
+      </div>
+
+      <!-- SOCIAL LINKS -->
+      <div class="info-card">
+        <div class="info-card-header">
+          <span style="font-size:20px">🌐</span>
+          <h3>Official Digital Presence</h3>
+        </div>
+        <div class="info-card-body">
+          <div class="social-links">
+            <a class="social-btn" href="#" onclick="alert('Official Twitter/X: @AgriConnectAP')">🐦 Twitter / X</a>
+            <a class="social-btn" href="#" onclick="alert('Official Facebook: fb.com/AgriConnectAP')">📘 Facebook</a>
+            <a class="social-btn" href="#" onclick="alert('Official YouTube: AgriConnect AP Official')">▶️ YouTube</a>
+            <a class="social-btn" href="#" onclick="alert('Official Portal: agricoop.ap.gov.in')">🌐 Main Website</a>
+          </div>
+          <div style="margin-top:14px;padding:12px;background:var(--blue-pale);border-radius:6px;font-size:12.5px;color:var(--blue-mid)">
+            ⚠️ Only follow official government verified accounts. AgriConnect never asks for passwords or OTPs on social media.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MAP -->
+<div class="map-section">
+  <div class="map-inner">
+    <div class="map-card">
+      <div class="map-header">
+        <div>
+          <div class="map-title">📍 Office Location — Amaravati, Andhra Pradesh</div>
+          <div class="map-sub">Commissionerate of Agriculture, Dept. of Agriculture, Cooperation & Farmers Welfare</div>
+        </div>
+        <a class="btn-directions" href="https://maps.google.com/?q=Commissionerate+of+Agriculture+Amaravati+Andhra+Pradesh" target="_blank">🗺️ Get Directions</a>
+      </div>
+      <div class="map-placeholder">
+        <div class="map-pin">📍</div>
+        <h3>Commissionerate of Agriculture</h3>
+        <p>Amaravati, Andhra Pradesh</p>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+          <a href="https://maps.google.com/?q=Commissionerate+of+Agriculture+Amaravati+Andhra+Pradesh" target="_blank" style="background:var(--blue);color:#fff;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px">🗺️ Open in Google Maps</a>
+          <a href="https://maps.apple.com/?q=Commissionerate+Agriculture+Amaravati" target="_blank" style="background:#fff;color:var(--blue);border:1.5px solid var(--blue);padding:10px 20px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px">🍎 Open in Apple Maps</a>
+        </div>
+      </div>
+      <div class="map-directions">
+        <span class="map-address">📍 Commissionerate of Agriculture, Rajasekhar Road, Ibrahimpatnam, Amaravati, AP — 522 020</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGIONAL OFFICES -->
+<div class="offices-section" id="offices">
+  <div class="offices-inner">
+    <div class="section-label">District Presence</div>
+    <div class="section-title">Regional Office Directory</div>
+    <div style="font-size:15px;color:var(--gray-500);margin-bottom:4px">AgriConnect district offices are co-located with the Joint Director of Agriculture (JDA) offices in each district headquarters. For village-level support, contact your nearest Sachivalayam.</div>
+    <div class="offices-grid">
+      <div class="office-card">
+        <div class="office-district">🏛️ Nellore <span class="office-badge">District HQ</span></div>
+        <div class="office-detail"><span class="office-icon">📍</span><span>JDA Office, Near Collectorate, Nellore — 524 001</span></div>
+        <div class="office-detail"><span class="office-icon">📞</span><span>0861-2323456</span></div>
+        <div class="office-detail"><span class="office-icon">📧</span><span>jda.nellore@agri.ap.gov.in</span></div>
+        <div class="office-detail"><span class="office-icon">🌾</span><span>Covering: 46 Mandals · 1,284 Villages</span></div>
+        <div class="office-status"><div class="status-dot"></div>Operational · Mon–Sat</div>
+      </div>
+      <div class="office-card">
+        <div class="office-district">🏛️ Guntur <span class="office-badge">District HQ</span></div>
+        <div class="office-detail"><span class="office-icon">📍</span><span>JDA Office, Collectorate Complex, Guntur — 522 001</span></div>
+        <div class="office-detail"><span class="office-icon">📞</span><span>0863-2234567</span></div>
+        <div class="office-detail"><span class="office-icon">📧</span><span>jda.guntur@agri.ap.gov.in</span></div>
+        <div class="office-detail"><span class="office-icon">🌾</span><span>Covering: 57 Mandals · 1,614 Villages</span></div>
+        <div class="office-status"><div class="status-dot"></div>Operational · Mon–Sat</div>
+      </div>
+      <div class="office-card">
+        <div class="office-district">🏛️ Krishna <span class="office-badge">District HQ</span></div>
+        <div class="office-detail"><span class="office-icon">📍</span><span>JDA Office, MG Road, Machilipatnam — 521 001</span></div>
+        <div class="office-detail"><span class="office-icon">📞</span><span>08672-222345</span></div>
+        <div class="office-detail"><span class="office-icon">📧</span><span>jda.krishna@agri.ap.gov.in</span></div>
+        <div class="office-detail"><span class="office-icon">🌾</span><span>Covering: 50 Mandals · 970 Villages</span></div>
+        <div class="office-status"><div class="status-dot"></div>Operational · Mon–Sat</div>
+      </div>
+      <div class="office-card">
+        <div class="office-district">🏛️ Kurnool <span class="office-badge">District HQ</span></div>
+        <div class="office-detail"><span class="office-icon">📍</span><span>JDA Office, Budihal Road, Kurnool — 518 001</span></div>
+        <div class="office-detail"><span class="office-icon">📞</span><span>08518-222456</span></div>
+        <div class="office-detail"><span class="office-icon">📧</span><span>jda.kurnool@agri.ap.gov.in</span></div>
+        <div class="office-detail"><span class="office-icon">🌾</span><span>Covering: 54 Mandals · 921 Villages</span></div>
+        <div class="office-status"><div class="status-dot"></div>Operational · Mon–Sat</div>
+      </div>
+      <div class="office-card">
+        <div class="office-district">🏛️ Visakhapatnam <span class="office-badge">District HQ</span></div>
+        <div class="office-detail"><span class="office-icon">📍</span><span>JDA Office, MVP Colony, Visakhapatnam — 530 017</span></div>
+        <div class="office-detail"><span class="office-icon">📞</span><span>0891-2756789</span></div>
+        <div class="office-detail"><span class="office-icon">📧</span><span>jda.vizag@agri.ap.gov.in</span></div>
+        <div class="office-detail"><span class="office-icon">🌾</span><span>Covering: 43 Mandals · 1,009 Villages</span></div>
+        <div class="office-status"><div class="status-dot"></div>Operational · Mon–Sat</div>
+      </div>
+      <div class="office-card">
+        <div class="office-district">🏛️ Kadapa <span class="office-badge">District HQ</span></div>
+        <div class="office-detail"><span class="office-icon">📍</span><span>JDA Office, Gandhi Road, Kadapa — 516 001</span></div>
+        <div class="office-detail"><span class="office-icon">📞</span><span>08562-222678</span></div>
+        <div class="office-detail"><span class="office-icon">📧</span><span>jda.kadapa@agri.ap.gov.in</span></div>
+        <div class="office-detail"><span class="office-icon">🌾</span><span>Covering: 50 Mandals · 1,002 Villages</span></div>
+        <div class="office-status"><div class="status-dot"></div>Operational · Mon–Sat</div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding:16px 20px;background:var(--blue-pale);border-radius:var(--radius);font-size:13.5px;color:var(--blue-mid);display:flex;align-items:center;gap:10px;">
+      <span style="font-size:18px">ℹ️</span>
+      <span>For village-level support, contact your nearest Sachivalayam. Every Gram Panchayat in AP has a dedicated Sachivalayam with a trained AgriConnect operator. <a href="helpdesk.html" style="color:var(--blue);font-weight:600;">Find your Sachivalayam →</a></span>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <h3>🌾 AgriConnect</h3>
+      <p>A Digital India initiative by the Department of Agriculture, Cooperation & Farmers Welfare, Government of Andhra Pradesh.</p>
+      <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:rgba(255,255,255,.08);padding:3px 10px;border-radius:20px;font-size:11px">ISO 27001</span>
+        <span style="background:rgba(255,255,255,.08);padding:3px 10px;border-radius:20px;font-size:11px">GSWAN Certified</span>
+        <span style="background:rgba(255,255,255,.08);padding:3px 10px;border-radius:20px;font-size:11px">NIC Hosted</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Portal</h4>
+      <a href="about.html">About</a>
+      <a href="schemes.html">Schemes</a>
+      <a href="crop-prices.html">Crop Prices</a>
+      <a href="helpdesk.html">Help Desk</a>
+      <a href="downloads.html">Downloads</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#">Toll Free: 1800-425-1551</a>
+      <a href="#">support@agriconnect.ap.gov.in</a>
+      <a href="#">Mon–Sat: 9AM–6PM</a>
+      <a href="helpdesk.html">Help Center</a>
+      <a href="#">RTI Information</a>
+    </div>
+    <div class="footer-col">
+      <h4>Government</h4>
+      <a href="#">AP Govt. Portal</a>
+      <a href="#">Dept. of Agriculture</a>
+      <a href="#">NIC AP</a>
+      <a href="#">Digital India</a>
+      <a href="#">Accessibility</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 Government of Andhra Pradesh. All rights reserved.</span>
+    <span>Privacy Policy · Terms of Use · Accessibility · Sitemap</span>
+  </div>
+</footer>
+
+<script>
+function updateCharCount(el){
+  document.getElementById('charCount').textContent=el.value.length;
+}
+
+let msgCounter=2000;
+function submitContactForm(){
+  const name=document.getElementById('contactName').value.trim();
+  const phone=document.getElementById('contactPhone').value.trim();
+  const subject=document.getElementById('contactSubject').value;
+  const message=document.getElementById('contactMessage').value.trim();
+  const consent=document.getElementById('contactConsent').checked;
+
+  if(!name||!phone||!subject||!message){
+    alert('Please fill all required fields (Name, Phone, Subject, and Message).');return;
+  }
+  if(!consent){
+    alert('Please provide your consent to proceed.');return;
+  }
+  if(phone.length!==10||isNaN(phone)){
+    alert('Please enter a valid 10-digit mobile number.');return;
+  }
+
+  msgCounter++;
+  const ref=`CTM-${new Date().getFullYear()}-${String(msgCounter).padStart(5,'0')}`;
+  document.getElementById('formRef').textContent=ref;
+  document.getElementById('formSuccess').classList.add('show');
+
+  // Reset form
+  document.getElementById('contactName').value='';
+  document.getElementById('contactPhone').value='';
+  document.getElementById('contactEmail').value='';
+  document.getElementById('contactSubject').value='';
+  document.getElementById('contactDistrict').value='';
+  document.getElementById('contactMessage').value='';
+  document.getElementById('contactConsent').checked=false;
+  document.getElementById('charCount').textContent='0';
+
+  document.getElementById('formSuccess').scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>

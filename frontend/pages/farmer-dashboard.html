@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farmer Dashboard — AgriConnect</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <div class="navbar-logo">🌾</div>
+    <div class="navbar-title">
+      <span class="main-title">AgriConnect</span>
+      <span class="sub-title">Department of Agriculture · Govt. of Andhra Pradesh</span>
+    </div>
+  </div>
+  <div class="navbar-right">
+    <button class="sidebar-toggle" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;padding:8px;">☰</button>
+    <button class="notif-btn">🔔<span class="notif-badge">0</span></button>
+    <div class="user-menu">
+      <div class="user-avatar">F</div>
+      <div class="user-info">
+        <div class="user-name">Farmer</div>
+        <div class="user-role">Farmer</div>
+      </div>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#">👤 My Profile</a>
+        <a class="dropdown-item danger" id="logoutBtn">🚪 Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <ul class="sidebar-nav">
+      <li><a id="nav-dashboard" onclick="showSection('dashboard')" class="active"><span class="nav-icon">🏠</span> Dashboard</a></li>
+      <li><a id="nav-prices" onclick="showSection('prices')"><span class="nav-icon">💰</span> Crop MSP Prices</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Procurement</div>
+    <ul class="sidebar-nav">
+      <li><a id="nav-sell-request" onclick="showSection('sell-request')"><span class="nav-icon">📤</span> Sell Crops</a></li>
+      <li><a id="nav-my-requests" onclick="showSection('my-requests')"><span class="nav-icon">📋</span> My Sell Requests</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Support</div>
+    <ul class="sidebar-nav">
+      <li><a id="nav-service-request" onclick="showSection('service-request')"><span class="nav-icon">📩</span> Raise Request</a></li>
+      <li><a id="nav-my-services" onclick="showSection('my-services')"><span class="nav-icon">🗂️</span> My Requests</a></li>
+    </ul>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- DASHBOARD SECTION -->
+  <section id="section-dashboard">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Home</div>
+        <h1 id="farmerGreeting">Welcome, Farmer</h1>
+      </div>
+      <button class="btn btn-primary" onclick="showSection('sell-request')">+ Submit Sell Request</button>
+    </div>
+
+    <div id="announcementsContainer"></div>
+
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-icon blue">📤</div><div class="stat-info"><div class="stat-value" id="stat-total">—</div><div class="stat-label">Total Sell Requests</div></div></div>
+      <div class="stat-card"><div class="stat-icon orange">⏳</div><div class="stat-info"><div class="stat-value" id="stat-pending">—</div><div class="stat-label">Pending Requests</div></div></div>
+      <div class="stat-card"><div class="stat-icon blue">✅</div><div class="stat-info"><div class="stat-value" id="stat-approved">—</div><div class="stat-label">Approved</div></div></div>
+      <div class="stat-card"><div class="stat-icon green">💰</div><div class="stat-info"><div class="stat-value" id="stat-earned">—</div><div class="stat-label">Total Earned</div></div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Recent Sell Requests</div></div>
+        <div class="table-container">
+          <table id="recentSellTable">
+            <thead><tr><th>Crop</th><th>Qty (Qtl)</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody id="recentSellBody"><tr><td colspan="4" class="loading-spinner"><div class="spinner"></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Status Overview</div></div>
+        <div class="card-body"><div class="chart-container"><canvas id="statusChart"></canvas></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CROP PRICES SECTION -->
+  <section id="section-prices" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Home / Crop Prices</div>
+        <h1>MSP Crop Prices</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Government Minimum Support Prices — Kharif 2024-25</div>
+        <div style="font-size:12px;color:var(--gray-500);">As declared by Government of India</div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>#</th><th>Crop Name</th><th>Telugu</th><th>Category</th><th>Season</th><th>MSP (₹/Quintal)</th></tr></thead>
+          <tbody id="cropPricesBody"><tr><td colspan="6" style="text-align:center;padding:24px;"><div class="spinner" style="margin:auto;"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SELL REQUEST FORM SECTION -->
+  <section id="section-sell-request" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Home / Submit Sell Request</div>
+        <h1>Submit Crop Sell Request</h1>
+      </div>
+    </div>
+    <div class="card" style="max-width:700px;">
+      <div class="card-header"><div class="card-title">Crop Procurement Request Form</div></div>
+      <div class="card-body">
+        <div id="sellFormAlert"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Select Crop <span class="required">*</span></label>
+            <select id="sellCrop" class="form-control">
+              <option value="">— Select Crop —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Quantity (Quintals) <span class="required">*</span></label>
+            <input type="number" id="sellQty" class="form-control" placeholder="e.g. 25.5" step="0.5" min="0.5">
+          </div>
+        </div>
+        <div id="estimatedAmount" style="display:none;background:#e6f7ec;border:1px solid #a3d9b5;border-radius:4px;padding:10px 14px;margin-bottom:16px;font-size:13px;color:#1a7a3c;"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Village / Location</label>
+            <input type="text" id="sellVillage" class="form-control" placeholder="Village where crop is stored">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harvest Date</label>
+            <input type="date" id="sellHarvestDate" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Additional Notes</label>
+          <textarea id="sellNotes" class="form-control" placeholder="Any additional information about the crop quality, storage, etc."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Crop Image (Proof)</label>
+          <div class="file-upload" onclick="document.getElementById('sellImage').click()">
+            <input type="file" id="sellImage" accept="image/*">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text" id="uploadText">Click to upload crop image</div>
+            <div class="upload-hint">JPG, PNG up to 5MB</div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="submitSellBtn" onclick="submitSellRequest()">Submit Request</button>
+          <button class="btn btn-outline" onclick="showSection('my-requests')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MY SELL REQUESTS SECTION -->
+  <section id="section-my-requests" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Home / My Sell Requests</div>
+        <h1>My Sell Requests</h1>
+      </div>
+      <button class="btn btn-primary" onclick="showSection('sell-request')">+ New Request</button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="filter-bar">
+          <select id="sellStatusFilter" class="form-control" onchange="filterSellRequests()">
+            <option value="">All Status</option>
+            <option>pending</option><option>verified</option><option>approved</option><option>rejected</option><option>payment_done</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Ref #</th><th>Crop</th><th>Quantity</th><th>Est. Amount</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead>
+          <tbody id="mySellBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE REQUEST FORM SECTION -->
+  <section id="section-service-request" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Home / Raise Request</div>
+        <h1>Submit Service Request</h1>
+      </div>
+    </div>
+    <div class="card" style="max-width:700px;">
+      <div class="card-header"><div class="card-title">Grievance / Service Request Form</div></div>
+      <div class="card-body">
+        <div id="serviceFormAlert"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Request Type <span class="required">*</span></label>
+            <select id="serviceType" class="form-control">
+              <option value="">— Select Type —</option>
+              <option value="subsidy">Subsidy Request</option>
+              <option value="complaint">Complaint</option>
+              <option value="crop_damage">Crop Damage Compensation</option>
+              <option value="loan">Agricultural Loan</option>
+              <option value="scheme">Government Scheme</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select id="servicePriority" class="form-control">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject <span class="required">*</span></label>
+          <input type="text" id="serviceSubject" class="form-control" placeholder="Brief subject of your request">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Detailed Description <span class="required">*</span></label>
+          <textarea id="serviceDesc" class="form-control" rows="5" placeholder="Provide complete details of your request/issue..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Supporting Document / Image</label>
+          <div class="file-upload" onclick="document.getElementById('serviceMedia').click()">
+            <input type="file" id="serviceMedia" accept="image/*,video/*,.pdf">
+            <div class="upload-icon">📎</div>
+            <div class="upload-text" id="mediaUploadText">Click to attach document/image</div>
+            <div class="upload-hint">Image, PDF, or video up to 5MB</div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="submitServiceBtn" onclick="submitServiceRequest()">Submit Request</button>
+          <button class="btn btn-outline" onclick="showSection('my-services')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MY SERVICE REQUESTS SECTION -->
+  <section id="section-my-services" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Home / My Service Requests</div>
+        <h1>My Service Requests</h1>
+      </div>
+      <button class="btn btn-primary" onclick="showSection('service-request')">+ New Request</button>
+    </div>
+    <div class="card">
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Ref #</th><th>Type</th><th>Subject</th><th>Priority</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead>
+          <tbody id="myServiceBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- SELL REQUEST DETAIL MODAL -->
+<div class="modal-overlay" id="sellDetailModal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <div class="modal-title">Sell Request Details</div>
+      <button class="modal-close" onclick="UI.hideModal('sellDetailModal')">×</button>
+    </div>
+    <div class="modal-body" id="sellDetailBody">Loading...</div>
+  </div>
+</div>
+
+<!-- SERVICE DETAIL MODAL -->
+<div class="modal-overlay" id="serviceDetailModal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <div class="modal-title">Service Request Details</div>
+      <button class="modal-close" onclick="UI.hideModal('serviceDetailModal')">×</button>
+    </div>
+    <div class="modal-body" id="serviceDetailBody">Loading...</div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+
+<script src="../js/api.js"></script>
+<script>
+// Auth guard
+if (!Auth.requireAuth() || !Auth.requireRole('farmer')) {}
+UI.initNavbar();
+
+const user = Api.getUser();
+let allSellRequests = [], allServiceRequests = [], crops = [];
+let statusChart;
+
+function showSection(name) {
+  document.querySelectorAll('main section').forEach(s => s.style.display = 'none');
+  document.getElementById(`section-${name}`).style.display = '';
+  document.querySelectorAll('.sidebar-nav li a').forEach(a => a.classList.remove('active'));
+  document.getElementById(`nav-${name}`)?.classList.add('active');
+  if (name === 'dashboard') loadDashboard();
+  else if (name === 'prices') loadCropPrices();
+  else if (name === 'sell-request') loadCropDropdown();
+  else if (name === 'my-requests') loadMySellRequests();
+  else if (name === 'my-services') loadMyServiceRequests();
+}
+
+async function loadDashboard() {
+  if (user) document.getElementById('farmerGreeting').textContent = `Welcome, ${user.name}`;
+  const res = await Api.get('/dashboard/farmer/stats');
+  if (res.success) {
+    const s = res.stats;
+    document.getElementById('stat-total').textContent = s.totalSell;
+    document.getElementById('stat-pending').textContent = s.pendingSell;
+    document.getElementById('stat-approved').textContent = s.approvedSell;
+    document.getElementById('stat-earned').textContent = UI.formatCurrency(s.totalEarned);
+
+    // Announcements
+    const ac = document.getElementById('announcementsContainer');
+    ac.innerHTML = (res.announcements || []).map(a => `
+      <div class="announcement-card">
+        <div class="announcement-icon">📢</div>
+        <div><div class="announcement-title">${a.title}</div><div class="announcement-text">${a.content}</div></div>
+      </div>`).join('');
+
+    // Recent requests table
+    const tb = document.getElementById('recentSellBody');
+    if (!res.recentSell.length) {
+      tb.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--gray-500);">No requests yet</td></tr>';
+    } else {
+      tb.innerHTML = res.recentSell.map(r => `
+        <tr>
+          <td>${r.crop_name}</td>
+          <td>${parseFloat(r.quantity).toFixed(2)}</td>
+          <td>${UI.badge(r.status)}</td>
+          <td>${UI.formatDate(r.created_at)}</td>
+        </tr>`).join('');
+    }
+
+    // Chart
+    const ctx = document.getElementById('statusChart')?.getContext('2d');
+    if (ctx) {
+      if (statusChart) statusChart.destroy();
+      statusChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Pending', 'Approved', 'Completed', 'Rejected'],
+          datasets: [{ data: [s.pendingSell, s.approvedSell, s.completedSell, s.totalSell - s.pendingSell - s.approvedSell - s.completedSell],
+            backgroundColor: ['#f39c12','#27a250','#003580','#c0392b'], borderWidth: 2 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+      });
+    }
+  }
+}
+
+async function loadCropPrices() {
+  const res = await Api.get('/crops');
+  if (res.success) {
+    const cats = { cereal: '🌾', pulse: '🫘', oilseed: '🌻', vegetable: '🥬', fruit: '🍎', other: '🌿' };
+    document.getElementById('cropPricesBody').innerHTML = res.crops.map((c, i) => `
+      <tr>
+        <td>${i+1}</td>
+        <td><strong>${c.name}</strong></td>
+        <td style="color:var(--gray-500)">${c.name_telugu || '—'}</td>
+        <td>${cats[c.category] || '🌿'} ${c.category}</td>
+        <td><span class="badge badge-pending">${c.season}</span></td>
+        <td style="font-size:16px;font-weight:700;color:var(--gov-green);">₹ ${parseFloat(c.govt_price).toLocaleString('en-IN')}</td>
+      </tr>`).join('');
+  }
+}
+
+async function loadCropDropdown() {
+  const res = await Api.get('/crops');
+  if (res.success) {
+    crops = res.crops;
+    const sel = document.getElementById('sellCrop');
+    sel.innerHTML = '<option value="">— Select Crop —</option>' + res.crops.map(c => `<option value="${c.id}" data-price="${c.govt_price}">${c.name} — ₹${parseFloat(c.govt_price).toLocaleString('en-IN')}/qtl</option>`).join('');
+  }
+  document.getElementById('sellCrop').addEventListener('change', updateEstimate);
+  document.getElementById('sellQty').addEventListener('input', updateEstimate);
+  document.getElementById('sellImage').addEventListener('change', function() {
+    document.getElementById('uploadText').textContent = this.files[0]?.name || 'Click to upload';
+  });
+}
+
+function updateEstimate() {
+  const sel = document.getElementById('sellCrop');
+  const opt = sel.options[sel.selectedIndex];
+  const price = parseFloat(opt?.dataset?.price);
+  const qty = parseFloat(document.getElementById('sellQty').value);
+  const el = document.getElementById('estimatedAmount');
+  if (price && qty) {
+    el.style.display = '';
+    el.innerHTML = `💰 Estimated Amount: <strong>₹ ${(price * qty).toLocaleString('en-IN', {minimumFractionDigits:2})}</strong> (₹${price.toLocaleString('en-IN')}/qtl × ${qty} qtl)`;
+  } else { el.style.display = 'none'; }
+}
+
+async function submitSellRequest() {
+  const crop_id = document.getElementById('sellCrop').value;
+  const quantity = document.getElementById('sellQty').value;
+  const village = document.getElementById('sellVillage').value;
+  const harvest_date = document.getElementById('sellHarvestDate').value;
+  const notes = document.getElementById('sellNotes').value;
+  const imageFile = document.getElementById('sellImage').files[0];
+  const alertEl = document.getElementById('sellFormAlert');
+
+  if (!crop_id || !quantity) {
+    alertEl.innerHTML = '<div class="alert alert-danger">Please select crop and enter quantity.</div>';
+    return;
+  }
+  const btn = document.getElementById('submitSellBtn');
+  UI.loading(btn, true);
+  const fd = new FormData();
+  fd.append('crop_id', crop_id); fd.append('quantity', quantity);
+  if (village) fd.append('village', village);
+  if (harvest_date) fd.append('harvest_date', harvest_date);
+  if (notes) fd.append('notes', notes);
+  if (imageFile) fd.append('image', imageFile);
+  const res = await Api.postForm('/sell-requests', fd);
+  UI.loading(btn, false);
+  if (res.success) {
+    alertEl.innerHTML = '<div class="alert alert-success">✅ Request submitted successfully! It will be reviewed by Sachivalayam.</div>';
+    document.getElementById('sellCrop').value = '';
+    document.getElementById('sellQty').value = '';
+    document.getElementById('sellNotes').value = '';
+    document.getElementById('estimatedAmount').style.display = 'none';
+    setTimeout(() => showSection('my-requests'), 2000);
+  } else {
+    alertEl.innerHTML = `<div class="alert alert-danger">${res.message}</div>`;
+  }
+}
+
+async function loadMySellRequests() {
+  const res = await Api.get('/sell-requests');
+  if (res.success) {
+    allSellRequests = res.requests;
+    renderSellRequests(allSellRequests);
+  }
+}
+
+function filterSellRequests() {
+  const f = document.getElementById('sellStatusFilter').value;
+  renderSellRequests(f ? allSellRequests.filter(r => r.status === f) : allSellRequests);
+}
+
+function renderSellRequests(data) {
+  const tb = document.getElementById('mySellBody');
+  if (!data.length) {
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><h3>No requests found</h3><p>Submit a sell request to get started.</p></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = data.map(r => `
+    <tr>
+      <td><code style="font-size:11px;color:var(--gray-500)">AGR-${String(r.id).padStart(4,'0')}</code></td>
+      <td><strong>${r.crop_name}</strong></td>
+      <td>${parseFloat(r.quantity).toFixed(2)} qtl</td>
+      <td>${r.payment_amount ? UI.formatCurrency(r.payment_amount) : '₹' + (parseFloat(r.quantity) * parseFloat(r.govt_price)).toLocaleString('en-IN',{minimumFractionDigits:2})}</td>
+      <td>${UI.badge(r.status)}</td>
+      <td>${UI.formatDate(r.created_at)}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="viewSellDetail(${r.id})">View</button></td>
+    </tr>`).join('');
+}
+
+async function viewSellDetail(id) {
+  UI.showModal('sellDetailModal');
+  document.getElementById('sellDetailBody').innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+  const res = await Api.get(`/sell-requests/${id}`);
+  if (res.success) {
+    const r = res.request;
+    document.getElementById('sellDetailBody').innerHTML = `
+      <div style="margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div>
+            <div style="font-size:12px;color:var(--gray-500);">Reference Number</div>
+            <div style="font-size:18px;font-weight:700;">AGR-${String(r.id).padStart(4,'0')}</div>
+          </div>
+          ${UI.badge(r.status)}
+        </div>
+        <div class="detail-grid">
+          <div class="detail-item"><div class="detail-label">Crop</div><div class="detail-value">${r.crop_name}</div></div>
+          <div class="detail-item"><div class="detail-label">Quantity</div><div class="detail-value">${parseFloat(r.quantity).toFixed(2)} Quintals</div></div>
+          <div class="detail-item"><div class="detail-label">MSP Rate</div><div class="detail-value">₹${parseFloat(r.govt_price).toLocaleString('en-IN')}/qtl</div></div>
+          <div class="detail-item"><div class="detail-label">Est. Amount</div><div class="detail-value" style="color:var(--gov-green);font-weight:700;">₹${(parseFloat(r.quantity)*parseFloat(r.govt_price)).toLocaleString('en-IN',{minimumFractionDigits:2})}</div></div>
+          <div class="detail-item"><div class="detail-label">Village</div><div class="detail-value">${r.village || '—'}</div></div>
+          <div class="detail-item"><div class="detail-label">Harvest Date</div><div class="detail-value">${UI.formatDate(r.harvest_date)}</div></div>
+          <div class="detail-item"><div class="detail-label">Submitted</div><div class="detail-value">${UI.formatDateTime(r.created_at)}</div></div>
+          <div class="detail-item"><div class="detail-label">Verified By</div><div class="detail-value">${r.verifier_name || '—'}</div></div>
+          ${r.rejection_reason ? `<div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Rejection Reason</div><div class="detail-value" style="color:var(--gov-red);">${r.rejection_reason}</div></div>` : ''}
+          ${r.procurement_date ? `<div class="detail-item"><div class="detail-label">Procurement Date</div><div class="detail-value">${UI.formatDate(r.procurement_date)}</div></div>` : ''}
+          ${r.payment_amount ? `<div class="detail-item"><div class="detail-label">Payment Amount</div><div class="detail-value" style="color:var(--gov-green);font-weight:700;">${UI.formatCurrency(r.payment_amount)}</div></div>` : ''}
+          ${r.transaction_ref ? `<div class="detail-item"><div class="detail-label">Transaction Ref</div><div class="detail-value">${r.transaction_ref}</div></div>` : ''}
+        </div>
+        ${r.notes ? `<div style="margin-top:12px;padding:12px;background:var(--gray-50);border-radius:4px;font-size:13px;color:var(--gray-700);">${r.notes}</div>` : ''}
+      </div>
+      ${res.remarks.length ? `<div style="border-top:1px solid var(--gray-100);padding-top:16px;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Activity</div>
+        <div class="timeline">${res.remarks.map(rm => `
+          <div class="timeline-item">
+            <div class="timeline-text">${rm.message}</div>
+            <div class="timeline-time">${rm.author} · ${UI.formatDateTime(rm.created_at)}</div>
+          </div>`).join('')}</div>
+      </div>` : ''}`;
+  }
+}
+
+async function loadMyServiceRequests() {
+  const res = await Api.get('/service-requests');
+  if (res.success) {
+    allServiceRequests = res.requests;
+    const tb = document.getElementById('myServiceBody');
+    if (!res.requests.length) {
+      tb.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📩</div><h3>No requests yet</h3><p>Submit a service request if you need assistance.</p></div></td></tr>';
+      return;
+    }
+    const typeLabels = { subsidy: 'Subsidy', complaint: 'Complaint', crop_damage: 'Crop Damage', loan: 'Loan', scheme: 'Scheme', other: 'Other' };
+    const prioColors = { low: 'badge-verified', medium: 'badge-pending', high: 'badge-escalated', urgent: 'badge-rejected' };
+    tb.innerHTML = res.requests.map(r => `
+      <tr>
+        <td><code style="font-size:11px;color:var(--gray-500)">SVC-${String(r.id).padStart(4,'0')}</code></td>
+        <td>${typeLabels[r.type] || r.type}</td>
+        <td>${r.subject}</td>
+        <td><span class="badge ${prioColors[r.priority]}">${r.priority}</span></td>
+        <td>${UI.badge(r.status)}</td>
+        <td>${UI.formatDate(r.created_at)}</td>
+        <td><button class="btn btn-outline btn-sm" onclick="viewServiceDetail(${r.id})">View</button></td>
+      </tr>`).join('');
+  }
+}
+
+async function viewServiceDetail(id) {
+  UI.showModal('serviceDetailModal');
+  document.getElementById('serviceDetailBody').innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+  const res = await Api.get(`/service-requests/${id}`);
+  if (res.success) {
+    const r = res.request;
+    document.getElementById('serviceDetailBody').innerHTML = `
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+        <div style="font-size:18px;font-weight:700;">SVC-${String(r.id).padStart(4,'0')}</div>
+        ${UI.badge(r.status)}
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="detail-label">Type</div><div class="detail-value">${r.type}</div></div>
+        <div class="detail-item"><div class="detail-label">Priority</div><div class="detail-value">${r.priority}</div></div>
+        <div class="detail-item" style="grid-column:1/-1"><div class="detail-label">Subject</div><div class="detail-value">${r.subject}</div></div>
+        <div class="detail-item" style="grid-column:1/-1"><div class="detail-label">Description</div><div class="detail-value">${r.description}</div></div>
+        <div class="detail-item"><div class="detail-label">Handled By</div><div class="detail-value">${r.handler_name || 'Not assigned'}</div></div>
+        <div class="detail-item"><div class="detail-label">Submitted</div><div class="detail-value">${UI.formatDateTime(r.created_at)}</div></div>
+        ${r.resolution_notes ? `<div class="detail-item" style="grid-column:1/-1"><div class="detail-label">Resolution</div><div class="detail-value" style="color:var(--gov-green)">${r.resolution_notes}</div></div>` : ''}
+        ${r.escalation_reason ? `<div class="detail-item" style="grid-column:1/-1"><div class="detail-label">Escalation Reason</div><div class="detail-value" style="color:var(--gov-orange)">${r.escalation_reason}</div></div>` : ''}
+      </div>
+      ${res.remarks.length ? `<div style="border-top:1px solid var(--gray-100);padding-top:16px;margin-top:16px;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Timeline</div>
+        <div class="timeline">${res.remarks.map(rm => `<div class="timeline-item"><div class="timeline-text">${rm.message}</div><div class="timeline-time">${rm.author} · ${UI.formatDateTime(rm.created_at)}</div></div>`).join('')}</div>
+      </div>` : ''}`;
+  }
+}
+
+async function submitServiceRequest() {
+  const type = document.getElementById('serviceType').value;
+  const subject = document.getElementById('serviceSubject').value.trim();
+  const description = document.getElementById('serviceDesc').value.trim();
+  const priority = document.getElementById('servicePriority').value;
+  const mediaFile = document.getElementById('serviceMedia').files[0];
+  const alertEl = document.getElementById('serviceFormAlert');
+  if (!type || !subject || !description) {
+    alertEl.innerHTML = '<div class="alert alert-danger">Please fill all required fields.</div>';
+    return;
+  }
+  const btn = document.getElementById('submitServiceBtn');
+  UI.loading(btn, true);
+  const fd = new FormData();
+  fd.append('type', type); fd.append('subject', subject); fd.append('description', description); fd.append('priority', priority);
+  if (mediaFile) fd.append('media', mediaFile);
+  const res = await Api.postForm('/service-requests', fd);
+  UI.loading(btn, false);
+  if (res.success) {
+    alertEl.innerHTML = '<div class="alert alert-success">✅ Service request submitted successfully!</div>';
+    setTimeout(() => showSection('my-services'), 2000);
+  } else {
+    alertEl.innerHTML = `<div class="alert alert-danger">${res.message}</div>`;
+  }
+}
+
+document.getElementById('serviceMedia').addEventListener('change', function() {
+  document.getElementById('mediaUploadText').textContent = this.files[0]?.name || 'Click to attach';
+});
+
+// Init
+loadDashboard();
+</script>
+</body>
+</html>

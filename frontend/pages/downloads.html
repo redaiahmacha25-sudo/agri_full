@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Downloads Center — AgriConnect | Andhra Pradesh</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&family=Noto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#003580;--blue-mid:#1a4f9c;--blue-pale:#e8f0ff;--orange:#FF6B00;--green:#1a7a3c;--green-pale:#e6f7ec;--white:#fff;--gray-50:#f8f9fb;--gray-100:#eef0f4;--gray-200:#dde1e9;--gray-400:#9aa3b2;--gray-500:#6b7585;--gray-600:#4a5568;--gray-700:#2d3748;--gray-800:#1a202c;--font:'Noto Sans',sans-serif;--serif:'Noto Serif',serif;--radius:8px;--radius-lg:16px;--shadow-sm:0 1px 4px rgba(0,0,0,.08);--shadow-md:0 4px 16px rgba(0,0,0,.10)}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--gray-800);background:var(--gray-50);font-size:15px;line-height:1.7}
+.gov-strip{background:#0a0a1a;color:rgba(255,255,255,.75);padding:7px 40px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px}
+.gov-strip a{color:rgba(255,255,255,.6);text-decoration:none;margin-left:16px}
+header{background:var(--blue);border-bottom:4px solid var(--orange);position:sticky;top:0;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.header-inner{max-width:1280px;margin:auto;padding:0 40px;display:flex;align-items:center;gap:18px;min-height:72px}
+.header-logo{width:52px;height:52px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.header-title{flex:1;color:#fff}
+.header-title h1{font-family:var(--serif);font-size:22px;font-weight:700}
+.header-title p{font-size:11px;opacity:.75;letter-spacing:.6px}
+.header-nav a{color:rgba(255,255,255,.8);text-decoration:none;padding:10px 16px;font-size:13px;font-weight:500;border-bottom:3px solid transparent;transition:all .2s}
+.header-nav a:hover,.header-nav a.active{color:#fff;border-bottom-color:var(--orange)}
+.btn-login{background:var(--orange);color:#fff;border:none;padding:8px 18px;border-radius:4px;font-size:13px;font-weight:600;text-decoration:none}
+.breadcrumb-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:10px 40px}
+.breadcrumb{max-width:1280px;margin:auto;font-size:13px;color:var(--gray-500)}
+.breadcrumb a{color:var(--blue);text-decoration:none}
+.breadcrumb span{margin:0 8px;color:var(--gray-400)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0a1a3a,#003580,#004db5);color:#fff;padding:64px 40px;position:relative;overflow:hidden}
+.hero::before{content:'📥';position:absolute;right:8%;top:50%;transform:translateY(-50%);font-size:150px;opacity:.05}
+.hero-inner{max-width:1280px;margin:auto;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px}
+.hero h2{font-family:var(--serif);font-size:36px;font-weight:700;margin-bottom:12px}
+.hero p{font-size:15px;opacity:.85;line-height:1.7;max-width:520px}
+.hero-search{display:flex;gap:0;margin-top:24px;max-width:480px}
+.hero-search input{flex:1;padding:12px 16px;border:none;border-radius:6px 0 0 6px;font-size:14px;font-family:var(--font);outline:none}
+.hero-search button{background:var(--orange);color:#fff;border:none;padding:12px 20px;border-radius:0 6px 6px 0;font-size:14px;font-weight:700;cursor:pointer}
+.hero-stats{display:flex;gap:0;margin-top:28px}
+.hero-stat{padding:16px 24px;border-right:1px solid rgba(255,255,255,.15)}
+.hero-stat:first-child{padding-left:0}
+.hero-stat:last-child{border-right:none}
+.hero-stat .val{font-size:26px;font-weight:800;color:#ffee99;line-height:1}
+.hero-stat .lbl{font-size:11px;opacity:.7;margin-top:3px}
+
+/* CATEGORY TABS */
+.cat-tabs-section{background:#fff;border-bottom:1px solid var(--gray-200);padding:0 40px;position:sticky;top:72px;z-index:100;box-shadow:var(--shadow-sm)}
+.cat-tabs-inner{max-width:1280px;margin:auto;display:flex;gap:0;overflow-x:auto}
+.cat-tab{padding:16px 22px;font-size:13.5px;font-weight:600;color:var(--gray-500);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s;border:none;background:none;font-family:var(--font);display:flex;align-items:center;gap:8px}
+.cat-tab:hover{color:var(--blue)}
+.cat-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.cat-tab .tab-count{background:var(--gray-100);color:var(--gray-500);padding:1px 7px;border-radius:20px;font-size:11px;font-weight:700}
+.cat-tab.active .tab-count{background:var(--blue-pale);color:var(--blue)}
+
+/* FILTER BAR */
+.filter-section{background:var(--gray-50);border-bottom:1px solid var(--gray-200);padding:16px 40px}
+.filter-inner{max-width:1280px;margin:auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:200px}
+.search-wrap input{width:100%;padding:9px 14px 9px 36px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:13.5px;font-family:var(--font);outline:none;transition:border .2s;background:#fff}
+.search-wrap input:focus{border-color:var(--blue)}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--gray-400)}
+.filter-select{padding:9px 13px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:13px;font-family:var(--font);color:var(--gray-700);background:#fff;cursor:pointer;outline:none;transition:border .2s}
+.filter-select:focus{border-color:var(--blue)}
+.result-count{font-size:13px;color:var(--gray-500);margin-left:auto;white-space:nowrap}
+
+/* FEATURED DOCS */
+.featured-section{padding:40px 40px 0}
+.featured-inner{max-width:1280px;margin:auto}
+.section-label{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:6px}
+.section-title{font-family:var(--serif);font-size:26px;font-weight:700;color:var(--gray-800);margin-bottom:20px}
+.featured-docs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.featured-doc-card{background:linear-gradient(135deg,#003580,#1a4f9c);color:#fff;border-radius:var(--radius-lg);padding:24px;cursor:pointer;transition:all .3s;display:flex;flex-direction:column;gap:10px}
+.featured-doc-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,53,128,.3)}
+.featured-doc-card.green{background:linear-gradient(135deg,#0a4d2a,#1a7a3c)}
+.featured-doc-card.orange{background:linear-gradient(135deg,#7a2a00,#c84400)}
+.fd-type{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.7}
+.fd-icon{font-size:32px}
+.fd-name{font-size:15px;font-weight:700}
+.fd-meta{font-size:12px;opacity:.7}
+.fd-btn{margin-top:4px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;padding:7px 14px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .2s;align-self:flex-start}
+.fd-btn:hover{background:rgba(255,255,255,.25)}
+
+/* DOCUMENTS TABLE */
+.docs-section{padding:32px 40px 60px}
+.docs-inner{max-width:1280px;margin:auto}
+.docs-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.docs-header{padding:18px 24px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.docs-title{font-size:15px;font-weight:700;color:var(--gray-800)}
+.docs-sub{font-size:12px;color:var(--gray-500);margin-top:2px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{padding:11px 16px;text-align:left;background:var(--gray-50);font-weight:700;color:var(--gray-600);font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--gray-200);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--gray-100);transition:background .15s}
+tbody tr:hover{background:var(--gray-50)}
+tbody tr:last-child{border-bottom:none}
+tbody td{padding:14px 16px;vertical-align:middle}
+
+/* FILE TYPE ICONS */
+.file-icon{width:38px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;font-weight:700;font-size:11px}
+.file-icon.pdf{background:#fde8e8;color:#c53030}
+.file-icon.doc{background:var(--blue-pale);color:var(--blue)}
+.file-icon.xls{background:var(--green-pale);color:var(--green)}
+.file-icon.zip{background:#f3e8ff;color:#6b21a8}
+.file-name-cell{display:flex;align-items:center;gap:12px}
+.file-name{font-weight:600;color:var(--gray-800);font-size:14px}
+.file-desc{font-size:12px;color:var(--gray-500);margin-top:2px}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:600}
+.badge-form{background:#fff3e0;color:#c84400}
+.badge-guide{background:var(--blue-pale);color:var(--blue-mid)}
+.badge-circular{background:#f3e8ff;color:#6b21a8}
+.badge-report{background:var(--green-pale);color:var(--green)}
+.badge-template{background:var(--gray-100);color:var(--gray-600)}
+.btn-download{background:var(--blue);color:#fff;border:none;padding:7px 14px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .2s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.btn-download:hover{background:var(--blue-mid)}
+.btn-preview{background:transparent;color:var(--blue);border:1.5px solid var(--blue);padding:6px 12px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;white-space:nowrap}
+.btn-preview:hover{background:var(--blue-pale)}
+.action-cell{display:flex;gap:6px;align-items:center}
+.new-badge{background:var(--orange);color:#fff;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;text-transform:uppercase;margin-left:6px}
+
+/* PREVIEW MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;align-items:center;justify-content:center;padding:24px}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:var(--radius-lg);width:100%;max-width:680px;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:modalIn .2s ease}
+@keyframes modalIn{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:16px;font-weight:700;color:var(--gray-800)}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--gray-500);padding:2px 8px;border-radius:4px;transition:background .2s}
+.modal-close:hover{background:var(--gray-100)}
+.modal-body{padding:24px}
+.preview-placeholder{background:var(--gray-50);border:2px dashed var(--gray-300);border-radius:var(--radius-lg);padding:60px 24px;text-align:center;color:var(--gray-500)}
+.preview-placeholder .pi{font-size:48px;margin-bottom:12px;opacity:.6}
+.preview-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.preview-meta-item .label{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--gray-400);margin-bottom:3px}
+.preview-meta-item .value{font-size:14px;color:var(--gray-700);font-weight:500}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--gray-100);display:flex;gap:10px;justify-content:flex-end}
+
+/* PAGINATION */
+.pagination{padding:14px 24px;border-top:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.page-info{font-size:13px;color:var(--gray-500)}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid var(--gray-200);border-radius:var(--radius);font-size:13px;font-weight:600;color:var(--gray-600);background:#fff;cursor:pointer;transition:all .2s}
+.page-btn:hover{border-color:var(--blue);color:var(--blue)}
+.page-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+footer{background:#0a0a1a;color:rgba(255,255,255,.7)}
+.footer-bottom{padding:20px 40px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-wrap:wrap;gap:8px}
+
+@media(max-width:900px){.featured-docs-grid{grid-template-columns:1fr 1fr}.hero-inner{grid-template-columns:1fr}}
+@media(max-width:600px){.featured-docs-grid{grid-template-columns:1fr}.hero,.featured-section,.docs-section,.filter-section{padding-left:20px;padding-right:20px}.hero h2{font-size:28px}.hero-stats{flex-direction:column;gap:0}.hero-stat{padding:8px 0;border-right:none;border-bottom:1px solid rgba(255,255,255,.1)}.cat-tabs-section{padding:0 20px}}
+</style>
+</head>
+<body>
+
+<div class="gov-strip">
+  <span>🇮🇳 Government of Andhra Pradesh · Department of Agriculture</span>
+  <span><a href="#">Screen Reader</a><a href="#">తెలుగు</a><a href="#">हिन्दी</a></span>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-logo">🌾</div>
+    <div class="header-title">
+      <h1>AgriConnect</h1>
+      <p>INTEGRATED FARMER SERVICES PORTAL · GOVT. OF ANDHRA PRADESH</p>
+    </div>
+    <nav class="header-nav" style="display:flex">
+      <a href="../index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="schemes.html">Schemes</a>
+      <a href="crop-prices.html">Crop Prices</a>
+      <a href="helpdesk.html">Help Desk</a>
+      <a href="downloads.html" class="active">Downloads</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <a href="../index.html" class="btn-login">Login / Register</a>
+  </div>
+</header>
+
+<div class="breadcrumb-bar">
+  <div class="breadcrumb"><a href="../index.html">Home</a><span>›</span>Downloads Center</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">📥 Official Document Repository</div>
+      <h2>Downloads Center</h2>
+      <p>Access all official government forms, guidelines, circulars, reports, and scheme documents. All documents are verified, up-to-date, and available for free download.</p>
+      <div class="hero-search">
+        <input type="text" id="heroSearchInput" placeholder="Search forms, guidelines, circulars..." oninput="filterDocs()">
+        <button onclick="filterDocs()">Search</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="val">84</div><div class="lbl">Documents</div></div>
+        <div class="hero-stat"><div class="val">12</div><div class="lbl">Categories</div></div>
+        <div class="hero-stat"><div class="val">Free</div><div class="lbl">All Downloads</div></div>
+        <div class="hero-stat"><div class="val">Jan 2025</div><div class="lbl">Last Updated</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="cat-tabs-section">
+  <div class="cat-tabs-inner">
+    <button class="cat-tab active" onclick="switchTab('all',this)">All Documents <span class="tab-count">32</span></button>
+    <button class="cat-tab" onclick="switchTab('form',this)">📋 Forms <span class="tab-count">10</span></button>
+    <button class="cat-tab" onclick="switchTab('guideline',this)">📖 Guidelines <span class="tab-count">8</span></button>
+    <button class="cat-tab" onclick="switchTab('circular',this)">🔵 Circulars <span class="tab-count">7</span></button>
+    <button class="cat-tab" onclick="switchTab('report',this)">📊 Reports <span class="tab-count">4</span></button>
+    <button class="cat-tab" onclick="switchTab('template',this)">📄 Templates <span class="tab-count">3</span></button>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-section">
+  <div class="filter-inner">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="docSearch" placeholder="Filter by name or keyword..." oninput="filterDocs()">
+    </div>
+    <select class="filter-select" id="yearFilter" onchange="filterDocs()">
+      <option value="">All Years</option>
+      <option value="2025">2025</option>
+      <option value="2024">2024</option>
+      <option value="2023">2023</option>
+    </select>
+    <select class="filter-select" id="langFilter" onchange="filterDocs()">
+      <option value="">All Languages</option>
+      <option value="english">English</option>
+      <option value="telugu">Telugu</option>
+      <option value="bilingual">Bilingual</option>
+    </select>
+    <select class="filter-select" id="typeFilter" onchange="filterDocs()">
+      <option value="">All File Types</option>
+      <option value="pdf">PDF</option>
+      <option value="doc">DOC/DOCX</option>
+      <option value="xls">XLS/XLSX</option>
+    </select>
+    <span class="result-count" id="resultCount">Showing 32 documents</span>
+  </div>
+</div>
+
+<!-- FEATURED -->
+<div class="featured-section">
+  <div class="featured-inner">
+    <div class="section-label">Most Downloaded</div>
+    <div class="section-title">Frequently Used Documents</div>
+    <div class="featured-docs-grid">
+      <div class="featured-doc-card" onclick="openPreview('AgriConnect Farmer Registration Form','Form','PDF','1.2 MB','January 2025','English / Telugu','Required to register on the AgriConnect portal. Must be submitted at nearest Sachivalayam with Aadhaar card.')">
+        <div class="fd-type">Registration Form · PDF</div>
+        <div class="fd-icon">📋</div>
+        <div class="fd-name">Farmer Registration Form</div>
+        <div class="fd-meta">1.2 MB · Updated Jan 2025 · English / Telugu</div>
+        <button class="fd-btn" onclick="event.stopPropagation();downloadDoc('Farmer_Registration_Form.pdf')">📥 Download</button>
+      </div>
+      <div class="featured-doc-card green" onclick="openPreview('AgriConnect User Manual — Farmer Guide','Guideline','PDF','3.8 MB','January 2025','English','Complete step-by-step guide for farmers on how to use the AgriConnect portal.')">
+        <div class="fd-type">User Manual · PDF</div>
+        <div class="fd-icon">📖</div>
+        <div class="fd-name">Farmer Portal User Manual</div>
+        <div class="fd-meta">3.8 MB · Updated Jan 2025 · English</div>
+        <button class="fd-btn" onclick="event.stopPropagation();downloadDoc('Farmer_User_Manual.pdf')">📥 Download</button>
+      </div>
+      <div class="featured-doc-card orange" onclick="openPreview('MSP Rates — Kharif & Rabi 2024-25','Report','PDF','0.8 MB','November 2024','English','Official MSP rates declared by CACP for all major crops for Kharif and Rabi seasons 2024-25.')">
+        <div class="fd-type">Official Report · PDF</div>
+        <div class="fd-icon">💰</div>
+        <div class="fd-name">MSP Rates 2024-25</div>
+        <div class="fd-meta">0.8 MB · Updated Nov 2024 · English</div>
+        <button class="fd-btn" onclick="event.stopPropagation();downloadDoc('MSP_Rates_2024-25.pdf')">📥 Download</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DOCUMENTS TABLE -->
+<div class="docs-section">
+  <div class="docs-inner">
+    <div class="docs-card">
+      <div class="docs-header">
+        <div>
+          <div class="docs-title">All Documents</div>
+          <div class="docs-sub">Official government documents — verified and regularly updated</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Document Name</th>
+              <th>Category</th>
+              <th>File Type</th>
+              <th>Size</th>
+              <th>Language</th>
+              <th>Updated</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="docsBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info" id="pageInfo">Showing 1–10 of 32 documents</div>
+        <div class="page-btns" id="pageBtns"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="modal-overlay" id="previewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="previewTitle">Document Preview</div>
+      <button class="modal-close" onclick="closePreview()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="preview-placeholder">
+        <div class="pi">📄</div>
+        <div style="font-size:16px;font-weight:700;color:var(--gray-700);margin-bottom:6px" id="previewName">—</div>
+        <div style="font-size:13px;color:var(--gray-500);line-height:1.7;max-width:400px;margin:0 auto" id="previewDesc">—</div>
+      </div>
+      <div class="preview-meta" id="previewMeta"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-preview" onclick="closePreview()">Close</button>
+      <button class="btn-download" id="previewDownloadBtn" onclick="downloadDoc('preview')">📥 Download Document</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <span>© 2024 Government of Andhra Pradesh. All documents are official government publications.</span>
+    <span>For certified copies, visit your nearest Sachivalayam.</span>
+  </div>
+</footer>
+
+<script>
+const allDocs=[
+  {name:'Farmer Registration Form',desc:'Required for new farmer registration on AgriConnect portal',cat:'form',type:'pdf',size:'1.2 MB',lang:'bilingual',year:'2025',updated:'Jan 2025',isNew:true},
+  {name:'Sell Request Application Form',desc:'Manual form for crop sell request submission',cat:'form',type:'pdf',size:'0.6 MB',lang:'bilingual',year:'2025',updated:'Jan 2025',isNew:false},
+  {name:'Crop Damage Assessment Form',desc:'Submit for natural disaster crop loss compensation',cat:'form',type:'pdf',size:'0.8 MB',lang:'bilingual',year:'2024',updated:'Oct 2024',isNew:false},
+  {name:'PM-KISAN Enrollment Form',desc:'Application form for PM-KISAN scheme registration',cat:'form',type:'pdf',size:'0.5 MB',lang:'bilingual',year:'2024',updated:'Jul 2024',isNew:false},
+  {name:'Bank Account Update Request',desc:'Form to update registered bank account details at Sachivalayam',cat:'form',type:'pdf',size:'0.3 MB',lang:'english',year:'2024',updated:'Jun 2024',isNew:false},
+  {name:'Grievance/Complaint Form',desc:'Manual complaint submission form for farmers without portal access',cat:'form',type:'pdf',size:'0.4 MB',lang:'bilingual',year:'2024',updated:'Jun 2024',isNew:false},
+  {name:'Subsidy Application Form',desc:'General subsidy application for agricultural inputs',cat:'form',type:'pdf',size:'0.7 MB',lang:'bilingual',year:'2025',updated:'Jan 2025',isNew:true},
+  {name:'Kisan Credit Card Application',desc:'KCC application form for concessional agricultural credit',cat:'form',type:'doc',size:'0.3 MB',lang:'english',year:'2024',updated:'Aug 2024',isNew:false},
+  {name:'Land Record Verification Form',desc:'Form for verifying agricultural land records with revenue department',cat:'form',type:'pdf',size:'0.5 MB',lang:'telugu',year:'2024',updated:'May 2024',isNew:false},
+  {name:'E-KYC Verification Consent Form',desc:'Consent form for Aadhaar-based E-KYC verification',cat:'form',type:'pdf',size:'0.2 MB',lang:'bilingual',year:'2025',updated:'Jan 2025',isNew:true},
+  {name:'Farmer Portal User Manual',desc:'Complete step-by-step guide for using the AgriConnect portal',cat:'guideline',type:'pdf',size:'3.8 MB',lang:'english',year:'2025',updated:'Jan 2025',isNew:true},
+  {name:'Employee Verification Guidelines',desc:'Standard operating procedures for Sachivalayam employees',cat:'guideline',type:'pdf',size:'2.1 MB',lang:'english',year:'2025',updated:'Jan 2025',isNew:false},
+  {name:'MSP Procurement Procedures',desc:'Guidelines for government crop procurement at MSP rates',cat:'guideline',type:'pdf',size:'1.5 MB',lang:'english',year:'2024',updated:'Sep 2024',isNew:false},
+  {name:'Crop Insurance Guidelines',desc:'PMFBY enrollment and claim procedure guidelines for farmers',cat:'guideline',type:'pdf',size:'2.4 MB',lang:'bilingual',year:'2024',updated:'Jun 2024',isNew:false},
+  {name:'Data Privacy & Security Policy',desc:'AgriConnect platform data handling and security policy',cat:'guideline',type:'pdf',size:'0.9 MB',lang:'english',year:'2024',updated:'Apr 2024',isNew:false},
+  {name:'Grievance Redressal Guidelines',desc:'Standard process for complaint escalation and resolution',cat:'guideline',type:'pdf',size:'1.1 MB',lang:'english',year:'2024',updated:'Mar 2024',isNew:false},
+  {name:'Natural Farming Guidelines (RySS)',desc:'Zero-budget natural farming guidelines issued by RySS, AP',cat:'guideline',type:'pdf',size:'4.2 MB',lang:'telugu',year:'2024',updated:'Aug 2024',isNew:false},
+  {name:'AgriConnect Circular 01/2025',desc:'Launch of new crop damage assessment module — Jan 2025',cat:'circular',type:'pdf',size:'0.3 MB',lang:'english',year:'2025',updated:'Jan 2025',isNew:true},
+  {name:'MSP Rate Revision Circular — Nov 2024',desc:'Official circular announcing revised MSP rates for Kharif 2024-25',cat:'circular',type:'pdf',size:'0.4 MB',lang:'english',year:'2024',updated:'Nov 2024',isNew:false},
+  {name:'Digital Procurement Mandate Circular',desc:'Mandatory digitization of all government crop procurement',cat:'circular',type:'pdf',size:'0.5 MB',lang:'english',year:'2024',updated:'Apr 2024',isNew:false},
+  {name:'RBK Integration Circular',desc:'Integration of Rythu Bharosa Kendras with AgriConnect portal',cat:'circular',type:'pdf',size:'0.3 MB',lang:'english',year:'2024',updated:'Feb 2024',isNew:false},
+  {name:'PM-KISAN 17th Installment Circular',desc:'Release of 17th installment details and eligible farmer list',cat:'circular',type:'pdf',size:'0.6 MB',lang:'english',year:'2025',updated:'Jan 2025',isNew:true},
+  {name:'E-KYC Mandatory Circular 2025',desc:'Mandatory E-KYC verification for all farmers before March 2025',cat:'circular',type:'pdf',size:'0.2 MB',lang:'bilingual',year:'2025',updated:'Jan 2025',isNew:true},
+  {name:'Grievance Escalation Protocol Circular',desc:'Revised escalation timelines for service requests',cat:'circular',type:'pdf',size:'0.3 MB',lang:'english',year:'2024',updated:'Jul 2024',isNew:false},
+  {name:'Annual Procurement Report 2023-24',desc:'District-wise crop procurement statistics and payment data',cat:'report',type:'pdf',size:'8.2 MB',lang:'english',year:'2024',updated:'Sep 2024',isNew:false},
+  {name:'Farmer Welfare Impact Report 2024',desc:'AgriConnect impact assessment — farmer income and middlemen elimination',cat:'report',type:'pdf',size:'5.4 MB',lang:'english',year:'2024',updated:'Dec 2024',isNew:true},
+  {name:'MSP Rates Summary 2024-25',desc:'Complete MSP rates for all crops — Kharif and Rabi 2024-25',cat:'report',type:'pdf',size:'0.8 MB',lang:'english',year:'2024',updated:'Nov 2024',isNew:false},
+  {name:'Grievance Resolution Statistics Q3 2024',desc:'Quarterly grievance resolution data across all districts',cat:'report',type:'xls',size:'1.2 MB',lang:'english',year:'2024',updated:'Oct 2024',isNew:false},
+  {name:'Sell Request Application Template',desc:'Editable MS Word template for offline sell request preparation',cat:'template',type:'doc',size:'0.4 MB',lang:'english',year:'2025',updated:'Jan 2025',isNew:true},
+  {name:'Monthly Procurement Schedule Template',desc:'Excel template for employee-level procurement scheduling',cat:'template',type:'xls',size:'0.3 MB',lang:'english',year:'2024',updated:'Jun 2024',isNew:false},
+  {name:'Grievance Report Template',desc:'Standardized template for weekly grievance status reports',cat:'template',type:'xls',size:'0.2 MB',lang:'english',year:'2024',updated:'Mar 2024',isNew:false},
+  {name:'AgriConnect API Integration Guide',desc:'Technical documentation for third-party API integration',cat:'guideline',type:'pdf',size:'2.6 MB',lang:'english',year:'2025',updated:'Jan 2025',isNew:true},
+];
+
+let currentTab='all';
+let currentPage=1;
+const perPage=10;
+let filtered=[...allDocs];
+
+const catBadge={form:'badge-form',guideline:'badge-guide',circular:'badge-circular',report:'badge-report',template:'badge-template'};
+const catLabel={form:'Form',guideline:'Guideline',circular:'Circular',report:'Report',template:'Template'};
+const typeIcon={pdf:'PDF',doc:'DOC',xls:'XLS',zip:'ZIP'};
+const typeIconClass={pdf:'pdf',doc:'doc',xls:'xls',zip:'zip'};
+
+function renderDocs(){
+  const start=(currentPage-1)*perPage;
+  const pageData=filtered.slice(start,start+perPage);
+  document.getElementById('pageInfo').textContent=`Showing ${start+1}–${Math.min(start+perPage,filtered.length)} of ${filtered.length} documents`;
+  document.getElementById('resultCount').textContent=`Showing ${filtered.length} document${filtered.length!==1?'s':''}`;
+
+  const tb=document.getElementById('docsBody');
+  if(!filtered.length){
+    tb.innerHTML='<tr><td colspan="7"><div style="text-align:center;padding:48px;color:var(--gray-400)"><div style="font-size:40px;margin-bottom:12px">🔍</div><div style="font-size:15px;font-weight:600">No documents found</div><div style="font-size:13px;margin-top:4px">Try adjusting your search or filters</div></div></td></tr>';
+    return;
+  }
+  tb.innerHTML=pageData.map(d=>`
+    <tr>
+      <td>
+        <div class="file-name-cell">
+          <div class="file-icon ${typeIconClass[d.type]}">${typeIcon[d.type]}</div>
+          <div>
+            <div class="file-name">${d.name}${d.isNew?'<span class="new-badge">NEW</span>':''}</div>
+            <div class="file-desc">${d.desc}</div>
+          </div>
+        </div>
+      </td>
+      <td><span class="badge ${catBadge[d.cat]}">${catLabel[d.cat]}</span></td>
+      <td><span style="font-size:12px;font-weight:700;color:var(--gray-500)">${d.type.toUpperCase()}</span></td>
+      <td style="font-size:13px;color:var(--gray-500)">${d.size}</td>
+      <td style="font-size:13px;color:var(--gray-500);text-transform:capitalize">${d.lang}</td>
+      <td style="font-size:13px;color:var(--gray-500);white-space:nowrap">${d.updated}</td>
+      <td>
+        <div class="action-cell">
+          <button class="btn-preview" onclick="openPreview('${d.name}','${catLabel[d.cat]}','${d.type.toUpperCase()}','${d.size}','${d.updated}','${d.lang}','${d.desc}')">👁 Preview</button>
+          <button class="btn-download" onclick="downloadDoc('${d.name.replace(/\s+/g,'_')}.${d.type}')">📥 Download</button>
+        </div>
+      </td>
+    </tr>`).join('');
+
+  // Pagination buttons
+  const totalPages=Math.ceil(filtered.length/perPage);
+  const pb=document.getElementById('pageBtns');
+  pb.innerHTML='';
+  if(totalPages>1){
+    const prev=document.createElement('button');
+    prev.className='page-btn';prev.textContent='‹';prev.disabled=currentPage===1;
+    prev.onclick=()=>{currentPage--;renderDocs()};
+    pb.appendChild(prev);
+    for(let i=1;i<=totalPages;i++){
+      const btn=document.createElement('button');
+      btn.className='page-btn'+(i===currentPage?' active':'');
+      btn.textContent=i;
+      btn.onclick=(()=>{const p=i;return()=>{currentPage=p;renderDocs()};})();
+      pb.appendChild(btn);
+    }
+    const next=document.createElement('button');
+    next.className='page-btn';next.textContent='›';next.disabled=currentPage===totalPages;
+    next.onclick=()=>{currentPage++;renderDocs()};
+    pb.appendChild(next);
+  }
+}
+
+function switchTab(tab,btn){
+  currentTab=tab;currentPage=1;
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function filterDocs(){
+  currentPage=1;
+  applyFilters();
+}
+
+function applyFilters(){
+  const q=(document.getElementById('docSearch').value||document.getElementById('heroSearchInput').value||'').toLowerCase();
+  const year=document.getElementById('yearFilter').value;
+  const lang=document.getElementById('langFilter').value;
+  const type=document.getElementById('typeFilter').value;
+  filtered=allDocs.filter(d=>{
+    const mTab=currentTab==='all'||d.cat===currentTab;
+    const mQ=!q||d.name.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q);
+    const mYear=!year||d.year===year;
+    const mLang=!lang||d.lang===lang;
+    const mType=!type||d.type===type;
+    return mTab&&mQ&&mYear&&mLang&&mType;
+  });
+  renderDocs();
+}
+
+let previewDocName='';
+function openPreview(name,cat,type,size,updated,lang,desc){
+  previewDocName=name.replace(/\s+/g,'_')+'.'+type.toLowerCase();
+  document.getElementById('previewTitle').textContent='Document Preview';
+  document.getElementById('previewName').textContent=name;
+  document.getElementById('previewDesc').textContent=desc||'Official government document. Download to view full content.';
+  document.getElementById('previewMeta').innerHTML=`
+    <div class="preview-meta-item"><div class="label">Category</div><div class="value">${cat}</div></div>
+    <div class="preview-meta-item"><div class="label">File Type</div><div class="value">${type}</div></div>
+    <div class="preview-meta-item"><div class="label">File Size</div><div class="value">${size}</div></div>
+    <div class="preview-meta-item"><div class="label">Language</div><div class="value" style="text-transform:capitalize">${lang}</div></div>
+    <div class="preview-meta-item"><div class="label">Last Updated</div><div class="value">${updated}</div></div>
+    <div class="preview-meta-item"><div class="label">Source</div><div class="value">Dept. of Agriculture, AP</div></div>`;
+  document.getElementById('previewModal').classList.add('show');
+}
+
+function closePreview(){document.getElementById('previewModal').classList.remove('show')}
+
+function downloadDoc(filename){
+  alert(`Downloading: ${filename}\n\nIn production, this would download the official document from the government document server.\n\nFor demo purposes, the file download has been simulated.`);
+}
+
+document.getElementById('previewModal').addEventListener('click',function(e){if(e.target===this)closePreview()});
+
+renderDocs();
+</script>
+</body>
+</html>

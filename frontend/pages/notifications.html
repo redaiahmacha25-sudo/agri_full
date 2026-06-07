@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications — AgriConnect</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-brand">
+    <div class="navbar-logo">🌾</div>
+    <div class="navbar-title">
+      <span class="main-title">AgriConnect</span>
+      <span class="sub-title">Notifications</span>
+    </div>
+  </div>
+  <div class="navbar-right">
+    <div class="user-menu">
+      <div class="user-avatar">U</div>
+      <div class="user-info"><div class="user-name">User</div><div class="user-role">Role</div></div>
+      <div class="dropdown-menu">
+        <a class="dropdown-item danger" id="logoutBtn">🚪 Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>
+<div style="margin-top:var(--header-height);padding:32px;max-width:800px;margin-left:auto;margin-right:auto;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+    <h1 style="font-family:var(--font-serif);font-size:22px;">🔔 Notifications</h1>
+    <button class="btn btn-outline btn-sm" onclick="goBack()">← Back to Dashboard</button>
+  </div>
+  <div class="card" id="notifContainer">
+    <div class="loading-spinner"><div class="spinner"></div></div>
+  </div>
+</div>
+<script src="../js/api.js"></script>
+<script>
+if (!Auth.requireAuth()) {}
+UI.initNavbar();
+
+function goBack() {
+  const role = Api.getUser()?.role;
+  const map = { admin: 'admin-dashboard.html', employee: 'employee-dashboard.html', farmer: 'farmer-dashboard.html' };
+  window.location.href = map[role] || '../index.html';
+}
+
+async function loadNotifications() {
+  const res = await Api.get('/dashboard/notifications');
+  const container = document.getElementById('notifContainer');
+  if (!res.success) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><h3>Failed to load notifications</h3></div>';
+    return;
+  }
+  if (!res.notifications.length) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔔</div><h3>No notifications</h3><p>You are all caught up!</p></div>';
+    return;
+  }
+  const typeIcon = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' };
+  container.innerHTML = res.notifications.map(n => `
+    <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 20px;border-bottom:1px solid var(--gray-100);">
+      <div style="font-size:24px;flex-shrink:0;margin-top:2px;">${typeIcon[n.type]||'🔔'}</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:14px;color:var(--gray-800);margin-bottom:4px;">${n.title}</div>
+        <div style="font-size:13px;color:var(--gray-600);line-height:1.6;">${n.message}</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:6px;">${UI.formatDateTime(n.created_at)}</div>
+      </div>
+    </div>`).join('');
+}
+
+loadNotifications();
+</script>
+</body>
+</html>

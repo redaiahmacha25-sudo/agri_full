@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — AgriConnect</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <div class="navbar-logo">🌾</div>
+    <div class="navbar-title">
+      <span class="main-title">AgriConnect</span>
+      <span class="sub-title">District Administration Portal · Govt. of Andhra Pradesh</span>
+    </div>
+  </div>
+  <div class="navbar-right">
+    <button class="sidebar-toggle" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;padding:8px;">☰</button>
+    <button class="notif-btn">🔔<span class="notif-badge">0</span></button>
+    <div class="user-menu">
+      <div class="user-avatar">A</div>
+      <div class="user-info">
+        <div class="user-name">Administrator</div>
+        <div class="user-role">Admin</div>
+      </div>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#">👤 My Profile</a>
+        <a class="dropdown-item danger" id="logoutBtn">🚪 Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Overview</div>
+    <ul class="sidebar-nav">
+      <li><a id="nav-dashboard" onclick="showSection('dashboard')" class="active"><span class="nav-icon">📊</span> Dashboard</a></li>
+      <li><a id="nav-users" onclick="showSection('users')"><span class="nav-icon">👥</span> User Management</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Procurement</div>
+    <ul class="sidebar-nav">
+      <li><a id="nav-crops" onclick="showSection('crops')"><span class="nav-icon">🌾</span> Crop MSP Management</a></li>
+      <li><a id="nav-approve" onclick="showSection('approve')"><span class="nav-icon">✅</span> Approval Queue <span class="nav-badge" id="approveBadge">0</span></a></li>
+      <li><a id="nav-all-sell" onclick="showSection('all-sell')"><span class="nav-icon">📋</span> All Sell Requests</a></li>
+      <li><a id="nav-procurement" onclick="showSection('procurement')"><span class="nav-icon">🚛</span> Procurement Schedule</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Support</div>
+    <ul class="sidebar-nav">
+      <li><a id="nav-escalations" onclick="showSection('escalations')"><span class="nav-icon">⬆</span> Escalated Cases</a></li>
+      <li><a id="nav-all-service" onclick="showSection('all-service')"><span class="nav-icon">🗂️</span> All Service Requests</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Reports</div>
+    <ul class="sidebar-nav">
+      <li><a id="nav-payments" onclick="showSection('payments')"><span class="nav-icon">💰</span> Payment Management</a></li>
+      <li><a id="nav-announcements" onclick="showSection('announcements')"><span class="nav-icon">📢</span> Announcements</a></li>
+    </ul>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- DASHBOARD -->
+  <section id="section-dashboard">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Admin Portal</div>
+        <h1>System Overview</h1>
+      </div>
+      <div style="font-size:13px;color:var(--gray-500);" id="currentDate"></div>
+    </div>
+
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+      <div class="stat-card"><div class="stat-icon blue">👨‍🌾</div><div class="stat-info"><div class="stat-value" id="stat-farmers">—</div><div class="stat-label">Registered Farmers</div></div></div>
+      <div class="stat-card"><div class="stat-icon orange">⏳</div><div class="stat-info"><div class="stat-value" id="stat-pending">—</div><div class="stat-label">Pending Approvals</div></div></div>
+      <div class="stat-card"><div class="stat-icon red">⬆</div><div class="stat-info"><div class="stat-value" id="stat-escalated">—</div><div class="stat-label">Escalated Cases</div></div></div>
+      <div class="stat-card"><div class="stat-icon green">💰</div><div class="stat-info"><div class="stat-value" id="stat-payments">—</div><div class="stat-label">Total Disbursed</div></div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Procurement by Crop</div></div>
+        <div class="card-body"><div class="chart-container" style="height:280px;"><canvas id="cropChart"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Request Status Distribution</div></div>
+        <div class="card-body"><div class="chart-container" style="height:280px;"><canvas id="statusChart"></canvas></div></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card">
+        <div class="card-header"><div class="card-title">🔴 Pending Approvals</div><button class="btn btn-outline btn-sm" onclick="showSection('approve')">View All</button></div>
+        <div class="table-container">
+          <table><thead><tr><th>Ref</th><th>Farmer</th><th>Crop</th><th>Qty</th><th>Action</th></tr></thead>
+          <tbody id="dashApproveBody"></tbody></table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">⬆ Escalated Cases</div><button class="btn btn-outline btn-sm" onclick="showSection('escalations')">View All</button></div>
+        <div class="table-container">
+          <table><thead><tr><th>Ref</th><th>Farmer</th><th>Type</th><th>Action</th></tr></thead>
+          <tbody id="dashEscalateBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USERS SECTION -->
+  <section id="section-users" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Admin / User Management</div>
+        <h1>User Management</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="filter-bar">
+          <select id="userRoleFilter" class="form-control" onchange="loadUsers()">
+            <option value="">All Roles</option>
+            <option value="farmer">Farmers</option>
+            <option value="employee">Employees</option>
+            <option value="admin">Admins</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Role</th><th>Village</th><th>District</th><th>Registered</th><th>Status</th></tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- CROPS SECTION -->
+  <section id="section-crops" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Admin / Crop Management</div>
+        <h1>Crop MSP Management</h1>
+      </div>
+      <button class="btn btn-primary" onclick="openAddCropModal()">+ Add New Crop</button>
+    </div>
+    <div class="card">
+      <div class="table-container">
+        <table>
+          <thead><tr><th>#</th><th>Crop Name</th><th>Telugu</th><th>Category</th><th>Season</th><th>MSP (₹/Qtl)</th><th>Status</th><th>Last Updated</th><th>Actions</th></tr></thead>
+          <tbody id="cropsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPROVAL QUEUE -->
+  <section id="section-approve" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Admin / Approval Queue</div>
+        <h1>Verified Requests — Pending Approval</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Ref #</th><th>Farmer</th><th>Phone</th><th>Crop</th><th>Quantity</th><th>Estimated Amount</th><th>Verified By</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="approveBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALL SELL REQUESTS -->
+  <section id="section-all-sell" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Admin / Sell Requests</div>
+        <h1>All Sell Requests</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="filter-bar">
+          <select id="adminSellFilter" class="form-control" onchange="loadAdminSellRequests()">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option><option value="verified">Verified</option>
+            <option value="approved">Approved</option><option value="rejected">Rejected</option>
+            <option value="payment_done">Payment Done</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Ref #</th><th>Farmer</th><th>Crop</th><th>Qty</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody id="adminSellBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCUREMENT SCHEDULE -->
+  <section id="section-procurement" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Admin / Procurement</div>
+        <h1>Procurement Schedule</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Ref #</th><th>Farmer</th><th>Crop</th><th>Qty</th><th>Sched. Date</th><th>Payment</th><th>Amount</th><th>Action</th></tr></thead>
+          <tbody id="procurementBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESCALATIONS -->
+  <section id="section-escalations" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Admin / Escalations</div>
+        <h1>Escalated Service Requests</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Ref #</th><th>Farmer</th><th>Type</th><th>Subject</th><th>Priority</th><th>Escalated On</th><th>Reason</th><th>Actions</th></tr></thead>
+          <tbody id="escalationBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALL SERVICE REQUESTS -->
+  <section id="section-all-service" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Admin / Service Requests</div>
+        <h1>All Service Requests</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="filter-bar">
+          <select id="adminServiceFilter" class="form-control" onchange="loadAllServiceRequests()">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option><option value="in_progress">In Progress</option>
+            <option value="escalated">Escalated</option><option value="resolved">Resolved</option><option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Ref #</th><th>Farmer</th><th>Type</th><th>Subject</th><th>Priority</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody id="adminServiceBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYMENTS -->
+  <section id="section-payments" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Admin / Payments</div>
+        <h1>Payment Management</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Approved Requests — Payment Pending</div></div>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Ref #</th><th>Farmer</th><th>Crop</th><th>Qty</th><th>Amount Due</th><th>Sched. Date</th><th>Payment Status</th><th>Action</th></tr></thead>
+          <tbody id="paymentsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANNOUNCEMENTS -->
+  <section id="section-announcements" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Admin / Announcements</div>
+        <h1>Announcements</h1>
+      </div>
+      <button class="btn btn-primary" onclick="UI.showModal('addAnnouncementModal')">+ New Announcement</button>
+    </div>
+    <div class="card">
+      <div class="table-container">
+        <table>
+          <thead><tr><th>#</th><th>Title</th><th>Target</th><th>Created</th><th>Status</th></tr></thead>
+          <tbody id="announcementsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ADD CROP MODAL -->
+<div class="modal-overlay" id="addCropModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="cropModalTitle">Add New Crop</div>
+      <button class="modal-close" onclick="UI.hideModal('addCropModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editCropId">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Crop Name (English) <span class="required">*</span></label>
+          <input type="text" id="cropName" class="form-control" placeholder="e.g. Paddy (Common)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Crop Name (Telugu)</label>
+          <input type="text" id="cropTelugu" class="form-control" placeholder="e.g. వరి">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category <span class="required">*</span></label>
+          <select id="cropCategory" class="form-control">
+            <option value="cereal">Cereal</option><option value="pulse">Pulse</option>
+            <option value="oilseed">Oilseed</option><option value="vegetable">Vegetable</option>
+            <option value="fruit">Fruit</option><option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Season</label>
+          <select id="cropSeason" class="form-control">
+            <option value="kharif">Kharif</option><option value="rabi">Rabi</option>
+            <option value="zaid">Zaid</option><option value="all">All Seasons</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">MSP Price (₹ per Quintal) <span class="required">*</span></label>
+          <input type="number" id="cropPrice" class="form-control" placeholder="e.g. 2183" step="0.01">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Unit</label>
+          <input type="text" id="cropUnit" class="form-control" value="quintal">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="UI.hideModal('addCropModal')">Cancel</button>
+      <button class="btn btn-primary" id="saveCropBtn" onclick="saveCrop()">Save Crop</button>
+    </div>
+  </div>
+</div>
+
+<!-- APPROVE MODAL -->
+<div class="modal-overlay" id="approveModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="approveModalTitle">Approve Sell Request</div>
+      <button class="modal-close" onclick="UI.hideModal('approveModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="approveRequestInfo" style="background:var(--gray-50);border-radius:8px;padding:16px;margin-bottom:20px;"></div>
+      <div class="form-group">
+        <label class="form-label">Decision <span class="required">*</span></label>
+        <div style="display:flex;gap:16px;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gov-green);">
+            <input type="radio" name="approveAction" value="approve"> ✅ Approve & Schedule
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gov-red);">
+            <input type="radio" name="approveAction" value="reject"> ✖ Reject
+          </label>
+        </div>
+      </div>
+      <div id="procurementDateGroup" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Procurement Date <span class="required">*</span></label>
+          <input type="date" id="procurementDate" class="form-control">
+        </div>
+      </div>
+      <div id="approveRejectionGroup" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Rejection Reason <span class="required">*</span></label>
+          <textarea id="approveRejectionReason" class="form-control" placeholder="Provide reason for rejection..."></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Remarks</label>
+        <textarea id="approveRemarks" class="form-control" placeholder="Optional admin remarks..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="UI.hideModal('approveModal')">Cancel</button>
+      <button class="btn btn-primary" id="submitApproveBtn" onclick="submitApproval()">Submit Decision</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="paymentModalTitle">Process Payment</div>
+      <button class="modal-close" onclick="UI.hideModal('paymentModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="paymentRequestInfo" style="background:var(--gray-50);border-radius:8px;padding:16px;margin-bottom:20px;"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Payment Amount (₹) <span class="required">*</span></label>
+          <input type="number" id="paymentAmount" class="form-control" step="0.01" placeholder="Amount to be paid">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Transaction Reference <span class="required">*</span></label>
+          <input type="text" id="transactionRef" class="form-control" placeholder="Bank/UTR reference number">
+        </div>
+      </div>
+      <div class="alert alert-info">💡 Payment will be marked as done and farmer will be notified automatically.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="UI.hideModal('paymentModal')">Cancel</button>
+      <button class="btn btn-success" id="submitPaymentBtn" onclick="submitPayment()">💰 Mark Payment Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICE ACTION MODAL (ADMIN) -->
+<div class="modal-overlay" id="adminServiceModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Handle Service Request</div>
+      <button class="modal-close" onclick="UI.hideModal('adminServiceModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="adminServiceInfo" style="background:var(--gray-50);border-radius:8px;padding:16px;margin-bottom:20px;"></div>
+      <div class="form-group">
+        <label class="form-label">Action <span class="required">*</span></label>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gov-green);">
+            <input type="radio" name="adminServiceAction" value="resolve"> ✅ Resolve
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gov-red);">
+            <input type="radio" name="adminServiceAction" value="reject"> ✖ Reject
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Resolution Notes / Reason <span class="required">*</span></label>
+        <textarea id="adminServiceNotes" class="form-control" placeholder="Provide resolution details or rejection reason..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="UI.hideModal('adminServiceModal')">Cancel</button>
+      <button class="btn btn-primary" id="submitAdminServiceBtn" onclick="submitAdminServiceAction()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ANNOUNCEMENT MODAL -->
+<div class="modal-overlay" id="addAnnouncementModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">New Announcement</div>
+      <button class="modal-close" onclick="UI.hideModal('addAnnouncementModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Title <span class="required">*</span></label>
+        <input type="text" id="announcementTitle" class="form-control" placeholder="Announcement title">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Content <span class="required">*</span></label>
+        <textarea id="announcementContent" class="form-control" rows="4" placeholder="Announcement details..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Target Audience</label>
+          <select id="announcementTarget" class="form-control">
+            <option value="all">All Users</option>
+            <option value="farmer">Farmers Only</option>
+            <option value="employee">Employees Only</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Expires On</label>
+          <input type="date" id="announcementExpiry" class="form-control">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="UI.hideModal('addAnnouncementModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="UI.toast('Announcement feature requires DB extension. Schema ready.','info');UI.hideModal('addAnnouncementModal')">Publish</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+<script src="../js/api.js"></script>
+<script>
+if (!Auth.requireAuth() || !Auth.requireRole('admin')) {}
+UI.initNavbar();
+
+let currentApproveId = null, currentPaymentId = null, currentAdminServiceId = null;
+let cropChartInst, statusChartInst;
+
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+function showSection(name) {
+  document.querySelectorAll('main section').forEach(s => s.style.display = 'none');
+  document.getElementById(`section-${name}`).style.display = '';
+  document.querySelectorAll('.sidebar-nav li a').forEach(a => a.classList.remove('active'));
+  document.getElementById(`nav-${name}`)?.classList.add('active');
+  const loaders = {
+    dashboard: loadDashboard, users: loadUsers, crops: loadCrops,
+    approve: loadApproveQueue, 'all-sell': loadAdminSellRequests,
+    procurement: loadProcurement, escalations: loadEscalations,
+    'all-service': loadAllServiceRequests, payments: loadPayments,
+    announcements: loadAnnouncements
+  };
+  loaders[name]?.();
+}
+
+async function loadDashboard() {
+  const res = await Api.get('/dashboard/admin/stats');
+  if (!res.success) return;
+  const s = res.stats;
+  document.getElementById('stat-farmers').textContent = s.totalFarmers;
+  document.getElementById('stat-pending').textContent = s.verifiedSell;
+  document.getElementById('stat-escalated').textContent = s.escalatedService;
+  document.getElementById('stat-payments').textContent = UI.formatCurrency(s.totalPayments);
+  document.getElementById('approveBadge').textContent = s.verifiedSell;
+
+  // Crop chart
+  const ctx1 = document.getElementById('cropChart')?.getContext('2d');
+  if (ctx1) {
+    if (cropChartInst) cropChartInst.destroy();
+    cropChartInst = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: res.cropStats.map(c => c.name),
+        datasets: [
+          { label: 'Requests', data: res.cropStats.map(c => c.requests), backgroundColor: '#003580', borderRadius: 4 },
+          { label: 'Quantity (Qtl)', data: res.cropStats.map(c => parseFloat(c.total_qty||0).toFixed(1)), backgroundColor: '#FF6B00', borderRadius: 4 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+    });
+  }
+
+  // Status donut
+  const ctx2 = document.getElementById('statusChart')?.getContext('2d');
+  if (ctx2) {
+    if (statusChartInst) statusChartInst.destroy();
+    statusChartInst = new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pending', 'Verified', 'Approved', 'Completed'],
+        datasets: [{ data: [s.pendingSell, s.verifiedSell, s.approvedSell, s.completedSell],
+          backgroundColor: ['#f39c12','#2e6db4','#1a7a3c','#003580'], borderWidth: 2 }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font:{size:11} } } } }
+    });
+  }
+
+  // Quick tables
+  const approveRes = await Api.get('/sell-requests');
+  if (approveRes.success) {
+    const verified = approveRes.requests.filter(r => r.status === 'verified').slice(0,5);
+    const atb = document.getElementById('dashApproveBody');
+    atb.innerHTML = verified.length ? verified.map(r => `<tr>
+      <td><code style="font-size:11px">AGR-${String(r.id).padStart(4,'0')}</code></td>
+      <td>${r.farmer_name}</td><td>${r.crop_name}</td>
+      <td>${parseFloat(r.quantity).toFixed(2)}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="openApproveModal(${r.id},'${r.farmer_name}','${r.crop_name}',${r.quantity},${r.govt_price})">Approve</button></td>
+    </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-500);">No pending approvals</td></tr>';
+  }
+
+  const serviceRes = await Api.get('/service-requests');
+  if (serviceRes.success) {
+    const escalated = serviceRes.requests.filter(r => r.status === 'escalated').slice(0,5);
+    const etb = document.getElementById('dashEscalateBody');
+    const tl = { subsidy:'Subsidy', complaint:'Complaint', crop_damage:'Crop Damage', loan:'Loan', scheme:'Scheme', other:'Other' };
+    etb.innerHTML = escalated.length ? escalated.map(r => `<tr>
+      <td><code style="font-size:11px">SVC-${String(r.id).padStart(4,'0')}</code></td>
+      <td>${r.farmer_name}</td><td>${tl[r.type]||r.type}</td>
+      <td><button class="btn btn-warning btn-sm" onclick="openAdminServiceModal(${r.id},'${r.subject}','${r.farmer_name}')">Handle</button></td>
+    </tr>`).join('') : '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--gray-500);">No escalations</td></tr>';
+  }
+}
+
+async function loadUsers() {
+  const role = document.getElementById('userRoleFilter')?.value || '';
+  const res = await Api.get(`/dashboard/users${role ? '?role='+role : ''}`);
+  if (!res.success) return;
+  const roleBadge = { admin:'badge-rejected', employee:'badge-verified', farmer:'badge-approved' };
+  document.getElementById('usersBody').innerHTML = res.users.map((u,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.phone}</td>
+      <td><span class="badge ${roleBadge[u.role]||''}">${u.role}</span></td>
+      <td>${u.village||'—'}</td>
+      <td>${u.district||'—'}</td>
+      <td>${UI.formatDate(u.created_at)}</td>
+      <td><span class="badge ${u.is_active ? 'badge-approved' : 'badge-rejected'}">${u.is_active ? 'Active' : 'Inactive'}</span></td>
+    </tr>`).join('');
+}
+
+async function loadCrops() {
+  const res = await Api.get('/crops');
+  if (!res.success) return;
+  const cats = { cereal:'🌾', pulse:'🫘', oilseed:'🌻', vegetable:'🥬', fruit:'🍎', other:'🌿' };
+  document.getElementById('cropsBody').innerHTML = res.crops.map((c,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${c.name}</strong></td>
+      <td style="color:var(--gray-500)">${c.name_telugu||'—'}</td>
+      <td>${cats[c.category]||'🌿'} ${c.category}</td>
+      <td>${c.season}</td>
+      <td style="font-weight:700;color:var(--gov-green);font-size:15px;">₹ ${parseFloat(c.govt_price).toLocaleString('en-IN')}</td>
+      <td><span class="badge ${c.is_active?'badge-approved':'badge-rejected'}">${c.is_active?'Active':'Inactive'}</span></td>
+      <td>${UI.formatDate(c.last_updated)}</td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="openEditCropModal(${c.id},'${c.name}','${c.name_telugu||''}','${c.category}','${c.season}',${c.govt_price},'${c.unit}')">Edit MSP</button>
+      </td>
+    </tr>`).join('');
+}
+
+function openAddCropModal() {
+  document.getElementById('cropModalTitle').textContent = 'Add New Crop';
+  document.getElementById('editCropId').value = '';
+  document.getElementById('cropName').value = '';
+  document.getElementById('cropTelugu').value = '';
+  document.getElementById('cropPrice').value = '';
+  document.getElementById('cropUnit').value = 'quintal';
+  UI.showModal('addCropModal');
+}
+
+function openEditCropModal(id, name, telugu, category, season, price, unit) {
+  document.getElementById('cropModalTitle').textContent = 'Update MSP — ' + name;
+  document.getElementById('editCropId').value = id;
+  document.getElementById('cropName').value = name;
+  document.getElementById('cropTelugu').value = telugu;
+  document.getElementById('cropCategory').value = category;
+  document.getElementById('cropSeason').value = season;
+  document.getElementById('cropPrice').value = price;
+  document.getElementById('cropUnit').value = unit;
+  UI.showModal('addCropModal');
+}
+
+async function saveCrop() {
+  const id = document.getElementById('editCropId').value;
+  const body = {
+    name: document.getElementById('cropName').value.trim(),
+    name_telugu: document.getElementById('cropTelugu').value.trim(),
+    category: document.getElementById('cropCategory').value,
+    season: document.getElementById('cropSeason').value,
+    govt_price: parseFloat(document.getElementById('cropPrice').value),
+    unit: document.getElementById('cropUnit').value
+  };
+  if (!body.name || !body.govt_price) { UI.toast('Name and price are required.', 'error'); return; }
+  const btn = document.getElementById('saveCropBtn');
+  UI.loading(btn, true);
+  const res = id ? await Api.put(`/crops/${id}`, body) : await Api.post('/crops', body);
+  UI.loading(btn, false);
+  if (res.success) {
+    UI.toast(id ? 'MSP updated successfully.' : 'Crop added successfully.', 'success');
+    UI.hideModal('addCropModal');
+    loadCrops();
+  } else { UI.toast(res.message, 'error'); }
+}
+
+async function loadApproveQueue() {
+  const res = await Api.get('/sell-requests');
+  if (!res.success) return;
+  const verified = res.requests.filter(r => r.status === 'verified');
+  const tb = document.getElementById('approveBody');
+  if (!verified.length) {
+    tb.innerHTML = '<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">✅</div><h3>No pending approvals</h3><p>All verified requests have been processed.</p></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = verified.map(r => `
+    <tr>
+      <td><code style="font-size:11px">AGR-${String(r.id).padStart(4,'0')}</code></td>
+      <td><strong>${r.farmer_name}</strong></td>
+      <td>${r.farmer_phone}</td>
+      <td>${r.crop_name}</td>
+      <td>${parseFloat(r.quantity).toFixed(2)} qtl</td>
+      <td style="font-weight:700;color:var(--gov-green);">₹${(parseFloat(r.quantity)*parseFloat(r.govt_price)).toLocaleString('en-IN',{minimumFractionDigits:2})}</td>
+      <td>${r.verifier_name||'—'}</td>
+      <td>${UI.formatDate(r.verified_at)}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="openApproveModal(${r.id},'${r.farmer_name}','${r.crop_name}',${r.quantity},${r.govt_price})">Review</button></td>
+    </tr>`).join('');
+}
+
+function openApproveModal(id, farmerName, cropName, quantity, price) {
+  currentApproveId = id;
+  document.getElementById('approveModalTitle').textContent = `Review: AGR-${String(id).padStart(4,'0')}`;
+  document.getElementById('approveRequestInfo').innerHTML = `
+    <div class="detail-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="detail-item"><div class="detail-label">Farmer</div><div class="detail-value">${farmerName}</div></div>
+      <div class="detail-item"><div class="detail-label">Crop</div><div class="detail-value">${cropName}</div></div>
+      <div class="detail-item"><div class="detail-label">Quantity</div><div class="detail-value">${parseFloat(quantity).toFixed(2)} Quintals</div></div>
+      <div class="detail-item"><div class="detail-label">Payable Amount</div><div class="detail-value" style="color:var(--gov-green);font-weight:700;">₹${(parseFloat(quantity)*parseFloat(price)).toLocaleString('en-IN',{minimumFractionDigits:2})}</div></div>
+    </div>`;
+  document.querySelectorAll('input[name="approveAction"]').forEach(r => r.checked = false);
+  document.getElementById('procurementDate').value = '';
+  document.getElementById('approveRejectionReason').value = '';
+  document.getElementById('approveRemarks').value = '';
+  document.getElementById('procurementDateGroup').style.display = 'none';
+  document.getElementById('approveRejectionGroup').style.display = 'none';
+
+  document.querySelectorAll('input[name="approveAction"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.getElementById('procurementDateGroup').style.display = radio.value === 'approve' ? '' : 'none';
+      document.getElementById('approveRejectionGroup').style.display = radio.value === 'reject' ? '' : 'none';
+    });
+  });
+  UI.showModal('approveModal');
+}
+
+async function submitApproval() {
+  const action = document.querySelector('input[name="approveAction"]:checked')?.value;
+  const procurement_date = document.getElementById('procurementDate').value;
+  const rejection_reason = document.getElementById('approveRejectionReason').value.trim();
+  const remarks = document.getElementById('approveRemarks').value.trim();
+  if (!action) { UI.toast('Please select a decision.', 'error'); return; }
+  if (action === 'approve' && !procurement_date) { UI.toast('Please select procurement date.', 'error'); return; }
+  if (action === 'reject' && !rejection_reason) { UI.toast('Please provide rejection reason.', 'error'); return; }
+  const btn = document.getElementById('submitApproveBtn');
+  UI.loading(btn, true);
+  const res = await Api.put(`/sell-requests/${currentApproveId}/approve`, { action, procurement_date, rejection_reason, remarks });
+  UI.loading(btn, false);
+  if (res.success) {
+    UI.toast(`Request ${action === 'approve' ? 'approved' : 'rejected'} successfully.`, 'success');
+    UI.hideModal('approveModal');
+    loadApproveQueue();
+    loadDashboard();
+  } else { UI.toast(res.message, 'error'); }
+}
+
+async function loadAdminSellRequests() {
+  const status = document.getElementById('adminSellFilter')?.value || '';
+  const res = await Api.get('/sell-requests');
+  if (!res.success) return;
+  let data = res.requests;
+  if (status) data = data.filter(r => r.status === status);
+  const tb = document.getElementById('adminSellBody');
+  tb.innerHTML = data.map(r => `
+    <tr>
+      <td><code style="font-size:11px">AGR-${String(r.id).padStart(4,'0')}</code></td>
+      <td>${r.farmer_name}</td><td>${r.crop_name}</td>
+      <td>${parseFloat(r.quantity).toFixed(2)} qtl</td>
+      <td style="color:var(--gov-green);font-weight:600;">₹${(parseFloat(r.quantity)*parseFloat(r.govt_price)).toLocaleString('en-IN',{minimumFractionDigits:2})}</td>
+      <td>${UI.badge(r.status)}</td>
+      <td>${UI.formatDate(r.created_at)}</td>
+      <td>
+        ${r.status === 'verified' ? `<button class="btn btn-primary btn-sm" onclick="openApproveModal(${r.id},'${r.farmer_name}','${r.crop_name}',${r.quantity},${r.govt_price})">Approve</button>` : ''}
+        ${r.status === 'approved' ? `<button class="btn btn-success btn-sm" onclick="openPaymentModal(${r.id},'${r.farmer_name}','${r.crop_name}',${r.quantity},${r.govt_price})">Pay</button>` : ''}
+      </td>
+    </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--gray-500);">No records found</td></tr>';
+}
+
+async function loadProcurement() {
+  const res = await Api.get('/sell-requests');
+  if (!res.success) return;
+  const procData = res.requests.filter(r => ['approved','scheduled','completed','payment_done'].includes(r.status));
+  const tb = document.getElementById('procurementBody');
+  tb.innerHTML = procData.length ? procData.map(r => `
+    <tr>
+      <td><code style="font-size:11px">AGR-${String(r.id).padStart(4,'0')}</code></td>
+      <td>${r.farmer_name}</td><td>${r.crop_name}</td>
+      <td>${parseFloat(r.quantity).toFixed(2)} qtl</td>
+      <td>${UI.formatDate(r.procurement_date)}</td>
+      <td><span class="badge badge-${r.payment_status}">${r.payment_status}</span></td>
+      <td>${r.payment_amount ? UI.formatCurrency(r.payment_amount) : '₹'+((parseFloat(r.quantity)*parseFloat(r.govt_price)).toLocaleString('en-IN',{minimumFractionDigits:2}))}</td>
+      <td>${r.payment_status !== 'done' ? `<button class="btn btn-success btn-sm" onclick="openPaymentModal(${r.id},'${r.farmer_name}','${r.crop_name}',${r.quantity},${r.govt_price})">Process Payment</button>` : `<span style="color:var(--gov-green);font-size:12px;">✅ ${r.transaction_ref||''}</span>`}</td>
+    </tr>`).join('') : '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🚛</div><h3>No procurements scheduled</h3><p>Approved requests will appear here.</p></div></td></tr>';
+}
+
+async function loadEscalations() {
+  const res = await Api.get('/service-requests');
+  if (!res.success) return;
+  const escalated = res.requests.filter(r => r.status === 'escalated');
+  const tb = document.getElementById('escalationBody');
+  const tl = { subsidy:'Subsidy', complaint:'Complaint', crop_damage:'Crop Damage', loan:'Loan', scheme:'Scheme', other:'Other' };
+  const prioColors = { low:'badge-verified', medium:'badge-pending', high:'badge-escalated', urgent:'badge-rejected' };
+  tb.innerHTML = escalated.length ? escalated.map(r => `
+    <tr>
+      <td><code style="font-size:11px">SVC-${String(r.id).padStart(4,'0')}</code></td>
+      <td>${r.farmer_name}</td>
+      <td>${tl[r.type]||r.type}</td>
+      <td>${r.subject}</td>
+      <td><span class="badge ${prioColors[r.priority]}">${r.priority}</span></td>
+      <td>${UI.formatDate(r.escalated_at)}</td>
+      <td style="font-size:12px;color:var(--gray-600);max-width:200px;">${r.escalation_reason||'—'}</td>
+      <td><button class="btn btn-warning btn-sm" onclick="openAdminServiceModal(${r.id},'${r.subject}','${r.farmer_name}')">Handle</button></td>
+    </tr>`).join('') : '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">✅</div><h3>No escalated cases</h3><p>All cases are handled at field level.</p></div></td></tr>';
+}
+
+async function loadAllServiceRequests() {
+  const status = document.getElementById('adminServiceFilter')?.value || '';
+  const res = await Api.get('/service-requests');
+  if (!res.success) return;
+  let data = res.requests;
+  if (status) data = data.filter(r => r.status === status);
+  const tl = { subsidy:'Subsidy', complaint:'Complaint', crop_damage:'Crop Damage', loan:'Loan', scheme:'Scheme', other:'Other' };
+  const prioColors = { low:'badge-verified', medium:'badge-pending', high:'badge-escalated', urgent:'badge-rejected' };
+  const tb = document.getElementById('adminServiceBody');
+  tb.innerHTML = data.length ? data.map(r => `
+    <tr>
+      <td><code style="font-size:11px">SVC-${String(r.id).padStart(4,'0')}</code></td>
+      <td>${r.farmer_name}</td><td>${tl[r.type]||r.type}</td>
+      <td>${r.subject}</td>
+      <td><span class="badge ${prioColors[r.priority]}">${r.priority}</span></td>
+      <td>${UI.badge(r.status)}</td>
+      <td>${UI.formatDate(r.created_at)}</td>
+      <td>${['escalated','pending','in_progress'].includes(r.status) ? `<button class="btn btn-primary btn-sm" onclick="openAdminServiceModal(${r.id},'${r.subject}','${r.farmer_name}')">Handle</button>` : '—'}</td>
+    </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--gray-500);">No records found</td></tr>';
+}
+
+async function loadPayments() {
+  const res = await Api.get('/sell-requests');
+  if (!res.success) return;
+  const payable = res.requests.filter(r => ['approved','scheduled'].includes(r.status));
+  const tb = document.getElementById('paymentsBody');
+  tb.innerHTML = payable.length ? payable.map(r => `
+    <tr>
+      <td><code style="font-size:11px">AGR-${String(r.id).padStart(4,'0')}</code></td>
+      <td><strong>${r.farmer_name}</strong></td><td>${r.crop_name}</td>
+      <td>${parseFloat(r.quantity).toFixed(2)} qtl</td>
+      <td style="font-weight:700;color:var(--gov-green);">₹${(parseFloat(r.quantity)*parseFloat(r.govt_price)).toLocaleString('en-IN',{minimumFractionDigits:2})}</td>
+      <td>${UI.formatDate(r.procurement_date)}</td>
+      <td><span class="badge badge-${r.payment_status}">${r.payment_status}</span></td>
+      <td><button class="btn btn-success btn-sm" onclick="openPaymentModal(${r.id},'${r.farmer_name}','${r.crop_name}',${r.quantity},${r.govt_price})">💰 Process</button></td>
+    </tr>`).join('') : '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">💰</div><h3>No pending payments</h3><p>All payments are up to date.</p></div></td></tr>';
+}
+
+function openPaymentModal(id, farmerName, cropName, quantity, price) {
+  currentPaymentId = id;
+  const amt = (parseFloat(quantity)*parseFloat(price)).toFixed(2);
+  document.getElementById('paymentModalTitle').textContent = `Process Payment — AGR-${String(id).padStart(4,'0')}`;
+  document.getElementById('paymentRequestInfo').innerHTML = `
+    <div class="detail-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="detail-item"><div class="detail-label">Farmer</div><div class="detail-value">${farmerName}</div></div>
+      <div class="detail-item"><div class="detail-label">Crop</div><div class="detail-value">${cropName}</div></div>
+      <div class="detail-item"><div class="detail-label">Quantity</div><div class="detail-value">${parseFloat(quantity).toFixed(2)} Quintals</div></div>
+      <div class="detail-item"><div class="detail-label">Payable Amount</div><div class="detail-value" style="color:var(--gov-green);font-weight:700;font-size:16px;">₹${parseFloat(amt).toLocaleString('en-IN',{minimumFractionDigits:2})}</div></div>
+    </div>`;
+  document.getElementById('paymentAmount').value = amt;
+  document.getElementById('transactionRef').value = 'UTR' + Date.now();
+  UI.showModal('paymentModal');
+}
+
+async function submitPayment() {
+  const payment_amount = document.getElementById('paymentAmount').value;
+  const transaction_ref = document.getElementById('transactionRef').value.trim();
+  if (!payment_amount || !transaction_ref) { UI.toast('Amount and transaction reference required.', 'error'); return; }
+  const btn = document.getElementById('submitPaymentBtn');
+  UI.loading(btn, true);
+  const res = await Api.put(`/sell-requests/${currentPaymentId}/payment`, { payment_amount, transaction_ref });
+  UI.loading(btn, false);
+  if (res.success) {
+    UI.toast('Payment processed successfully. Farmer notified.', 'success');
+    UI.hideModal('paymentModal');
+    loadPayments();
+  } else { UI.toast(res.message, 'error'); }
+}
+
+function openAdminServiceModal(id, subject, farmerName) {
+  currentAdminServiceId = id;
+  document.getElementById('adminServiceInfo').innerHTML = `
+    <div class="detail-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="detail-item"><div class="detail-label">Ref</div><div class="detail-value">SVC-${String(id).padStart(4,'0')}</div></div>
+      <div class="detail-item"><div class="detail-label">Farmer</div><div class="detail-value">${farmerName}</div></div>
+      <div class="detail-item" style="grid-column:1/-1"><div class="detail-label">Subject</div><div class="detail-value">${subject}</div></div>
+    </div>`;
+  document.querySelectorAll('input[name="adminServiceAction"]').forEach(r => r.checked = false);
+  document.getElementById('adminServiceNotes').value = '';
+  UI.showModal('adminServiceModal');
+}
+
+async function submitAdminServiceAction() {
+  const action = document.querySelector('input[name="adminServiceAction"]:checked')?.value;
+  const resolution_notes = document.getElementById('adminServiceNotes').value.trim();
+  if (!action) { UI.toast('Please select an action.', 'error'); return; }
+  if (!resolution_notes) { UI.toast('Please provide notes/reason.', 'error'); return; }
+  const btn = document.getElementById('submitAdminServiceBtn');
+  UI.loading(btn, true);
+  const res = await Api.put(`/service-requests/${currentAdminServiceId}/update`, { action, resolution_notes });
+  UI.loading(btn, false);
+  if (res.success) {
+    UI.toast(`Service request ${action}d successfully.`, 'success');
+    UI.hideModal('adminServiceModal');
+    loadEscalations();
+  } else { UI.toast(res.message, 'error'); }
+}
+
+async function loadAnnouncements() {
+  const res = await Api.get('/dashboard/announcements');
+  if (!res.success) return;
+  document.getElementById('announcementsBody').innerHTML = res.announcements.map((a,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${a.title}</strong><div style="font-size:11px;color:var(--gray-500);margin-top:2px;">${a.content.substring(0,80)}...</div></td>
+      <td><span class="badge badge-verified">${a.target_role}</span></td>
+      <td>${UI.formatDate(a.created_at)}</td>
+      <td><span class="badge ${a.is_active?'badge-approved':'badge-rejected'}">${a.is_active?'Active':'Inactive'}</span></td>
+    </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-500);">No announcements</td></tr>';
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

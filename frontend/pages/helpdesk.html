@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Help Desk — AgriConnect | Andhra Pradesh</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&family=Noto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#003580;--blue-mid:#1a4f9c;--blue-pale:#e8f0ff;--orange:#FF6B00;--green:#1a7a3c;--green-pale:#e6f7ec;--white:#fff;--gray-50:#f8f9fb;--gray-100:#eef0f4;--gray-200:#dde1e9;--gray-400:#9aa3b2;--gray-500:#6b7585;--gray-600:#4a5568;--gray-700:#2d3748;--gray-800:#1a202c;--font:'Noto Sans',sans-serif;--serif:'Noto Serif',serif;--radius:8px;--radius-lg:16px;--shadow-sm:0 1px 4px rgba(0,0,0,.08);--shadow-md:0 4px 16px rgba(0,0,0,.10);--shadow-lg:0 8px 32px rgba(0,0,0,.13)}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--gray-800);background:var(--gray-50);font-size:15px;line-height:1.7}
+.gov-strip{background:#0a0a1a;color:rgba(255,255,255,.75);padding:7px 40px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px}
+.gov-strip a{color:rgba(255,255,255,.6);text-decoration:none;margin-left:16px}
+header{background:var(--blue);border-bottom:4px solid var(--orange);position:sticky;top:0;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.header-inner{max-width:1280px;margin:auto;padding:0 40px;display:flex;align-items:center;gap:18px;min-height:72px}
+.header-logo{width:52px;height:52px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.header-title{flex:1;color:#fff}
+.header-title h1{font-family:var(--serif);font-size:22px;font-weight:700}
+.header-title p{font-size:11px;opacity:.75;letter-spacing:.6px}
+.header-nav a{color:rgba(255,255,255,.8);text-decoration:none;padding:10px 16px;font-size:13px;font-weight:500;border-bottom:3px solid transparent;transition:all .2s}
+.header-nav a:hover,.header-nav a.active{color:#fff;border-bottom-color:var(--orange)}
+.btn-login{background:var(--orange);color:#fff;border:none;padding:8px 18px;border-radius:4px;font-size:13px;font-weight:600;text-decoration:none}
+.breadcrumb-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:10px 40px}
+.breadcrumb{max-width:1280px;margin:auto;font-size:13px;color:var(--gray-500)}
+.breadcrumb a{color:var(--blue);text-decoration:none}
+.breadcrumb span{margin:0 8px;color:var(--gray-400)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#001d4a,#003580,#1a4f9c);color:#fff;padding:72px 40px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'🛡️';position:absolute;left:5%;top:50%;transform:translateY(-50%);font-size:120px;opacity:.05}
+.hero::after{content:'💬';position:absolute;right:5%;top:50%;transform:translateY(-50%);font-size:120px;opacity:.05}
+.hero-inner{max-width:720px;margin:auto;position:relative}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:5px 16px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:16px}
+.hero h2{font-family:var(--serif);font-size:40px;font-weight:700;margin-bottom:14px}
+.hero p{font-size:16px;opacity:.85;line-height:1.7;margin-bottom:32px}
+.hero-search{display:flex;gap:0;max-width:540px;margin:0 auto}
+.hero-search input{flex:1;padding:14px 18px;border:none;border-radius:6px 0 0 6px;font-size:14px;font-family:var(--font);outline:none}
+.hero-search button{background:var(--orange);color:#fff;border:none;padding:14px 22px;border-radius:0 6px 6px 0;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;white-space:nowrap}
+.hero-search button:hover{background:#e05f00}
+.hero-stats{display:flex;justify-content:center;gap:40px;margin-top:36px;padding-top:28px;border-top:1px solid rgba(255,255,255,.15)}
+.hero-stat .val{font-size:28px;font-weight:800;color:#ffcc66}
+.hero-stat .lbl{font-size:12px;opacity:.7;margin-top:3px}
+
+/* SUPPORT CATEGORIES */
+.categories-section{padding:56px 40px}
+.section-inner{max-width:1280px;margin:auto}
+.section-label{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:6px}
+.section-title{font-family:var(--serif);font-size:30px;font-weight:700;color:var(--gray-800);margin-bottom:8px}
+.section-sub{font-size:15px;color:var(--gray-500);margin-bottom:36px}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.cat-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:28px 20px;text-align:center;cursor:pointer;transition:all .3s;text-decoration:none;display:block}
+.cat-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px);border-color:var(--blue)}
+.cat-icon{font-size:40px;margin-bottom:14px;display:block}
+.cat-card h3{font-size:15px;font-weight:700;color:var(--gray-800);margin-bottom:6px}
+.cat-card p{font-size:13px;color:var(--gray-500);line-height:1.6}
+.cat-card .cat-count{margin-top:12px;font-size:12px;color:var(--blue);font-weight:600}
+
+/* CONTACT METHODS */
+.contact-methods{background:#fff;padding:56px 40px;border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-100)}
+.contact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:36px}
+.contact-card{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;text-align:center;transition:all .3s}
+.contact-card:hover{box-shadow:var(--shadow-md);background:#fff}
+.contact-card .ci{font-size:36px;margin-bottom:12px}
+.contact-card h3{font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:6px}
+.contact-card .cv{font-size:15px;font-weight:600;color:var(--blue);margin:8px 0}
+.contact-card p{font-size:12px;color:var(--gray-500);line-height:1.5}
+.contact-card .badge-free{display:inline-block;background:var(--green-pale);color:var(--green);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;margin-top:6px}
+
+/* TICKET SYSTEM */
+.ticket-section{padding:56px 40px}
+.ticket-inner{max-width:1280px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.ticket-form-card,.ticket-track-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.ticket-card-header{padding:20px 24px;border-bottom:1px solid var(--gray-100)}
+.ticket-card-header h3{font-size:16px;font-weight:700;color:var(--gray-800);margin-bottom:4px}
+.ticket-card-header p{font-size:13px;color:var(--gray-500)}
+.ticket-card-body{padding:24px}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:6px}
+.form-label .req{color:#c0392b;margin-left:2px}
+.form-control{width:100%;padding:10px 13px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:13.5px;font-family:var(--font);color:var(--gray-800);background:#fff;outline:none;transition:border .2s}
+.form-control:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,53,128,.08)}
+textarea.form-control{resize:vertical;min-height:90px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.btn-submit{width:100%;background:var(--blue);color:#fff;border:none;padding:12px;border-radius:var(--radius);font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;transition:background .2s}
+.btn-submit:hover{background:var(--blue-mid)}
+.ticket-status{border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px;margin-top:16px;display:none}
+.ticket-status.show{display:block}
+.ts-ref{font-size:12px;color:var(--gray-500);margin-bottom:8px}
+.ts-status{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.status-dot.pending{background:#f39c12}
+.status-dot.progress{background:var(--blue)}
+.status-dot.resolved{background:var(--green)}
+.track-form{margin-top:16px}
+
+/* FAQ */
+.faq-section{background:#fff;padding:56px 40px;border-top:1px solid var(--gray-100)}
+.faq-inner{max-width:900px;margin:auto}
+.faq-tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+.faq-tab{padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-600);transition:all .2s}
+.faq-tab.active,.faq-tab:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.faq-item{border:1px solid var(--gray-200);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;transition:box-shadow .2s}
+.faq-item:hover{box-shadow:var(--shadow-sm)}
+.faq-question{padding:16px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;user-select:none}
+.faq-question h4{font-size:14px;font-weight:600;color:var(--gray-800)}
+.faq-chevron{font-size:16px;color:var(--gray-400);transition:transform .3s;flex-shrink:0}
+.faq-item.open .faq-chevron{transform:rotate(180deg)}
+.faq-answer{display:none;padding:0 20px 16px;font-size:13.5px;color:var(--gray-600);line-height:1.8;background:#fff;border-top:1px solid var(--gray-100)}
+.faq-item.open .faq-answer{display:block}
+.faq-item.open .faq-question{background:var(--gray-50)}
+
+/* FOOTER */
+footer{background:#0a0a1a;color:rgba(255,255,255,.7);margin-top:0}
+.footer-bottom{padding:20px 40px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-wrap:wrap;gap:8px}
+
+@media(max-width:900px){.cat-grid,.contact-grid{grid-template-columns:1fr 1fr}.ticket-inner{grid-template-columns:1fr}}
+@media(max-width:600px){.cat-grid,.contact-grid{grid-template-columns:1fr}.hero,.categories-section,.contact-methods,.ticket-section,.faq-section{padding-left:20px;padding-right:20px}.form-row{grid-template-columns:1fr}.hero h2{font-size:28px}.hero-stats{flex-direction:column;gap:16px}}
+</style>
+</head>
+<body>
+
+<div class="gov-strip">
+  <span>🇮🇳 Government of Andhra Pradesh · Department of Agriculture</span>
+  <span><a href="#">Screen Reader</a><a href="#">తెలుగు</a><a href="#">हिन्दी</a></span>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-logo">🌾</div>
+    <div class="header-title">
+      <h1>AgriConnect</h1>
+      <p>INTEGRATED FARMER SERVICES PORTAL · GOVT. OF ANDHRA PRADESH</p>
+    </div>
+    <nav class="header-nav" style="display:flex">
+      <a href="../index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="schemes.html">Schemes</a>
+      <a href="crop-prices.html">Crop Prices</a>
+      <a href="helpdesk.html" class="active">Help Desk</a>
+      <a href="downloads.html">Downloads</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <a href="../index.html" class="btn-login">Login / Register</a>
+  </div>
+</header>
+
+<div class="breadcrumb-bar">
+  <div class="breadcrumb"><a href="../index.html">Home</a><span>›</span>Help Desk</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🛡️ Citizen Support Center</div>
+    <h2>How Can We Help You?</h2>
+    <p>Get answers to your questions, track your support tickets, and connect with our dedicated farmer support team. We are here to ensure you get the help you need.</p>
+    <div class="hero-search">
+      <input type="text" placeholder="Search help articles, FAQs, guides..." id="heroSearch" oninput="searchFAQ(this.value)">
+      <button>Search</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="val">24×7</div><div class="lbl">Helpline Available</div></div>
+      <div class="hero-stat"><div class="val">4.8h</div><div class="lbl">Avg. Response Time</div></div>
+      <div class="hero-stat"><div class="val">98%</div><div class="lbl">Resolution Rate</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPORT CATEGORIES -->
+<div class="categories-section">
+  <div class="section-inner">
+    <div class="section-label">Support Categories</div>
+    <div class="section-title">What do you need help with?</div>
+    <p class="section-sub">Select a category to find relevant help articles and contact options.</p>
+    <div class="cat-grid">
+      <a href="#faq" class="cat-card" onclick="filterFAQ('procurement')">
+        <span class="cat-icon">📤</span>
+        <h3>Procurement Issues</h3>
+        <p>Help with sell requests, verification delays, and procurement scheduling problems.</p>
+        <div class="cat-count">12 articles</div>
+      </a>
+      <a href="#faq" class="cat-card" onclick="filterFAQ('payment')">
+        <span class="cat-icon">💰</span>
+        <h3>Payment Issues</h3>
+        <p>Payment delays, bank account updates, transaction queries, and amount discrepancies.</p>
+        <div class="cat-count">8 articles</div>
+      </a>
+      <a href="#faq" class="cat-card" onclick="filterFAQ('subsidy')">
+        <span class="cat-icon">🏛️</span>
+        <h3>Subsidy & Schemes</h3>
+        <p>PM-KISAN enrollment, subsidy applications, eligibility queries, and benefits.</p>
+        <div class="cat-count">15 articles</div>
+      </a>
+      <a href="#faq" class="cat-card" onclick="filterFAQ('technical')">
+        <span class="cat-icon">⚙️</span>
+        <h3>Technical Support</h3>
+        <p>Login issues, password reset, app navigation, and document upload problems.</p>
+        <div class="cat-count">10 articles</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT METHODS -->
+<div class="contact-methods">
+  <div class="section-inner">
+    <div class="section-label">Reach Us</div>
+    <div class="section-title">Support Channels</div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="ci">📞</div>
+        <h3>Toll-Free Helpline</h3>
+        <div class="cv">1800-425-1551</div>
+        <p>Speak directly to a support agent. Available in Telugu and English.</p>
+        <span class="badge-free">FREE CALL</span>
+        <div style="font-size:12px;color:var(--gray-400);margin-top:8px">Mon–Sat: 8AM–8PM</div>
+      </div>
+      <div class="contact-card">
+        <div class="ci">📧</div>
+        <h3>Email Support</h3>
+        <div class="cv" style="font-size:13px">support@agriconnect.ap.gov.in</div>
+        <p>Email us your query with request reference. Response within 24 working hours.</p>
+        <div style="font-size:12px;color:var(--gray-400);margin-top:8px">24 hour response time</div>
+      </div>
+      <div class="contact-card">
+        <div class="ci">🏪</div>
+        <h3>Visit Sachivalayam</h3>
+        <div class="cv">Nearest Center</div>
+        <p>Walk in to your local Sachivalayam for in-person assistance with all portal services.</p>
+        <div style="font-size:12px;color:var(--gray-400);margin-top:8px">Mon–Sat: 9AM–5PM</div>
+      </div>
+      <div class="contact-card">
+        <div class="ci">💬</div>
+        <h3>Online Portal</h3>
+        <div class="cv">AgriConnect Portal</div>
+        <p>Submit service requests directly on the portal and track them in real time.</p>
+        <a href="../index.html" style="display:inline-block;margin-top:8px;font-size:12px;color:var(--blue);font-weight:600;text-decoration:none">Login & Submit →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKET SYSTEM -->
+<div class="ticket-section">
+  <div class="ticket-inner">
+    <!-- SUBMIT TICKET -->
+    <div class="ticket-form-card">
+      <div class="ticket-card-header">
+        <h3>📩 Submit a Support Ticket</h3>
+        <p>Describe your issue and our team will respond within 24 hours.</p>
+      </div>
+      <div class="ticket-card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name <span class="req">*</span></label>
+            <input type="text" class="form-control" id="ticketName" placeholder="Your full name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mobile Number <span class="req">*</span></label>
+            <input type="tel" class="form-control" id="ticketPhone" placeholder="10-digit number" maxlength="10">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category <span class="req">*</span></label>
+          <select class="form-control" id="ticketCategory">
+            <option value="">— Select issue category —</option>
+            <option>Procurement Issue</option>
+            <option>Payment Delay</option>
+            <option>Subsidy / PM-KISAN</option>
+            <option>Login / Technical Issue</option>
+            <option>Crop Damage Complaint</option>
+            <option>Middlemen Exploitation</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject <span class="req">*</span></label>
+          <input type="text" class="form-control" id="ticketSubject" placeholder="Brief description of your issue">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Detailed Description <span class="req">*</span></label>
+          <textarea class="form-control" id="ticketDesc" placeholder="Please describe your issue in detail. Include any reference numbers if available..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">AgriConnect Request ID (if any)</label>
+          <input type="text" class="form-control" id="ticketRef" placeholder="e.g. AGR-0024 or SVC-0012">
+        </div>
+        <button class="btn-submit" onclick="submitTicket()">Submit Support Request</button>
+        <div class="ticket-status" id="ticketSuccess">
+          <div class="ts-ref">Reference Number: <strong id="ticketRefNo">—</strong></div>
+          <div class="ts-status"><div class="status-dot pending"></div><span>Ticket submitted. Expected response within 24 hours.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRACK TICKET -->
+    <div class="ticket-track-card">
+      <div class="ticket-card-header">
+        <h3>🔍 Track Your Ticket</h3>
+        <p>Enter your ticket reference number to check current status.</p>
+      </div>
+      <div class="ticket-card-body">
+        <div class="form-group">
+          <label class="form-label">Ticket Reference Number</label>
+          <input type="text" class="form-control" id="trackRef" placeholder="e.g. TKT-2024-00124">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Registered Mobile Number</label>
+          <input type="tel" class="form-control" id="trackPhone" placeholder="Mobile number used while submitting">
+        </div>
+        <button class="btn-submit" style="background:var(--green)" onclick="trackTicket()">Track Status</button>
+        <div class="ticket-status" id="trackResult" style="margin-top:16px">
+          <div class="ts-ref" id="trackRefDisplay"></div>
+          <div class="ts-status" id="trackStatusDisplay"></div>
+          <div id="trackDetails" style="margin-top:12px;font-size:13px;color:var(--gray-600);line-height:1.7"></div>
+        </div>
+
+        <div style="margin-top:28px;padding-top:24px;border-top:1px solid var(--gray-100)">
+          <div class="section-label" style="margin-bottom:12px">Portal Login → Better Support</div>
+          <p style="font-size:13.5px;color:var(--gray-600);line-height:1.7;margin-bottom:16px">For fastest support, login to AgriConnect and raise a service request directly. You can track all requests in real time from your farmer dashboard.</p>
+          <a href="../index.html" style="display:inline-block;background:var(--blue);color:#fff;padding:10px 20px;border-radius:var(--radius);font-size:13px;font-weight:700;text-decoration:none">Login to Portal →</a>
+        </div>
+
+        <div style="margin-top:24px;padding:16px;background:var(--gray-50);border-radius:var(--radius);border:1px solid var(--gray-200)">
+          <div style="font-size:12px;font-weight:700;color:var(--gray-600);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Emergency Contacts</div>
+          <div style="font-size:13px;color:var(--gray-700);display:flex;flex-direction:column;gap:6px">
+            <span>📞 Helpline: <strong>1800-425-1551</strong></span>
+            <span>📧 Email: <strong>support@agriconnect.ap.gov.in</strong></span>
+            <span>⏰ Hours: <strong>Mon–Sat, 8AM–8PM</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ SECTION -->
+<div class="faq-section" id="faq">
+  <div class="faq-inner">
+    <div class="section-label">Frequently Asked Questions</div>
+    <div class="section-title" style="margin-bottom:24px">Common Questions Answered</div>
+    <div class="faq-tabs">
+      <button class="faq-tab active" onclick="filterFAQ('all',this)">All Topics</button>
+      <button class="faq-tab" onclick="filterFAQ('procurement',this)">Procurement</button>
+      <button class="faq-tab" onclick="filterFAQ('payment',this)">Payment</button>
+      <button class="faq-tab" onclick="filterFAQ('subsidy',this)">Subsidy</button>
+      <button class="faq-tab" onclick="filterFAQ('technical',this)">Technical</button>
+    </div>
+    <div id="faqList"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <span>© 2024 Government of Andhra Pradesh. All rights reserved.</span>
+    <span>Toll-Free: 1800-425-1551 · Mon–Sat 8AM–8PM</span>
+  </div>
+</footer>
+
+<script>
+const faqs=[
+  {q:'How do I submit a crop sell request on AgriConnect?',a:'Login to your farmer account, click "Sell Crops" in the sidebar. Select your crop, enter quantity, upload a photo of your crop, and submit. Your request will be assigned to a local Sachivalayam employee for verification within 2 working days.',cat:'procurement'},
+  {q:'My sell request has been pending for more than a week. What should I do?',a:'If your request has been pending for more than 5 working days without update, please raise a complaint through the "Raise Request" section in your dashboard. Select "Complaint" as the type and mention your request reference number (e.g., AGR-0024).',cat:'procurement'},
+  {q:'Why was my sell request rejected?',a:'Sell requests can be rejected by the Sachivalayam employee if the crop quality does not match the claim, quantity is not verifiable, or documentation is insufficient. You can view the rejection reason in your request details and resubmit after addressing the issue.',cat:'procurement'},
+  {q:'When will I receive payment after my request is approved?',a:'After Admin approval, a procurement date will be scheduled. Payment is processed within 5–7 working days after the physical procurement is completed. The amount is transferred directly to your registered bank account.',cat:'payment'},
+  {q:'My payment was not credited even though the status shows "Payment Done". What should I do?',a:'Please check your bank account after 3 working days as transfers may take time. If still not credited, note the Transaction Reference number from your request details and contact your bank. You can also raise a payment complaint on the portal.',cat:'payment'},
+  {q:'How do I update my bank account details?',a:'Currently, bank account updates require in-person verification at your nearest Sachivalayam. Carry your Aadhaar card and bank passbook. This process is to protect against fraudulent account changes.',cat:'payment'},
+  {q:'How do I apply for PM-KISAN through AgriConnect?',a:'PM-KISAN applications are submitted through the portal\'s "Raise Request" section. Select "Scheme" as the type, mention "PM-KISAN enrollment" as subject, and provide your land records and Aadhaar details. Our team will process it with the district office.',cat:'subsidy'},
+  {q:'I have not received my PM-KISAN installment. What should I do?',a:'Raise a service request on the portal with type "Subsidy", subject "PM-KISAN installment not received", and mention the installment number. Common reasons include: E-KYC not completed, incorrect bank details, or land record mismatch.',cat:'subsidy'},
+  {q:'How do I apply for crop damage compensation?',a:'Submit a service request with type "Crop Damage Compensation". Include your land details, crop type, affected area, and photographs of the damage. A Sachivalayam employee will conduct a field visit within 3 working days.',cat:'subsidy'},
+  {q:'I forgot my password. How do I reset it?',a:'Currently, password reset requires contacting the support helpline at 1800-425-1551 or visiting your nearest Sachivalayam with your Aadhaar card. An OTP-based reset feature is being developed and will be available soon.',cat:'technical'},
+  {q:'I cannot upload my crop image. What formats are supported?',a:'The portal supports JPG, JPEG, PNG image formats up to 5MB. Ensure your internet connection is stable while uploading. If the issue persists, try using a different browser or clear your browser cache.',cat:'technical'},
+  {q:'Which browsers are supported by AgriConnect?',a:'AgriConnect works best on Google Chrome, Mozilla Firefox, and Microsoft Edge (latest versions). Internet Explorer is not supported. For mobile, Chrome and Safari work well.',cat:'technical'},
+];
+
+let currentFilter='all';
+
+function renderFAQ(data){
+  const list=document.getElementById('faqList');
+  if(!data.length){list.innerHTML='<div style="text-align:center;padding:40px;color:var(--gray-400)">No results found for your search.</div>';return}
+  list.innerHTML=data.map((f,i)=>`
+    <div class="faq-item" id="faq${i}">
+      <div class="faq-question" onclick="toggleFAQ(${i})">
+        <h4>${f.q}</h4>
+        <span class="faq-chevron">▾</span>
+      </div>
+      <div class="faq-answer">${f.a}</div>
+    </div>`).join('');
+}
+
+function toggleFAQ(i){
+  const item=document.getElementById(`faq${i}`);
+  const wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));
+  if(!wasOpen)item.classList.add('open');
+}
+
+function filterFAQ(cat,btn){
+  currentFilter=cat;
+  document.querySelectorAll('.faq-tab').forEach(t=>t.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const data=cat==='all'?faqs:faqs.filter(f=>f.cat===cat);
+  renderFAQ(data);
+  document.getElementById('faq').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function searchFAQ(q){
+  if(!q){renderFAQ(currentFilter==='all'?faqs:faqs.filter(f=>f.cat===currentFilter));return}
+  const data=faqs.filter(f=>f.q.toLowerCase().includes(q.toLowerCase())||f.a.toLowerCase().includes(q.toLowerCase()));
+  renderFAQ(data);
+}
+
+let ticketCounter=1000;
+function submitTicket(){
+  const name=document.getElementById('ticketName').value.trim();
+  const phone=document.getElementById('ticketPhone').value.trim();
+  const cat=document.getElementById('ticketCategory').value;
+  const subj=document.getElementById('ticketSubject').value.trim();
+  const desc=document.getElementById('ticketDesc').value.trim();
+  if(!name||!phone||!cat||!subj||!desc){alert('Please fill all required fields.');return}
+  ticketCounter++;
+  const ref=`TKT-2024-${String(ticketCounter).padStart(5,'0')}`;
+  document.getElementById('ticketRefNo').textContent=ref;
+  document.getElementById('ticketSuccess').classList.add('show');
+  document.getElementById('ticketName').value='';
+  document.getElementById('ticketPhone').value='';
+  document.getElementById('ticketCategory').value='';
+  document.getElementById('ticketSubject').value='';
+  document.getElementById('ticketDesc').value='';
+}
+
+function trackTicket(){
+  const ref=document.getElementById('trackRef').value.trim();
+  const phone=document.getElementById('trackPhone').value.trim();
+  if(!ref||!phone){alert('Please enter ticket reference and mobile number.');return}
+  const result=document.getElementById('trackResult');
+  const mockStatuses=[
+    {status:'In Progress',dot:'progress',msg:'Your ticket has been assigned to a support agent. Expected resolution: 24 hours.'},
+    {status:'Resolved',dot:'resolved',msg:'Your issue has been resolved. If the problem persists, please raise a new ticket.'},
+    {status:'Pending',dot:'pending',msg:'Your ticket is in queue. A support agent will be assigned shortly.'},
+  ];
+  const mock=mockStatuses[Math.floor(Math.random()*mockStatuses.length)];
+  document.getElementById('trackRefDisplay').textContent=`Reference: ${ref}`;
+  document.getElementById('trackStatusDisplay').innerHTML=`<div class="status-dot ${mock.dot}"></div><span style="font-weight:600">${mock.status}</span>`;
+  document.getElementById('trackDetails').textContent=mock.msg;
+  result.classList.add('show');
+}
+
+renderFAQ(faqs);
+</script>
+</body>
+</html>

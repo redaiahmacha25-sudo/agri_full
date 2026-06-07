@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About AgriConnect — E-Governance Platform | Government of Andhra Pradesh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&family=Noto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#003580;--blue-mid:#1a4f9c;--blue-light:#2e6db4;--blue-pale:#e8f0ff;
+  --orange:#FF6B00;--green:#1a7a3c;--green-light:#27a250;--green-pale:#e6f7ec;
+  --gold:#c8960c;--gold-pale:#fef9e7;
+  --white:#fff;--gray-50:#f8f9fb;--gray-100:#eef0f4;--gray-200:#dde1e9;
+  --gray-400:#9aa3b2;--gray-500:#6b7585;--gray-600:#4a5568;--gray-700:#2d3748;--gray-800:#1a202c;
+  --font:'Noto Sans',sans-serif;--serif:'Noto Serif',serif;
+  --shadow-sm:0 1px 4px rgba(0,0,0,0.08);--shadow-md:0 4px 16px rgba(0,0,0,0.10);--shadow-lg:0 8px 32px rgba(0,0,0,0.13);
+  --radius:8px;--radius-lg:16px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--gray-800);background:var(--white);font-size:15px;line-height:1.7}
+
+/* ── TOP STRIP ── */
+.gov-strip{background:#0a0a1a;color:rgba(255,255,255,.75);padding:7px 40px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px;letter-spacing:.3px}
+.gov-strip a{color:rgba(255,255,255,.6);text-decoration:none;margin-left:16px}
+.gov-strip a:hover{color:#fff}
+
+/* ── HEADER ── */
+header{background:var(--blue);border-bottom:4px solid var(--orange);position:sticky;top:0;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.header-inner{max-width:1280px;margin:auto;padding:0 40px;display:flex;align-items:center;gap:18px;min-height:72px}
+.header-logo{width:52px;height:52px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.header-title{flex:1;color:#fff}
+.header-title h1{font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:.3px}
+.header-title p{font-size:11px;opacity:.75;letter-spacing:.6px;margin-top:1px}
+.header-nav{display:flex;gap:0}
+.header-nav a{color:rgba(255,255,255,.8);text-decoration:none;padding:10px 16px;font-size:13px;font-weight:500;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap}
+.header-nav a:hover,.header-nav a.active{color:#fff;border-bottom-color:var(--orange);background:rgba(255,255,255,.07)}
+.header-actions{display:flex;gap:8px;margin-left:12px}
+.btn-login{background:var(--orange);color:#fff;border:none;padding:8px 18px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .2s}
+.btn-login:hover{background:#e05f00}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#001d4a 0%,#003580 45%,#004db5 100%);color:#fff;padding:90px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-inner{max-width:1280px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,107,0,.15);border:1px solid rgba(255,107,0,.35);color:#ffaa66;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:20px}
+.hero h2{font-family:var(--serif);font-size:42px;font-weight:700;line-height:1.25;margin-bottom:20px}
+.hero h2 span{color:#ffcc66}
+.hero p{font-size:16px;opacity:.85;line-height:1.8;margin-bottom:32px;max-width:520px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-hero-primary{background:var(--orange);color:#fff;padding:13px 28px;border-radius:5px;font-size:14px;font-weight:700;text-decoration:none;transition:all .2s;border:none;cursor:pointer}
+.btn-hero-primary:hover{background:#e05f00;transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,107,0,.4)}
+.btn-hero-outline{background:transparent;color:#fff;padding:13px 28px;border-radius:5px;font-size:14px;font-weight:600;text-decoration:none;border:2px solid rgba(255,255,255,.4);transition:all .2s}
+.btn-hero-outline:hover{border-color:#fff;background:rgba(255,255,255,.1)}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px;padding-top:32px;border-top:1px solid rgba(255,255,255,.15)}
+.hero-stat .val{font-size:32px;font-weight:800;color:#ffcc66;line-height:1}
+.hero-stat .lbl{font-size:12px;opacity:.7;margin-top:4px;letter-spacing:.3px}
+.hero-visual{display:flex;flex-direction:column;gap:12px}
+.hero-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px);transition:transform .3s}
+.hero-card:hover{transform:translateX(6px)}
+.hero-card-icon{font-size:28px;flex-shrink:0}
+.hero-card-text strong{display:block;font-size:14px;font-weight:700;margin-bottom:2px}
+.hero-card-text span{font-size:12px;opacity:.7}
+
+/* ── BREADCRUMB ── */
+.breadcrumb-bar{background:var(--gray-50);border-bottom:1px solid var(--gray-200);padding:10px 40px}
+.breadcrumb{max-width:1280px;margin:auto;font-size:13px;color:var(--gray-500)}
+.breadcrumb a{color:var(--blue);text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.breadcrumb span{margin:0 8px;color:var(--gray-400)}
+
+/* ── SECTIONS ── */
+section{padding:80px 40px}
+.section-inner{max-width:1280px;margin:auto}
+.section-label{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+.section-title{font-family:var(--serif);font-size:34px;font-weight:700;color:var(--gray-800);margin-bottom:16px}
+.section-sub{font-size:16px;color:var(--gray-500);max-width:600px;line-height:1.7}
+.section-header{margin-bottom:52px}
+.section-header.center{text-align:center}
+.section-header.center .section-sub{margin:0 auto}
+
+/* ── PROBLEM CARDS ── */
+.problems-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.problem-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:32px;transition:all .3s;position:relative;overflow:hidden}
+.problem-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--gray-200);transition:background .3s}
+.problem-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px)}
+.problem-card:hover::before{background:var(--orange)}
+.problem-icon{font-size:40px;margin-bottom:16px}
+.problem-card h3{font-size:17px;font-weight:700;color:var(--gray-800);margin-bottom:10px}
+.problem-card p{font-size:14px;color:var(--gray-500);line-height:1.7}
+.problem-card .solution{margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-100);font-size:13px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px}
+
+/* ── MISSION VISION ── */
+.mv-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.mv-card{border-radius:var(--radius-lg);padding:40px;position:relative;overflow:hidden}
+.mv-card.mission{background:linear-gradient(135deg,#001d4a,#003580);color:#fff}
+.mv-card.vision{background:linear-gradient(135deg,#0a4d2a,#1a7a3c);color:#fff}
+.mv-card .mv-icon{font-size:48px;margin-bottom:20px;opacity:.9}
+.mv-card h3{font-family:var(--serif);font-size:26px;font-weight:700;margin-bottom:16px}
+.mv-card p{font-size:15px;opacity:.85;line-height:1.8}
+.mv-list{list-style:none;margin-top:20px}
+.mv-list li{padding:8px 0;font-size:14px;opacity:.85;display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid rgba(255,255,255,.1)}
+.mv-list li:last-child{border-bottom:none}
+.mv-list li::before{content:'✦';flex-shrink:0;color:rgba(255,255,255,.5);margin-top:2px}
+
+/* ── FEATURES ── */
+.features-section{background:var(--gray-50)}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feature-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:28px;transition:all .3s;cursor:default}
+.feature-card:hover{box-shadow:var(--shadow-md);border-color:var(--blue-pale);transform:translateY(-2px)}
+.feature-card:hover .feature-icon-wrap{background:var(--blue);color:#fff}
+.feature-icon-wrap{width:56px;height:56px;border-radius:12px;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:18px;transition:all .3s}
+.feature-card h3{font-size:16px;font-weight:700;color:var(--gray-800);margin-bottom:8px}
+.feature-card p{font-size:13.5px;color:var(--gray-500);line-height:1.7}
+
+/* ── WORKFLOW ── */
+.workflow-section{background:#fff}
+.workflow-flow{display:flex;align-items:flex-start;justify-content:center;gap:0;margin-top:52px;flex-wrap:wrap}
+.workflow-step{flex:1;min-width:200px;max-width:260px;text-align:center;position:relative}
+.workflow-step:not(:last-child)::after{content:'→';position:absolute;top:36px;right:-20px;font-size:28px;color:var(--gray-300);font-weight:300}
+.step-circle{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px;position:relative}
+.step-circle.farmer{background:#e6f7ec}
+.step-circle.employee{background:var(--blue-pale)}
+.step-circle.admin{background:#fef3e2}
+.step-num{position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.workflow-step h3{font-size:16px;font-weight:700;color:var(--gray-800);margin-bottom:8px}
+.workflow-step p{font-size:13px;color:var(--gray-500);line-height:1.6}
+.workflow-step ul{list-style:none;margin-top:12px;text-align:left;display:inline-block}
+.workflow-step ul li{font-size:12.5px;color:var(--gray-600);padding:3px 0;display:flex;align-items:center;gap:6px}
+.workflow-step ul li::before{content:'•';color:var(--blue)}
+
+/* ── IMPACT ── */
+.impact-section{background:linear-gradient(135deg,#001d4a,#003580);color:#fff}
+.impact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:48px}
+.impact-card{text-align:center;padding:32px 20px;border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-lg);background:rgba(255,255,255,.05);backdrop-filter:blur(10px)}
+.impact-number{font-size:44px;font-weight:800;color:#ffcc66;line-height:1;margin-bottom:8px}
+.impact-label{font-size:13px;opacity:.75;letter-spacing:.3px}
+.impact-icon{font-size:32px;margin-bottom:12px;opacity:.8}
+
+/* ── TIMELINE ── */
+.timeline-section{background:var(--gray-50)}
+.timeline{position:relative;margin-top:48px}
+.timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--gray-200);transform:translateX(-50%)}
+.tl-item{display:grid;grid-template-columns:1fr 60px 1fr;gap:0;margin-bottom:40px;align-items:center}
+.tl-item:nth-child(even) .tl-content{grid-column:3;text-align:left}
+.tl-item:nth-child(even) .tl-empty{grid-column:1}
+.tl-content{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm)}
+.tl-content h4{font-size:15px;font-weight:700;color:var(--gray-800);margin-bottom:6px}
+.tl-content p{font-size:13px;color:var(--gray-500);line-height:1.6}
+.tl-dot{width:44px;height:44px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto;box-shadow:0 0 0 6px #fff,0 0 0 8px var(--gray-200);z-index:1;position:relative}
+.tl-year{font-size:11px;font-weight:700;color:#fff;margin-top:4px;text-align:center}
+
+/* ── FOOTER ── */
+footer{background:#0a0a1a;color:rgba(255,255,255,.7)}
+.footer-main{max-width:1280px;margin:auto;padding:60px 40px 40px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+.footer-brand h3{font-family:var(--serif);font-size:20px;color:#fff;margin-bottom:12px}
+.footer-brand p{font-size:13px;line-height:1.7;max-width:280px}
+.footer-col h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);margin-bottom:16px}
+.footer-col a{display:block;font-size:13px;color:rgba(255,255,255,.6);text-decoration:none;margin-bottom:9px;transition:color .2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding:20px 40px;max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-wrap:wrap;gap:8px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr}.hero-visual{display:none}
+  .problems-grid,.features-grid{grid-template-columns:1fr 1fr}
+  .impact-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-main{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  section{padding:56px 20px}
+  .hero{padding:60px 20px}
+  .hero h2{font-size:28px}
+  .problems-grid,.features-grid,.mv-grid{grid-template-columns:1fr}
+  .workflow-flow{flex-direction:column;align-items:center}
+  .workflow-step:not(:last-child)::after{content:'↓';right:auto;top:auto;bottom:-24px;left:50%;transform:translateX(-50%);position:relative;display:block}
+  .impact-grid{grid-template-columns:1fr 1fr}
+  .timeline::before{left:24px}
+  .tl-item{grid-template-columns:48px 1fr}
+  .header-nav{display:none}
+  .gov-strip{padding:6px 20px;font-size:10px}
+  .breadcrumb-bar{padding:8px 20px}
+  .footer-main{grid-template-columns:1fr;padding:40px 20px}
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.animate{opacity:0;animation:fadeUp .6s ease forwards}
+.animate.delay-1{animation-delay:.1s}.animate.delay-2{animation-delay:.2s}.animate.delay-3{animation-delay:.3s}
+.counter{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+<!-- GOV STRIP -->
+<div class="gov-strip">
+  <span>🇮🇳 Government of Andhra Pradesh &nbsp;|&nbsp; Department of Agriculture, Cooperation & Farmers Welfare</span>
+  <span>
+    <a href="#">Screen Reader</a>
+    <a href="#">Skip to Content</a>
+    <a href="#">हिन्दी</a>
+    <a href="#">తెలుగు</a>
+  </span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="header-logo">🌾</div>
+    <div class="header-title">
+      <h1>AgriConnect</h1>
+      <p>INTEGRATED FARMER SERVICES PORTAL · GOVT. OF ANDHRA PRADESH</p>
+    </div>
+    <nav class="header-nav">
+      <a href="../index.html">Home</a>
+      <a href="about.html" class="active">About</a>
+      <a href="schemes.html">Schemes</a>
+      <a href="crop-prices.html">Crop Prices</a>
+      <a href="helpdesk.html">Help Desk</a>
+      <a href="downloads.html">Downloads</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <a href="../index.html" class="btn-login">Login / Register</a>
+    </div>
+  </div>
+</header>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <div class="breadcrumb">
+    <a href="../index.html">Home</a><span>›</span>About AgriConnect
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge animate">🌾 Digital India Initiative · Est. 2024</div>
+      <h2 class="animate delay-1">Empowering Farmers<br>Through <span>Digital Governance</span></h2>
+      <p class="animate delay-2">AgriConnect is Andhra Pradesh's flagship e-governance platform that directly connects farmers to government procurement systems — eliminating middlemen, ensuring fair MSP pricing, and enabling transparent, accountable governance.</p>
+      <div class="hero-btns animate delay-3">
+        <a href="../index.html" class="btn-hero-primary">Access Portal</a>
+        <a href="schemes.html" class="btn-hero-outline">View Schemes</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="val counter" data-target="12480">0</div><div class="lbl">Registered Farmers</div></div>
+        <div class="hero-stat"><div class="val counter" data-target="48200">0</div><div class="lbl">Requests Processed</div></div>
+        <div class="hero-stat"><div class="val counter" data-target="98">0</div><div class="lbl">% Resolution Rate</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card"><div class="hero-card-icon">💰</div><div class="hero-card-text"><strong>₹48.2 Crore Disbursed</strong><span>Direct bank transfers to farmers</span></div></div>
+      <div class="hero-card"><div class="hero-card-icon">🚫</div><div class="hero-card-text"><strong>Zero Middlemen</strong><span>Farmer to government — direct</span></div></div>
+      <div class="hero-card"><div class="hero-card-icon">📊</div><div class="hero-card-text"><strong>Real-Time Tracking</strong><span>Every step visible to the farmer</span></div></div>
+      <div class="hero-card"><div class="hero-card-icon">🔐</div><div class="hero-card-text"><strong>Secure & Transparent</strong><span>JWT-secured, audit-logged system</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEMS SECTION -->
+<section>
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-label">Why AgriConnect Exists</div>
+      <div class="section-title">Problems We Are Solving</div>
+      <p class="section-sub">Indian farmers have long faced systemic exploitation. AgriConnect directly addresses these critical issues with technology and governance.</p>
+    </div>
+    <div class="problems-grid">
+      <div class="problem-card">
+        <div class="problem-icon">🕵️</div>
+        <h3>Middlemen Exploitation</h3>
+        <p>Farmers were forced to sell crops through agents and brokers who would purchase below MSP and resell at market rate, keeping profits that rightfully belonged to farmers.</p>
+        <div class="solution">✅ Solution: Direct government procurement at MSP</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">📋</div>
+        <h3>Manual & Opaque Processes</h3>
+        <p>Paper-based procurement was slow, error-prone, and opaque. Farmers had no visibility into the status of their requests, payments, or grievances.</p>
+        <div class="solution">✅ Solution: Full digital workflow with real-time tracking</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">⏳</div>
+        <h3>Delayed Payments</h3>
+        <p>Farmers waited months for payment after crop procurement. Multiple intermediaries in the payment chain caused delays and sometimes loss of funds entirely.</p>
+        <div class="solution">✅ Solution: Direct bank transfer upon procurement completion</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🗣️</div>
+        <h3>No Grievance Redressal</h3>
+        <p>Farmers had no formal mechanism to report exploitation, subsidy issues, or crop damage. Complaints were often dismissed or ignored at local level.</p>
+        <div class="solution">✅ Solution: Structured grievance system with escalation</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">💸</div>
+        <h3>MSP Non-Compliance</h3>
+        <p>Despite government mandated MSP, enforcement was poor. Without a digital trail, proving below-MSP transactions was nearly impossible for farmers.</p>
+        <div class="solution">✅ Solution: All transactions recorded at government-set MSP</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🌐</div>
+        <h3>Information Asymmetry</h3>
+        <p>Farmers lacked access to real-time crop prices, government schemes, and support information — keeping them dependent on local agents for even basic information.</p>
+        <div class="solution">✅ Solution: Open access MSP dashboard and scheme information</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION VISION -->
+<section style="background:var(--gray-50)">
+  <div class="section-inner">
+    <div class="section-header center">
+      <div class="section-label">Our Purpose</div>
+      <div class="section-title">Mission & Vision</div>
+    </div>
+    <div class="mv-grid">
+      <div class="mv-card mission">
+        <div class="mv-icon">🎯</div>
+        <h3>Our Mission</h3>
+        <p>To create a transparent, technology-driven agricultural procurement ecosystem that ensures every farmer in Andhra Pradesh receives fair, timely compensation for their produce — directly from the government, without any intermediary.</p>
+        <ul class="mv-list">
+          <li>Eliminate exploitative middlemen from the supply chain</li>
+          <li>Ensure 100% MSP compliance across all procurement</li>
+          <li>Digitize every step of farmer-government interaction</li>
+          <li>Empower farmers with information and agency</li>
+          <li>Build accountability into governance processes</li>
+        </ul>
+      </div>
+      <div class="mv-card vision">
+        <div class="mv-icon">🔭</div>
+        <h3>Our Vision</h3>
+        <p>A future where every farmer in Andhra Pradesh — regardless of literacy, location, or landholding — has equal, dignified access to government procurement, support, and information through a seamless digital platform.</p>
+        <ul class="mv-list">
+          <li>Andhra Pradesh as a model for digital agricultural governance</li>
+          <li>Complete elimination of cash-based procurement</li>
+          <li>Real-time visibility for every farmer transaction</li>
+          <li>Integrated welfare delivery through single platform</li>
+          <li>Scalable to all 26 districts and 13 million farmers</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="section-inner">
+    <div class="section-header center">
+      <div class="section-label">Platform Capabilities</div>
+      <div class="section-title">Key Features of AgriConnect</div>
+      <p class="section-sub">A comprehensive suite of tools designed for farmers, field employees, and district administrators.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-wrap">📤</div>
+        <h3>Direct Crop Procurement</h3>
+        <p>Farmers submit sell requests digitally with crop details, quantity, and photo proof. Requests are processed through a verified 3-tier approval workflow.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">🔍</div>
+        <h3>Real-Time Status Tracking</h3>
+        <p>Every stage — submission, verification, approval, scheduling, and payment — is visible to the farmer in real time with timestamp logs.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">📩</div>
+        <h3>Grievance Management</h3>
+        <p>Farmers can raise complaints, subsidy requests, and crop damage reports. Each case is tracked through Sachivalayam to Admin with full escalation support.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">💰</div>
+        <h3>Direct Bank Payments</h3>
+        <p>Once procurement is complete, payment is credited directly to the farmer's registered bank account with a transaction reference for full traceability.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">👥</div>
+        <h3>Role-Based Governance</h3>
+        <p>Three-tier access control — Farmer, Sachivalayam Employee, District Admin — ensures proper accountability and separation of duties in all workflows.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">📊</div>
+        <h3>Analytics & Reporting</h3>
+        <p>District administrators get real-time dashboards with procurement analytics, payment summaries, grievance resolution rates, and crop-wise data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="workflow-section">
+  <div class="section-inner">
+    <div class="section-header center">
+      <div class="section-label">How It Works</div>
+      <div class="section-title">The Governance Workflow</div>
+      <p class="section-sub">A structured three-tier process ensures accountability, transparency, and efficiency at every step.</p>
+    </div>
+    <div class="workflow-flow">
+      <div class="workflow-step">
+        <div class="step-circle farmer"><span>👨‍🌾</span><div class="step-num">1</div></div>
+        <h3>Farmer</h3>
+        <p>Initiates all requests and tracks outcomes</p>
+        <ul>
+          <li>Register on portal</li>
+          <li>Submit sell request</li>
+          <li>Upload crop image</li>
+          <li>Track request status</li>
+          <li>Raise grievances</li>
+          <li>Receive payment</li>
+        </ul>
+      </div>
+      <div class="workflow-step">
+        <div class="step-circle employee"><span>🧑‍💼</span><div class="step-num">2</div></div>
+        <h3>Sachivalayam Employee</h3>
+        <p>Field-level verification and first-line support</p>
+        <ul>
+          <li>Receive assigned requests</li>
+          <li>Field visit & verification</li>
+          <li>Verify or reject with reason</li>
+          <li>Handle service requests</li>
+          <li>Escalate to Admin</li>
+        </ul>
+      </div>
+      <div class="workflow-step">
+        <div class="step-circle admin"><span>🏛️</span><div class="step-num">3</div></div>
+        <h3>District Admin</h3>
+        <p>Final authority on all decisions and payments</p>
+        <ul>
+          <li>Review verified requests</li>
+          <li>Approve & schedule</li>
+          <li>Manage crop MSP prices</li>
+          <li>Process payments</li>
+          <li>Handle escalations</li>
+          <li>System analytics</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact-section">
+  <div class="section-inner">
+    <div class="section-header center">
+      <div class="section-label" style="color:#ffaa66">Measurable Outcomes</div>
+      <div class="section-title" style="color:#fff">Our Impact in Numbers</div>
+      <p class="section-sub" style="color:rgba(255,255,255,.75)">Since launch, AgriConnect has transformed agricultural governance across Andhra Pradesh.</p>
+    </div>
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="impact-icon">👨‍🌾</div>
+        <div class="impact-number counter" data-target="12480">0</div>
+        <div class="impact-label">Farmers Registered</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-icon">📋</div>
+        <div class="impact-number counter" data-target="48200">0</div>
+        <div class="impact-label">Requests Processed</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-icon">💰</div>
+        <div class="impact-number">₹48.2Cr</div>
+        <div class="impact-label">Payments Disbursed</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-icon">✅</div>
+        <div class="impact-number counter" data-target="98">0</div>
+        <div class="impact-label">% Resolution Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <h3>🌾 AgriConnect</h3>
+      <p>A Digital India initiative by the Department of Agriculture, Cooperation & Farmers Welfare, Government of Andhra Pradesh. Committed to farmer welfare through technology.</p>
+      <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+        <span style="background:rgba(255,255,255,.08);padding:4px 10px;border-radius:20px;font-size:11px">ISO 27001 Compliant</span>
+        <span style="background:rgba(255,255,255,.08);padding:4px 10px;border-radius:20px;font-size:11px">GSWAN Certified</span>
+        <span style="background:rgba(255,255,255,.08);padding:4px 10px;border-radius:20px;font-size:11px">NIC Hosted</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Portal</h4>
+      <a href="about.html">About</a>
+      <a href="schemes.html">Schemes</a>
+      <a href="crop-prices.html">Crop Prices</a>
+      <a href="helpdesk.html">Help Desk</a>
+      <a href="downloads.html">Downloads</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Farmers</h4>
+      <a href="../index.html">Register</a>
+      <a href="schemes.html">PM-KISAN</a>
+      <a href="schemes.html">Crop Insurance</a>
+      <a href="crop-prices.html">MSP Prices</a>
+      <a href="helpdesk.html">Raise Complaint</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#">Toll Free: 1800-425-1551</a>
+      <a href="#">feedback@agriconnect.ap.gov.in</a>
+      <a href="#">Mon–Sat: 9AM–6PM</a>
+      <a href="helpdesk.html">Help Center</a>
+      <a href="#">RTI Information</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 Government of Andhra Pradesh. All rights reserved.</span>
+    <span>Privacy Policy · Terms · Accessibility · Sitemap</span>
+  </div>
+</footer>
+
+<script>
+// Animated counters
+function animateCounters(){
+  document.querySelectorAll('.counter').forEach(el=>{
+    const target=parseInt(el.dataset.target);
+    let current=0;
+    const step=target/80;
+    const timer=setInterval(()=>{
+      current+=step;
+      if(current>=target){current=target;clearInterval(timer)}
+      el.textContent=Math.floor(current).toLocaleString('en-IN');
+    },20);
+  });
+}
+
+// Intersection observer for animations
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running';if(e.target.closest('.impact-section'))animateCounters()}});
+},{threshold:.1});
+document.querySelectorAll('.animate').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+document.querySelectorAll('.impact-section').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>

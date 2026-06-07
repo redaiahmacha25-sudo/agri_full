@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Dashboard — AgriConnect</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <div class="navbar-logo">🌾</div>
+    <div class="navbar-title">
+      <span class="main-title">AgriConnect</span>
+      <span class="sub-title">Sachivalayam Employee Portal · Govt. of Andhra Pradesh</span>
+    </div>
+  </div>
+  <div class="navbar-right">
+    <button class="sidebar-toggle" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;padding:8px;">☰</button>
+    <button class="notif-btn">🔔<span class="notif-badge">0</span></button>
+    <div class="user-menu">
+      <div class="user-avatar">E</div>
+      <div class="user-info">
+        <div class="user-name">Employee</div>
+        <div class="user-role">Sachivalayam</div>
+      </div>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#">👤 My Profile</a>
+        <a class="dropdown-item danger" id="logoutBtn">🚪 Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <ul class="sidebar-nav">
+      <li><a id="nav-dashboard" onclick="showSection('dashboard')" class="active"><span class="nav-icon">🏠</span> Dashboard</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Procurement</div>
+    <ul class="sidebar-nav">
+      <li><a id="nav-pending-sell" onclick="showSection('pending-sell')"><span class="nav-icon">⏳</span> Pending Verification <span class="nav-badge" id="pendingBadge">0</span></a></li>
+      <li><a id="nav-all-sell" onclick="showSection('all-sell')"><span class="nav-icon">📋</span> All Sell Requests</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Support</div>
+    <ul class="sidebar-nav">
+      <li><a id="nav-service-queue" onclick="showSection('service-queue')"><span class="nav-icon">📩</span> Service Queue</a></li>
+      <li><a id="nav-my-handled" onclick="showSection('my-handled')"><span class="nav-icon">✅</span> My Handled Cases</a></li>
+    </ul>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- DASHBOARD -->
+  <section id="section-dashboard">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Sachivalayam Portal</div>
+        <h1 id="empGreeting">Employee Dashboard</h1>
+      </div>
+      <div style="font-size:13px;color:var(--gray-500);" id="currentDate"></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon orange">⏳</div><div class="stat-info"><div class="stat-value" id="stat-pending">—</div><div class="stat-label">Pending Verifications</div></div></div>
+      <div class="stat-card"><div class="stat-icon blue">✔</div><div class="stat-info"><div class="stat-value" id="stat-verified">—</div><div class="stat-label">Verified by Me</div></div></div>
+      <div class="stat-card"><div class="stat-icon purple">📩</div><div class="stat-info"><div class="stat-value" id="stat-service">—</div><div class="stat-label">Service Cases Assigned</div></div></div>
+      <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-info"><div class="stat-value" id="stat-resolved">—</div><div class="stat-label">Cases Resolved</div></div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:8px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔴 Pending Sell Requests (Requires Action)</div>
+          <button class="btn btn-outline btn-sm" onclick="showSection('pending-sell')">View All</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Ref #</th><th>Farmer</th><th>Crop</th><th>Qty</th><th>Village</th><th>Submitted</th><th>Action</th></tr></thead>
+            <tbody id="dashPendingBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Verification Stats</div></div>
+        <div class="card-body"><div class="chart-container"><canvas id="verifyChart"></canvas></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PENDING SELL REQUESTS -->
+  <section id="section-pending-sell" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Sachivalayam Portal / Pending Verification</div>
+        <h1>Pending Sell Requests</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Requests Awaiting Verification</div>
+        <div class="filter-bar">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="form-control" placeholder="Search farmer/crop..." oninput="filterPendingSell(this.value)" id="pendingSearch">
+          </div>
+        </div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Ref #</th><th>Farmer</th><th>Phone</th><th>Crop</th><th>Quantity</th><th>Village</th><th>Submitted</th><th>Actions</th></tr></thead>
+          <tbody id="pendingSellBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALL SELL REQUESTS -->
+  <section id="section-all-sell" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Sachivalayam Portal / All Sell Requests</div>
+        <h1>All Sell Requests</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="filter-bar">
+          <select id="allSellStatusFilter" class="form-control" onchange="loadAllSellRequests()">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="verified">Verified</option>
+            <option value="rejected">Rejected</option>
+            <option value="approved">Approved</option>
+            <option value="payment_done">Payment Done</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Ref #</th><th>Farmer</th><th>Crop</th><th>Quantity</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead>
+          <tbody id="allSellBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE QUEUE -->
+  <section id="section-service-queue" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Sachivalayam Portal / Service Queue</div>
+        <h1>Service Request Queue</h1>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Pending & Assigned Service Requests</div>
+        <div class="filter-bar">
+          <select id="serviceQueueFilter" class="form-control" onchange="loadServiceQueue()">
+            <option value="">All</option>
+            <option value="pending">Pending</option>
+            <option value="in_progress">In Progress</option>
+            <option value="escalated">Escalated</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Ref #</th><th>Farmer</th><th>Type</th><th>Subject</th><th>Priority</th><th>Status</th><th>Submitted</th><th>Actions</th></tr></thead>
+          <tbody id="serviceQueueBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- MY HANDLED -->
+  <section id="section-my-handled" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Sachivalayam Portal / My Cases</div>
+        <h1>My Handled Cases</h1>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Verified Sell Requests</div></div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Ref</th><th>Farmer</th><th>Crop</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody id="myVerifiedBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Resolved Service Requests</div></div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Ref</th><th>Farmer</th><th>Type</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody id="myServiceBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- VERIFY MODAL -->
+<div class="modal-overlay" id="verifyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="verifyModalTitle">Verify Sell Request</div>
+      <button class="modal-close" onclick="UI.hideModal('verifyModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="verifyRequestInfo" style="background:var(--gray-50);border-radius:8px;padding:16px;margin-bottom:20px;"></div>
+      <div class="form-group">
+        <label class="form-label">Your Decision <span class="required">*</span></label>
+        <div style="display:flex;gap:12px;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gov-green);">
+            <input type="radio" name="verifyAction" value="verify" style="accent-color:var(--gov-green);"> ✅ Verify & Forward
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gov-red);">
+            <input type="radio" name="verifyAction" value="reject" style="accent-color:var(--gov-red);"> ✖ Reject
+          </label>
+        </div>
+      </div>
+      <div class="form-group" id="rejectionReasonGroup" style="display:none;">
+        <label class="form-label">Rejection Reason <span class="required">*</span></label>
+        <textarea id="rejectionReason" class="form-control" placeholder="Please provide a clear reason for rejection..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Remarks / Notes</label>
+        <textarea id="verifyRemarks" class="form-control" placeholder="Optional field observation notes..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="UI.hideModal('verifyModal')">Cancel</button>
+      <button class="btn btn-primary" id="submitVerifyBtn" onclick="submitVerification()">Submit Decision</button>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICE ACTION MODAL -->
+<div class="modal-overlay" id="serviceModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Handle Service Request</div>
+      <button class="modal-close" onclick="UI.hideModal('serviceModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="serviceRequestInfo" style="background:var(--gray-50);border-radius:8px;padding:16px;margin-bottom:20px;"></div>
+      <div class="form-group">
+        <label class="form-label">Action <span class="required">*</span></label>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gov-blue);">
+            <input type="radio" name="serviceAction" value="accept"> 🔄 Accept & Process
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gov-green);">
+            <input type="radio" name="serviceAction" value="resolve"> ✅ Resolve
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gov-yellow);">
+            <input type="radio" name="serviceAction" value="escalate"> ⬆ Escalate to Admin
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gov-red);">
+            <input type="radio" name="serviceAction" value="reject"> ✖ Reject
+          </label>
+        </div>
+      </div>
+      <div class="form-group" id="serviceReasonGroup">
+        <label class="form-label" id="serviceReasonLabel">Notes / Reason</label>
+        <textarea id="serviceReason" class="form-control" placeholder="Provide resolution notes, escalation reason, or rejection reason..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Internal Remark</label>
+        <textarea id="serviceRemark" class="form-control" placeholder="Optional internal note visible to staff..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="UI.hideModal('serviceModal')">Cancel</button>
+      <button class="btn btn-primary" id="submitServiceBtn" onclick="submitServiceAction()">Submit Action</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="sellDetailModal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <div class="modal-title">Sell Request Details</div>
+      <button class="modal-close" onclick="UI.hideModal('sellDetailModal')">×</button>
+    </div>
+    <div class="modal-body" id="sellDetailBody"></div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+<script src="../js/api.js"></script>
+<script>
+if (!Auth.requireAuth() || !Auth.requireRole('employee')) {}
+UI.initNavbar();
+
+const user = Api.getUser();
+let currentVerifyId = null, currentServiceId = null;
+let allPendingSell = [];
+
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+function showSection(name) {
+  document.querySelectorAll('main section').forEach(s => s.style.display = 'none');
+  document.getElementById(`section-${name}`).style.display = '';
+  document.querySelectorAll('.sidebar-nav li a').forEach(a => a.classList.remove('active'));
+  document.getElementById(`nav-${name}`)?.classList.add('active');
+  if (name === 'dashboard') loadDashboard();
+  else if (name === 'pending-sell') loadPendingSell();
+  else if (name === 'all-sell') loadAllSellRequests();
+  else if (name === 'service-queue') loadServiceQueue();
+  else if (name === 'my-handled') loadMyHandled();
+}
+
+async function loadDashboard() {
+  if (user) document.getElementById('empGreeting').textContent = `Welcome, ${user.name}`;
+  const res = await Api.get('/dashboard/employee/stats');
+  if (!res.success) return;
+  const s = res.stats;
+  document.getElementById('stat-pending').textContent = s.pending;
+  document.getElementById('stat-verified').textContent = s.verified;
+  document.getElementById('stat-service').textContent = s.serviceAssigned;
+  document.getElementById('stat-resolved').textContent = s.serviceResolved;
+  document.getElementById('pendingBadge').textContent = s.pending;
+
+  // Pending table
+  const tb = document.getElementById('dashPendingBody');
+  if (!res.recentSell.length) {
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty-state" style="padding:30px;"><div class="empty-icon">✅</div><h3>All clear!</h3><p>No pending verifications.</p></div></td></tr>';
+  } else {
+    tb.innerHTML = res.recentSell.map(r => `
+      <tr>
+        <td><code style="font-size:11px">AGR-${String(r.id).padStart(4,'0')}</code></td>
+        <td>${r.farmer_name}</td>
+        <td>${r.crop_name}</td>
+        <td>${parseFloat(r.quantity).toFixed(2)} qtl</td>
+        <td>${r.village || '—'}</td>
+        <td>${UI.formatDate(r.created_at)}</td>
+        <td><button class="btn btn-primary btn-sm" onclick="openVerifyModal(${r.id},'${r.farmer_name}','${r.crop_name}',${r.quantity},'${r.village||''}')">Verify</button></td>
+      </tr>`).join('');
+  }
+
+  // Chart
+  const ctx = document.getElementById('verifyChart')?.getContext('2d');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Pending', 'Verified by Me', 'Cases Assigned', 'Cases Resolved'],
+        datasets: [{ data: [s.pending, s.verified, s.serviceAssigned, s.serviceResolved],
+          backgroundColor: ['#f39c12','#003580','#8e44ad','#1a7a3c'], borderRadius: 4 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+      }
+    });
+  }
+}
+
+async function loadPendingSell() {
+  const res = await Api.get('/sell-requests');
+  if (res.success) {
+    allPendingSell = res.requests.filter(r => r.status === 'pending');
+    renderPendingSell(allPendingSell);
+  }
+}
+
+function filterPendingSell(q) {
+  const filtered = allPendingSell.filter(r =>
+    r.farmer_name.toLowerCase().includes(q.toLowerCase()) ||
+    r.crop_name.toLowerCase().includes(q.toLowerCase())
+  );
+  renderPendingSell(filtered);
+}
+
+function renderPendingSell(data) {
+  const tb = document.getElementById('pendingSellBody');
+  if (!data.length) {
+    tb.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">✅</div><h3>No pending requests</h3><p>All requests have been processed.</p></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = data.map(r => `
+    <tr>
+      <td><code style="font-size:11px">AGR-${String(r.id).padStart(4,'0')}</code></td>
+      <td><strong>${r.farmer_name}</strong></td>
+      <td>${r.farmer_phone}</td>
+      <td>${r.crop_name}</td>
+      <td>${parseFloat(r.quantity).toFixed(2)} qtl</td>
+      <td>${r.farmer_village || r.village || '—'}</td>
+      <td>${UI.formatDate(r.created_at)}</td>
+      <td style="display:flex;gap:6px;">
+        <button class="btn btn-outline btn-sm" onclick="viewSellDetail(${r.id})">View</button>
+        <button class="btn btn-primary btn-sm" onclick="openVerifyModal(${r.id},'${r.farmer_name}','${r.crop_name}',${r.quantity},'${r.village||r.farmer_village||''}')">Verify</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function loadAllSellRequests() {
+  const status = document.getElementById('allSellStatusFilter').value;
+  const res = await Api.get('/sell-requests');
+  if (res.success) {
+    let data = res.requests;
+    if (status) data = data.filter(r => r.status === status);
+    const tb = document.getElementById('allSellBody');
+    if (!data.length) {
+      tb.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><h3>No requests found</h3></div></td></tr>';
+      return;
+    }
+    tb.innerHTML = data.map(r => `
+      <tr>
+        <td><code style="font-size:11px">AGR-${String(r.id).padStart(4,'0')}</code></td>
+        <td>${r.farmer_name}</td>
+        <td>${r.crop_name}</td>
+        <td>${parseFloat(r.quantity).toFixed(2)} qtl</td>
+        <td>${UI.badge(r.status)}</td>
+        <td>${UI.formatDate(r.created_at)}</td>
+        <td><button class="btn btn-outline btn-sm" onclick="viewSellDetail(${r.id})">View</button>
+          ${r.status === 'pending' ? `<button class="btn btn-primary btn-sm" style="margin-left:4px;" onclick="openVerifyModal(${r.id},'${r.farmer_name}','${r.crop_name}',${r.quantity},'')">Verify</button>` : ''}
+        </td>
+      </tr>`).join('');
+  }
+}
+
+async function loadServiceQueue() {
+  const statusFilter = document.getElementById('serviceQueueFilter').value;
+  const res = await Api.get('/service-requests');
+  if (res.success) {
+    let data = res.requests;
+    if (statusFilter) data = data.filter(r => r.status === statusFilter);
+    else data = data.filter(r => ['pending','in_progress','escalated'].includes(r.status));
+    const tb = document.getElementById('serviceQueueBody');
+    const typeLabels = { subsidy:'Subsidy', complaint:'Complaint', crop_damage:'Crop Damage', loan:'Loan', scheme:'Scheme', other:'Other' };
+    const prioColors = { low:'badge-verified', medium:'badge-pending', high:'badge-escalated', urgent:'badge-rejected' };
+    if (!data.length) {
+      tb.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📩</div><h3>Queue is empty</h3><p>No active service requests.</p></div></td></tr>';
+      return;
+    }
+    tb.innerHTML = data.map(r => `
+      <tr>
+        <td><code style="font-size:11px">SVC-${String(r.id).padStart(4,'0')}</code></td>
+        <td>${r.farmer_name}</td>
+        <td>${typeLabels[r.type] || r.type}</td>
+        <td>${r.subject}</td>
+        <td><span class="badge ${prioColors[r.priority]}">${r.priority}</span></td>
+        <td>${UI.badge(r.status)}</td>
+        <td>${UI.formatDate(r.created_at)}</td>
+        <td><button class="btn btn-primary btn-sm" onclick="openServiceModal(${r.id},'${r.subject}','${r.type}','${r.farmer_name}','${r.status}')">Handle</button></td>
+      </tr>`).join('');
+  }
+}
+
+async function loadMyHandled() {
+  const res = await Api.get('/sell-requests');
+  if (res.success) {
+    const myVerified = res.requests.filter(r => r.verified_by == user.id);
+    const tb = document.getElementById('myVerifiedBody');
+    tb.innerHTML = myVerified.length ? myVerified.map(r => `
+      <tr>
+        <td><code style="font-size:11px">AGR-${String(r.id).padStart(4,'0')}</code></td>
+        <td>${r.farmer_name}</td>
+        <td>${r.crop_name}</td>
+        <td>${UI.badge(r.status)}</td>
+        <td>${UI.formatDate(r.verified_at)}</td>
+      </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-500);">No records</td></tr>';
+  }
+  const sres = await Api.get('/service-requests');
+  if (sres.success) {
+    const myHandled = sres.requests.filter(r => r.handled_by == user.id);
+    const stb = document.getElementById('myServiceBody');
+    const typeLabels = { subsidy:'Subsidy', complaint:'Complaint', crop_damage:'Crop Damage', loan:'Loan', scheme:'Scheme', other:'Other' };
+    stb.innerHTML = myHandled.length ? myHandled.map(r => `
+      <tr>
+        <td><code style="font-size:11px">SVC-${String(r.id).padStart(4,'0')}</code></td>
+        <td>${r.farmer_name}</td>
+        <td>${typeLabels[r.type] || r.type}</td>
+        <td>${UI.badge(r.status)}</td>
+        <td>${UI.formatDate(r.assigned_at)}</td>
+      </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-500);">No records</td></tr>';
+  }
+}
+
+function openVerifyModal(id, farmerName, cropName, quantity, village) {
+  currentVerifyId = id;
+  document.getElementById('verifyModalTitle').textContent = `Verify: AGR-${String(id).padStart(4,'0')}`;
+  document.getElementById('verifyRequestInfo').innerHTML = `
+    <div class="detail-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="detail-item"><div class="detail-label">Farmer</div><div class="detail-value">${farmerName}</div></div>
+      <div class="detail-item"><div class="detail-label">Crop</div><div class="detail-value">${cropName}</div></div>
+      <div class="detail-item"><div class="detail-label">Quantity</div><div class="detail-value">${parseFloat(quantity).toFixed(2)} Quintals</div></div>
+      <div class="detail-item"><div class="detail-label">Village</div><div class="detail-value">${village || '—'}</div></div>
+    </div>`;
+  document.querySelectorAll('input[name="verifyAction"]').forEach(r => r.checked = false);
+  document.getElementById('rejectionReason').value = '';
+  document.getElementById('verifyRemarks').value = '';
+  document.getElementById('rejectionReasonGroup').style.display = 'none';
+  UI.showModal('verifyModal');
+
+  document.querySelectorAll('input[name="verifyAction"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.getElementById('rejectionReasonGroup').style.display = radio.value === 'reject' ? '' : 'none';
+    });
+  });
+}
+
+async function submitVerification() {
+  const action = document.querySelector('input[name="verifyAction"]:checked')?.value;
+  const rejection_reason = document.getElementById('rejectionReason').value.trim();
+  const remarks = document.getElementById('verifyRemarks').value.trim();
+  if (!action) { UI.toast('Please select a decision.', 'error'); return; }
+  if (action === 'reject' && !rejection_reason) { UI.toast('Please provide rejection reason.', 'error'); return; }
+  const btn = document.getElementById('submitVerifyBtn');
+  UI.loading(btn, true);
+  const res = await Api.put(`/sell-requests/${currentVerifyId}/verify`, { action, rejection_reason, remarks });
+  UI.loading(btn, false);
+  if (res.success) {
+    UI.toast(`Request ${action === 'verify' ? 'verified' : 'rejected'} successfully.`, 'success');
+    UI.hideModal('verifyModal');
+    loadDashboard();
+  } else {
+    UI.toast(res.message, 'error');
+  }
+}
+
+function openServiceModal(id, subject, type, farmerName, status) {
+  currentServiceId = id;
+  document.getElementById('serviceRequestInfo').innerHTML = `
+    <div class="detail-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="detail-item"><div class="detail-label">Farmer</div><div class="detail-value">${farmerName}</div></div>
+      <div class="detail-item"><div class="detail-label">Type</div><div class="detail-value">${type}</div></div>
+      <div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Subject</div><div class="detail-value">${subject}</div></div>
+      <div class="detail-item"><div class="detail-label">Current Status</div><div class="detail-value">${UI.badge(status)}</div></div>
+    </div>`;
+  document.querySelectorAll('input[name="serviceAction"]').forEach(r => r.checked = false);
+  document.getElementById('serviceReason').value = '';
+  document.getElementById('serviceRemark').value = '';
+  UI.showModal('serviceModal');
+}
+
+async function submitServiceAction() {
+  const action = document.querySelector('input[name="serviceAction"]:checked')?.value;
+  const resolution_notes = document.getElementById('serviceReason').value.trim();
+  const remarks = document.getElementById('serviceRemark').value.trim();
+  if (!action) { UI.toast('Please select an action.', 'error'); return; }
+  const btn = document.getElementById('submitServiceBtn');
+  UI.loading(btn, true);
+  const res = await Api.put(`/service-requests/${currentServiceId}/update`, {
+    action, resolution_notes, escalation_reason: resolution_notes, remarks
+  });
+  UI.loading(btn, false);
+  if (res.success) {
+    UI.toast('Action submitted successfully.', 'success');
+    UI.hideModal('serviceModal');
+    loadServiceQueue();
+  } else {
+    UI.toast(res.message, 'error');
+  }
+}
+
+async function viewSellDetail(id) {
+  UI.showModal('sellDetailModal');
+  document.getElementById('sellDetailBody').innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+  const res = await Api.get(`/sell-requests/${id}`);
+  if (res.success) {
+    const r = res.request;
+    document.getElementById('sellDetailBody').innerHTML = `
+      <div style="margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+          <div style="font-size:20px;font-weight:700;">AGR-${String(r.id).padStart(4,'0')}</div>
+          ${UI.badge(r.status)}
+        </div>
+        <div class="detail-grid">
+          <div class="detail-item"><div class="detail-label">Farmer</div><div class="detail-value">${r.farmer_name}</div></div>
+          <div class="detail-item"><div class="detail-label">Phone</div><div class="detail-value">${r.farmer_phone}</div></div>
+          <div class="detail-item"><div class="detail-label">Crop</div><div class="detail-value">${r.crop_name}</div></div>
+          <div class="detail-item"><div class="detail-label">Quantity</div><div class="detail-value">${parseFloat(r.quantity).toFixed(2)} Quintals</div></div>
+          <div class="detail-item"><div class="detail-label">MSP Rate</div><div class="detail-value">₹${parseFloat(r.govt_price).toLocaleString('en-IN')}/qtl</div></div>
+          <div class="detail-item"><div class="detail-label">Estimated Amount</div><div class="detail-value" style="color:var(--gov-green);font-weight:700;">₹${(parseFloat(r.quantity)*parseFloat(r.govt_price)).toLocaleString('en-IN',{minimumFractionDigits:2})}</div></div>
+          <div class="detail-item"><div class="detail-label">Village</div><div class="detail-value">${r.village || r.farmer_village || '—'}</div></div>
+          <div class="detail-item"><div class="detail-label">Harvest Date</div><div class="detail-value">${UI.formatDate(r.harvest_date)}</div></div>
+          <div class="detail-item"><div class="detail-label">Submitted</div><div class="detail-value">${UI.formatDateTime(r.created_at)}</div></div>
+          <div class="detail-item"><div class="detail-label">Verified By</div><div class="detail-value">${r.verifier_name || '—'}</div></div>
+          ${r.rejection_reason ? `<div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Rejection Reason</div><div class="detail-value" style="color:var(--gov-red);">${r.rejection_reason}</div></div>` : ''}
+          ${r.notes ? `<div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Farmer Notes</div><div class="detail-value">${r.notes}</div></div>` : ''}
+        </div>
+        ${r.image_url ? `<div style="margin-top:16px;"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--gray-400);margin-bottom:6px;">Crop Image</div><img src="http://localhost:5000${r.image_url}" style="max-width:100%;border-radius:8px;border:1px solid var(--gray-200);" onerror="this.style.display='none'"></div>` : ''}
+      </div>
+      ${res.remarks.length ? `<div style="border-top:1px solid var(--gray-100);padding-top:16px;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Activity Log</div>
+        <div class="timeline">${res.remarks.map(rm => `<div class="timeline-item"><div class="timeline-text">${rm.message}</div><div class="timeline-time">${rm.author} · ${UI.formatDateTime(rm.created_at)}</div></div>`).join('')}</div>
+      </div>` : ''}
+      ${r.status === 'pending' ? `<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-100);"><button class="btn btn-primary" onclick="UI.hideModal('sellDetailModal');openVerifyModal(${r.id},'${r.farmer_name}','${r.crop_name}',${r.quantity},'${r.village||''}')">Take Action</button></div>` : ''}`;
+  }
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
