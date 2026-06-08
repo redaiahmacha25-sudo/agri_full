@@ -25,12 +25,13 @@ app.get('/api/health', (req, res) => {
 });
 app.get('/', (req, res) => {
   res.json({
-    success: true, message: 'AgriConnect Backend Running'});
-    
+    success: true,
+    message: 'AgriConnect Backend Running'
+  });
+});
+
 app.get('/test', (req, res) => {
   res.json({ ok: true });
-});
-    
 });
 // Error handling
 app.use(notFound);
