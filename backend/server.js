@@ -1,3 +1,4 @@
+console.log("🔥 SERVER ACTIVE - NEW CODE RUNNING");
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -5,7 +6,6 @@ const path = require('path');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 
 const app = express();
-
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -18,6 +18,7 @@ app.use('/api/sell-requests', require('./routes/sellRequests'));
 app.use('/api/service-requests', require('./routes/serviceRequests'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'AgriConnect API is running', timestamp: new Date().toISOString() });
@@ -26,10 +27,15 @@ app.get('/', (req, res) => {
   res.json({
     success: true, message: 'AgriConnect Backend Running'});
     
+app.get('/test', (req, res) => {
+  res.json({ ok: true });
+});
+    
 });
 // Error handling
 app.use(notFound);
 app.use(errorHandler);
+console.log("🔥 BACKEND VERSION 1.0 LOADED");
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
