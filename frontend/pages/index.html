@@ -458,6 +458,8 @@ async function doLogin() {
   if (!phone || !password) { errEl.textContent = 'Please enter phone and password.'; errEl.style.display = 'block'; return; }
   btn.textContent = 'Signing in...'; btn.disabled = true;
   try {
+    console.log("API_BASE =", API_BASE);
+       console.log("LOGIN URL =", `${API_BASE}/auth/login`);
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
