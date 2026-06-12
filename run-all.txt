@@ -1,8 +1,8 @@
 Run instructions (Windows):
 1) Double-click agri_full\run-all.bat
-2) Open frontend in browser: http://localhost:5500/
+2) Open frontend in browser: https://agri-full.onrender.com/api
 Notes:
 - Backend listens on port 5000 (/api/*).
-- Frontend code currently points to http://localhost:3001/api, so login/dashboard API calls may fail until that mismatch is fixed.
+- Frontend code currently points to https://agri-full.onrender.com/api, so login/dashboard API calls may fail until that mismatch is fixed.
 - Script assumes MySQL is already running and accessible with backend .env defaults.
 

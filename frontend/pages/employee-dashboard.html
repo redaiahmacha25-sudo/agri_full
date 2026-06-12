@@ -605,7 +605,7 @@ async function viewSellDetail(id) {
           ${r.rejection_reason ? `<div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Rejection Reason</div><div class="detail-value" style="color:var(--gov-red);">${r.rejection_reason}</div></div>` : ''}
           ${r.notes ? `<div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Farmer Notes</div><div class="detail-value">${r.notes}</div></div>` : ''}
         </div>
-        ${r.image_url ? `<div style="margin-top:16px;"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--gray-400);margin-bottom:6px;">Crop Image</div><img src="http://localhost:5000${r.image_url}" style="max-width:100%;border-radius:8px;border:1px solid var(--gray-200);" onerror="this.style.display='none'"></div>` : ''}
+        ${r.image_url ? `<div style="margin-top:16px;"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--gray-400);margin-bottom:6px;">Crop Image</div><img src="https://agri-full.onrender.com${r.image_url}" style="max-width:100%;border-radius:8px;border:1px solid var(--gray-200);" onerror="this.style.display='none'"></div>` : ''}
       </div>
       ${res.remarks.length ? `<div style="border-top:1px solid var(--gray-100);padding-top:16px;">
         <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Activity Log</div>

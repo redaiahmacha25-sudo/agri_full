@@ -20,12 +20,16 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/crops', require('./routes/crops'));
 app.use('/api/sell-requests', require('./routes/sellRequests'));
 app.use('/api/service-requests', require('./routes/serviceRequests'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+
+// Serve frontend static assets
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 
 // Health check
@@ -42,6 +46,13 @@ app.get('/', (req, res) => {
 app.get('/test', (req, res) => {
   res.json({ ok: true });
 });
+
+// Frontend fallback for SPA routes
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
 // Error handling
 app.use(notFound);
 app.use(errorHandler);
