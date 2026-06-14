@@ -28,6 +28,21 @@ app.use('/api/sell-requests', require('./routes/sellRequests'));
 app.use('/api/service-requests', require('./routes/serviceRequests'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 
+// TEMP DEBUG ROUTE
+app.get('/debug-db', (req, res) => {
+  res.json({
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    passwordLength: process.env.DB_PASSWORD?.length
+  });
+});
+
+// START SERVER
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
 // Serve frontend static assets
 app.use(express.static(path.join(__dirname, '../frontend')));
 

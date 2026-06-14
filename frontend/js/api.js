@@ -2,7 +2,7 @@
 // AGRICONNECT — API CLIENT
 // ================================================================
 
-const API_BASE =  "https://agri-full.onrender.com/api";
+const API_BASE =  "https://agri-full.onrender.com/api/auth/login";
 
 const Api = {
   getToken: () => localStorage.getItem('agri_token'),
