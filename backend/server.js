@@ -38,10 +38,6 @@ app.get('/debug-db', (req, res) => {
   });
 });
 
-// START SERVER
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 
 // Serve frontend static assets
 app.use(express.static(path.join(__dirname, '../frontend')));
