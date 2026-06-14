@@ -34,8 +34,35 @@ app.get('/debug-db', (req, res) => {
     host: process.env.DB_HOST,
     database: process.env.DB_NAME,
     user: process.env.DB_USER,
-    passwordLength: process.env.DB_PASSWORD?.length
+    passwordLength: process.env.DB_PASSWORD?.length || 0
   });
+});
+
+const mysql = require('mysql2/promise');
+
+app.get('/test-db', async (req, res) => {
+  try {
+    const conn = await mysql.createConnection({
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME
+    });
+
+    await conn.query('SELECT 1');
+    await conn.end();
+
+    res.json({
+      success: true,
+      message: 'DB connection successful'
+    });
+  } catch (err) {
+    res.json({
+      success: false,
+      error: err.message,
+      code: err.code
+    });
+  }
 });
 
 
