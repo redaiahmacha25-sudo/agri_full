@@ -2,15 +2,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/database');
 
+/* =========================
+   LOGIN
+========================= */
 const login = async (req, res, next) => {
   try {
-    const { phone, password } = req.body;
-
-    const cleanPhone = String(phone).trim();
-    const cleanPassword = String(password).trim();
-
-    // TEMP DEBUG: ensure received password exactly
-    console.log('[AUTH_DEBUG] raw password length=', String(password).length, 'clean length=', cleanPassword.length);
+    let { phone, password } = req.body;
 
     if (!phone || !password) {
       return res.status(400).json({
@@ -19,8 +16,16 @@ const login = async (req, res, next) => {
       });
     }
 
+    // CLEAN INPUTS
+    phone = String(phone).trim();
+    password = String(password).trim();
+
+    console.log('[LOGIN] phone:', phone);
+    console.log('[LOGIN] password length:', password.length);
+
+    // GET USER
     const [rows] = await db.query(
-      'SELECT * FROM users WHERE phone = ? AND is_active = 1',
+      'SELECT * FROM users WHERE phone = ?',
       [phone]
     );
 
@@ -33,15 +38,19 @@ const login = async (req, res, next) => {
 
     const user = rows[0];
 
+    // CHECK ACTIVE STATUS
+    if (user.is_active !== 1) {
+      return res.status(403).json({
+        success: false,
+        message: 'Account is inactive.'
+      });
+    }
+
+    // PASSWORD CHECK
     const valid = await bcrypt.compare(password, user.password_hash);
 
-    // TEMP DEBUG (remove after auth works)
-    console.log('[AUTH_DEBUG] login payload phone=', phone);
-    console.log('[AUTH_DEBUG] user found id=', user.id, 'role=', user.role);
-    console.log('[AUTH_DEBUG] password_hash(first20)=', String(user.password_hash).slice(0,20));
-    console.log('[AUTH_DEBUG] password received =', JSON.stringify(password));
-    console.log('[AUTH_DEBUG] bcrypt.compare result=', valid);
-    
+    console.log('[LOGIN] bcrypt result:', valid);
+
     if (!valid) {
       return res.status(401).json({
         success: false,
@@ -49,8 +58,7 @@ const login = async (req, res, next) => {
       });
     }
 
-    // MISSING BRACKET FIXED HERE
-
+    // JWT TOKEN
     const token = jwt.sign(
       {
         id: user.id,
@@ -59,14 +67,12 @@ const login = async (req, res, next) => {
         role: user.role
       },
       process.env.JWT_SECRET || 'agriconnect_secret',
-      {
-        expiresIn: process.env.JWT_EXPIRES_IN || '24h'
-      }
+      { expiresIn: '24h' }
     );
 
-    res.json({
+    return res.json({
       success: true,
-      message: 'Login successful.',
+      message: 'Login successful',
       token,
       user: {
         id: user.id,
@@ -83,9 +89,12 @@ const login = async (req, res, next) => {
   }
 };
 
+/* =========================
+   REGISTER
+========================= */
 const register = async (req, res, next) => {
   try {
-    const {
+    let {
       name,
       phone,
       password,
@@ -103,6 +112,11 @@ const register = async (req, res, next) => {
       });
     }
 
+    // CLEAN INPUTS
+    phone = String(phone).trim();
+    password = String(password).trim();
+
+    // CHECK EXISTING USER
     const [existing] = await db.query(
       'SELECT id FROM users WHERE phone = ?',
       [phone]
@@ -115,16 +129,18 @@ const register = async (req, res, next) => {
       });
     }
 
-    const hashedpassword = await bcrypt.hash(password, 10);
+    // HASH PASSWORD
+    const hashedPassword = await bcrypt.hash(password, 10);
 
+    // INSERT USER
     const [result] = await db.query(
       `INSERT INTO users 
-      (name, phone, password_hash, role, village, district, aadhar_number, bank_account, ifsc_code) 
-      VALUES (?, ?, ?, "farmer", ?, ?, ?, ?, ?)`,
+      (name, phone, password_hash, role, village, district, aadhar_number, bank_account, ifsc_code, is_active)
+      VALUES (?, ?, ?, 'farmer', ?, ?, ?, ?, ?, 1)`,
       [
         name,
         phone,
-        hashedpassword, // FIXED
+        hashedPassword,
         village || null,
         district || null,
         aadhar_number || null,
@@ -133,23 +149,49 @@ const register = async (req, res, next) => {
       ]
     );
 
-    res.status(201).json({ success: true, message: 'Registration successful. Please log in.', id: result.insertId });
-  } catch (err) { next(err); }
+    return res.status(201).json({
+      success: true,
+      message: 'Registration successful',
+      userId: result.insertId
+    });
+
+  } catch (err) {
+    next(err);
+  }
 };
 
+/* =========================
+   PROFILE
+========================= */
 const getProfile = async (req, res, next) => {
   try {
-    const [rows] = await db.query( 'SELECT id, name, phone, email, role, village, district, state, aadhar_number, bank_account, ifsc_code, created_at FROM users WHERE id = ?', [req.user.id] );
+    const [rows] = await db.query(
+      `SELECT id, name, phone, email, role, village, district, state,
+              aadhar_number, bank_account, ifsc_code, created_at
+       FROM users
+       WHERE id = ?`,
+      [req.user.id]
+    );
 
-    if (!rows.length) 
-      return res.status(404).json({ success: false,
-        message: 'User not found.' });
-    
+    if (!rows.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
 
-    res.json({
-      success: true, user: rows[0] });
+    return res.json({
+      success: true,
+      user: rows[0]
+    });
 
-  } catch (err) { next(err);}
+  } catch (err) {
+    next(err);
+  }
 };
 
-module.exports = {  login, register, getProfile };
+module.exports = {
+  login,
+  register,
+  getProfile
+};
