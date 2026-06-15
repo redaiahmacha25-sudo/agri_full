@@ -1,6 +1,5 @@
 const bcrypt = require('bcryptjs');
-
-const hash = '$2a$10$WGAwaofyR57z62v1BmP6sOmvPEMA3PCBOXt...'; // paste FULL hash from DB
+bcrypt.hash("Admin@123", 10).then(console.log);
 
 bcrypt.compare('Admin@123', hash)
   .then(result => console.log(result));
