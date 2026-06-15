@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriConnect — E-Governance Platform | Government of Andhra Pradesh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --gov-blue: #003580; --gov-orange: #FF6B00; --gov-green: #1a7a3c;
+    --white: #fff; --gray-50: #f8f9fb; --gray-100: #eef0f4;
+    --gray-300: #c4cad6; --gray-500: #6b7585; --gray-700: #2d3748; --gray-800: #1a202c;
+    --font-main: 'Noto Sans', sans-serif; --font-serif: 'Noto Serif', serif;
+  }
+  body { font-family: var(--font-main); background: var(--gray-50); min-height: 100vh; }
+
+  /* TOP STRIP */
+  .gov-top-strip {
+    background: #1a1a2e;
+    color: rgba(255,255,255,0.8);
+    padding: 6px 40px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    align-items: center;
+  }
+  .gov-top-strip span { display: flex; align-items: center; gap: 6px; }
+
+  /* HEADER */
+  header {
+    background: var(--gov-blue);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-height: 80px;
+    border-bottom: 4px solid var(--gov-orange);
+  }
+  .header-emblem {
+    width: 64px; height: 64px;
+    background: var(--white);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; flex-shrink: 0;
+  }
+  .header-title { color: white; flex: 1; }
+  .header-title h1 { font-family: var(--font-serif); font-size: 26px; font-weight: 700; }
+  .header-title p { font-size: 12px; opacity: 0.8; letter-spacing: 0.5px; margin-top: 2px; }
+  .header-right { display: flex; flex-direction: column; align-items: flex-end; color: rgba(255,255,255,0.8); font-size: 11px; gap: 4px; }
+
+  /* NAV */
+  nav {
+    background: #002060;
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+  }
+  nav a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+  }
+  nav a:hover, nav a.active { color: white; border-bottom-color: var(--gov-orange); background: rgba(255,255,255,0.05); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #003580 0%, #001f5b 60%, #002d80 100%);
+    color: white;
+    padding: 60px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '🌾';
+    position: absolute; right: 80px; top: 50%; transform: translateY(-50%);
+    font-size: 180px; opacity: 0.08;
+  }
+  .hero-content { max-width: 600px; position: relative; }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,107,0,0.2);
+    border: 1px solid rgba(255,107,0,0.4);
+    color: #ffaa66;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h2 { font-family: var(--font-serif); font-size: 36px; font-weight: 700; line-height: 1.3; margin-bottom: 16px; }
+  .hero p { font-size: 15px; opacity: 0.85; line-height: 1.7; margin-bottom: 28px; max-width: 480px; }
+  .hero-stats {
+    display: flex; gap: 32px; margin-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.15); padding-top: 24px;
+  }
+  .hero-stat .val { font-size: 26px; font-weight: 700; color: #ffcc66; }
+  .hero-stat .lbl { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+  /* MAIN LAYOUT */
+  .main { display: grid; grid-template-columns: 1fr 380px; gap: 32px; padding: 40px; max-width: 1200px; margin: 0 auto; }
+
+  /* FEATURES */
+  .features-section h2 { font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: var(--gray-800); margin-bottom: 20px; }
+  .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .feature-card {
+    background: white; border: 1px solid var(--gray-100);
+    border-radius: 8px; padding: 20px;
+    display: flex; align-items: flex-start; gap: 14px;
+    transition: box-shadow 0.2s;
+  }
+  .feature-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .feature-icon { font-size: 28px; flex-shrink: 0; }
+  .feature-title { font-size: 13px; font-weight: 700; color: var(--gray-800); margin-bottom: 4px; }
+  .feature-desc { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+
+  .workflow-section { background: white; border: 1px solid var(--gray-100); border-radius: 8px; padding: 24px; }
+  .workflow-section h3 { font-size: 14px; font-weight: 700; color: var(--gray-800); margin-bottom: 16px; }
+  .workflow-step {
+    display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px;
+  }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--gov-blue); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
+  }
+  .step-text { font-size: 13px; color: var(--gray-700); line-height: 1.5; }
+  .step-text strong { color: var(--gov-blue); }
+
+  /* LOGIN PANEL */
+  .login-panel {
+    background: white;
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    height: fit-content;
+    position: sticky;
+    top: 24px;
+  }
+  .login-panel-header {
+    background: var(--gov-blue);
+    color: white;
+    padding: 20px 24px;
+    text-align: center;
+  }
+  .login-panel-header h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .login-panel-header p { font-size: 12px; opacity: 0.8; }
+  .login-panel-body { padding: 24px; }
+  .login-tabs { display: flex; border-bottom: 1px solid var(--gray-100); margin-bottom: 20px; }
+  .login-tab {
+    flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600;
+    cursor: pointer; color: var(--gray-500); border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+  .login-tab.active { color: var(--gov-blue); border-bottom-color: var(--gov-blue); }
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+  .form-control {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--gray-300);
+    border-radius: 4px; font-size: 14px; font-family: var(--font-main);
+    outline: none; transition: border 0.2s, box-shadow 0.2s;
+  }
+  .form-control:focus { border-color: var(--gov-blue); box-shadow: 0 0 0 3px rgba(0,53,128,0.1); }
+  .btn-login {
+    width: 100%; padding: 11px; background: var(--gov-blue); color: white;
+    border: none; border-radius: 4px; font-size: 14px; font-weight: 700;
+    font-family: var(--font-main); cursor: pointer; transition: background 0.2s;
+  }
+  .btn-login:hover { background: #1a4f9c; }
+  .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+  .error-msg { background: #fde8e8; color: #c53030; padding: 10px 12px; border-radius: 4px; font-size: 13px; margin-bottom: 14px; display: none; }
+  .demo-accounts { background: var(--gray-50); border-radius: 8px; padding: 14px; margin-top: 16px; }
+  .demo-accounts h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); margin-bottom: 10px; }
+  .demo-account {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 0; border-bottom: 1px solid var(--gray-100); font-size: 12px;
+  }
+  .demo-account:last-child { border-bottom: none; }
+  .demo-account .role-badge {
+    padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700;
+  }
+  .admin-badge { background: #fde8e8; color: #c53030; }
+  .emp-badge { background: #e8f0ff; color: #003580; }
+  .farmer-badge { background: #e6f7ec; color: #1a7a3c; }
+  .demo-fill-btn {
+    background: none; border: 1px solid var(--gray-300); border-radius: 4px;
+    padding: 3px 8px; font-size: 11px; cursor: pointer; color: var(--gray-600);
+    transition: all 0.2s;
+  }
+  .demo-fill-btn:hover { border-color: var(--gov-blue); color: var(--gov-blue); }
+
+  /* REGISTER FORM */
+  .register-form { display: none; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* FOOTER */
+  footer {
+    background: #1a1a2e; color: rgba(255,255,255,0.7);
+    padding: 32px 40px; margin-top: 40px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 24px;
+  }
+  footer .footer-brand h3 { color: white; font-family: var(--font-serif); margin-bottom: 6px; }
+  footer .footer-brand p { font-size: 12px; line-height: 1.6; max-width: 300px; }
+  footer .footer-links h4 { color: white; font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+  footer .footer-links a { display: block; font-size: 12px; color: rgba(255,255,255,0.6); text-decoration: none; margin-bottom: 6px; }
+  footer .footer-links a:hover { color: white; }
+  .footer-bottom { background: #111120; padding: 12px 40px; font-size: 11px; color: rgba(255,255,255,0.4); text-align: center; }
+
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    header { padding: 16px 20px; }
+    .hero { padding: 40px 20px; }
+    .main { padding: 24px 20px; }
+    .hero::before { display: none; }
+    .hero-stats { flex-wrap: wrap; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- GOV STRIP -->
+<div class="gov-top-strip">
+  <span>🇮🇳 Government of Andhra Pradesh</span>
+  <span>Screen Reader Access | Skip to Content | Sitemap</span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-emblem">🌾</div>
+  <div class="header-title">
+    <h1>AgriConnect</h1>
+    <p>Department of Agriculture, Cooperation & Farmers Welfare · Government of Andhra Pradesh</p>
+  </div>
+  <div class="header-right">
+    <span>🌐 Integrated Farmer Services Portal</span>
+    <span>Version 2.1.0 | GSWAN Certified</span>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="active">Home</a>
+  <a href="pages/about.html">About</a>
+  <a href="pages/schemes.html">Schemes</a>
+  <a href="pages/crop-prices.html">Crop Prices</a>
+  <a href="pages/helpdesk.html">Help Desk</a>
+  <a href="pages/downloads.html">Downloads</a>
+  <a href="pages/contact.html">Contact</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">🚀 Digital India Initiative</div>
+    <h2>Direct. Transparent.<br>Farmer-First Procurement</h2>
+    <p>AgriConnect eliminates middlemen and connects farmers directly to government procurement centers. Transparent MSP-based pricing, real-time tracking, and direct bank payments.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="val">12,480+</div><div class="lbl">Registered Farmers</div></div>
+      <div class="hero-stat"><div class="val">₹48.2Cr</div><div class="lbl">Payments Disbursed</div></div>
+      <div class="hero-stat"><div class="val">98.2%</div><div class="lbl">Resolution Rate</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- LEFT: FEATURES + WORKFLOW -->
+  <div>
+    <div class="features-section">
+      <h2>Platform Features</h2>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">💰</div><div><div class="feature-title">MSP-Based Pricing</div><div class="feature-desc">All crop procurement at government Minimum Support Price — no middlemen, no price manipulation.</div></div></div>
+        <div class="feature-card"><div class="feature-icon">🔍</div><div><div class="feature-title">Real-Time Tracking</div><div class="feature-desc">Track your sell requests from submission through verification, approval, and payment.</div></div></div>
+        <div class="feature-card"><div class="feature-icon">📋</div><div><div class="feature-title">Grievance Redressal</div><div class="feature-desc">Submit complaints, subsidy requests, and crop damage reports with full lifecycle tracking.</div></div></div>
+        <div class="feature-card"><div class="feature-icon">🏦</div><div><div class="feature-title">Direct Bank Transfer</div><div class="feature-desc">Payment credited directly to your registered bank account. No cash. No delays.</div></div></div>
+        <div class="feature-card"><div class="feature-icon">🌐</div><div><div class="feature-title">Sachivalayam Integration</div><div class="feature-desc">Linked to local Sachivalayam employees for field verification and first-level support.</div></div></div>
+        <div class="feature-card"><div class="feature-icon">📱</div><div><div class="feature-title">Mobile Friendly</div><div class="feature-desc">Access from any device. Submit photos of your crop as proof of harvest directly from the field.</div></div></div>
+      </div>
+    </div>
+
+    <div class="workflow-section">
+      <h3>🔄 How the Procurement Workflow Works</h3>
+      <div class="workflow-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Farmer Registers & Submits</strong> — Log in and submit a sell request with crop type, quantity, and image proof.</div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Sachivalayam Verification</strong> — Local employee visits/reviews the request and marks it as Verified or Rejected with reason.</div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Admin Approval & Scheduling</strong> — District admin approves and schedules the procurement date and location.</div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Procurement & Payment</strong> — Government team arrives on scheduled date. Payment transferred directly to farmer's bank account.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: LOGIN PANEL -->
+  <div>
+    <div class="login-panel">
+      <div class="login-panel-header">
+        <h3>🔒 Secure Citizen Login</h3>
+        <p>Government of Andhra Pradesh — AgriConnect Portal</p>
+      </div>
+      <div class="login-panel-body">
+        <div class="login-tabs">
+          <div class="login-tab active" onclick="switchTab('login')">Sign In</div>
+          <div class="login-tab" onclick="switchTab('register')">Register</div>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div id="loginForm">
+          <div id="loginError" class="error-msg"></div>
+          <div class="form-group">
+            <label class="form-label">📱 Mobile Number (Registered)</label>
+            <input type="tel" id="loginPhone" class="form-control" placeholder="Enter 10-digit mobile number" maxlength="10">
+          </div>
+          <div class="form-group">
+            <label class="form-label">🔐 Password</label>
+            <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password">
+          </div>
+          <button class="btn-login" id="loginBtn" onclick="doLogin()">Sign In to Portal</button>
+
+          <div class="demo-accounts">
+            <h4>Demo Accounts (Password: Admin@123)</h4>
+            <div class="demo-account">
+              <span><span class="role-badge admin-badge">Admin</span> &nbsp; 9000000001</span>
+              <button class="demo-fill-btn" onclick="fillDemo('9000000001')">Use</button>
+            </div>
+            <div class="demo-account">
+              <span><span class="role-badge emp-badge">Employee</span> &nbsp; 9000000002</span>
+              <button class="demo-fill-btn" onclick="fillDemo('9000000002')">Use</button>
+            </div>
+            <div class="demo-account">
+              <span><span class="role-badge farmer-badge">Farmer</span> &nbsp; 9000000003</span>
+              <button class="demo-fill-btn" onclick="fillDemo('9000000003')">Use</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="registerForm" class="register-form">
+          <div id="regError" class="error-msg"></div>
+          <div id="regSuccess" style="display:none; background:#e6f7ec; color:#1a7a3c; padding:10px 12px; border-radius:4px; font-size:13px; margin-bottom:14px;"></div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" id="regName" class="form-control" placeholder="As per Aadhaar">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mobile Number *</label>
+              <input type="tel" id="regPhone" class="form-control" placeholder="10 digits" maxlength="10">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Password *</label>
+              <input type="password" id="regPassword" class="form-control" placeholder="Min 6 characters">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Village</label>
+              <input type="text" id="regVillage" class="form-control" placeholder="Your village">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">District</label>
+              <select id="regDistrict" class="form-control">
+                <option value="">Select District</option>
+                <option>Nellore</option><option>Guntur</option><option>Krishna</option>
+                <option>East Godavari</option><option>West Godavari</option><option>Kurnool</option>
+                <option>Kadapa</option><option>Anantapur</option><option>Chittoor</option>
+                <option>Visakhapatnam</option><option>Vizianagaram</option><option>Srikakulam</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Aadhaar Number</label>
+              <input type="text" id="regAadhar" class="form-control" placeholder="12-digit Aadhaar" maxlength="12">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Bank Account</label>
+              <input type="text" id="regBank" class="form-control" placeholder="Account number">
+            </div>
+            <div class="form-group">
+              <label class="form-label">IFSC Code</label>
+              <input type="text" id="regIFSC" class="form-control" placeholder="e.g. SBIN0001234">
+            </div>
+          </div>
+          <button class="btn-login" id="regBtn" onclick="doRegister()">Register as Farmer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <h3>🌾 AgriConnect</h3>
+    <p>A Digital India initiative by the Department of Agriculture, Cooperation & Farmers Welfare, Government of Andhra Pradesh.</p>
+  </div>
+  <div class="footer-links">
+    <h4>Quick Links</h4>
+    <a href="pages/schemes.html">PM-KISAN Scheme</a>
+    <a href="pages/schemes.html">Crop Insurance</a>
+    <a href="pages/schemes.html">Soil Health Card</a>
+    <a href="pages/schemes.html">Kisan Credit Card</a>
+  </div>
+  <div class="footer-links">
+    <h4>Help & Support</h4>
+    <a href="pages/downloads.html">User Manual</a>
+    <a href="pages/helpdesk.html">FAQ</a>
+    <a href="pages/contact.html">Toll Free: 1800-425-1551</a>
+    <a href="pages/contact.html">feedback@agriconnect.ap.gov.in</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  © 2024 Government of Andhra Pradesh. All rights reserved. | This website is best viewed in Chrome/Firefox | Last Updated: January 2025
+</div>
+
+<script>
+// Use same origin as the backend (prevents port mismatch when backend serves the frontend)
+const API_BASE = '';
+
+
+function switchTab(tab) {
+  document.querySelectorAll('.login-tab').forEach((t, i) => t.classList.toggle('active', (i === 0) === (tab === 'login')));
+  document.getElementById('loginForm').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+}
+
+function fillDemo(phone) {
+  document.getElementById('loginPhone').value = phone;
+  document.getElementById('loginPassword').value = 'Admin@123';
+}
+
+async function doLogin() {
+  const phone = document.getElementById('loginPhone').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+  errEl.style.display = 'none';
+  if (!phone || !password) { errEl.textContent = 'Please enter phone and password.'; errEl.style.display = 'block'; return; }
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  try {
+const res = await fetch(`/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, password })
+    });
+    const data = await res.json();
+    if (data.success) {
+      localStorage.setItem('agri_token', data.token);
+      localStorage.setItem('agri_user', JSON.stringify(data.user));
+      const roleMap = { admin: 'pages/admin-dashboard.html', employee: 'pages/employee-dashboard.html', farmer: 'pages/farmer-dashboard.html' };
+      window.location.href = roleMap[data.user.role] || 'pages/farmer-dashboard.html';
+    } else {
+      errEl.textContent = data.message || 'Login failed.';
+      errEl.style.display = 'block';
+    }
+  } catch (e) {
+    errEl.textContent = 'Cannot connect to server. Ensure backend is running.';
+    errEl.style.display = 'block';
+  }
+  btn.textContent = 'Sign In to Portal'; btn.disabled = false;
+}
+
+async function doRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const village = document.getElementById('regVillage').value.trim();
+  const district = document.getElementById('regDistrict').value;
+  const aadhar_number = document.getElementById('regAadhar').value.trim();
+  const bank_account = document.getElementById('regBank').value.trim();
+  const ifsc_code = document.getElementById('regIFSC').value.trim();
+  const errEl = document.getElementById('regError');
+  const succEl = document.getElementById('regSuccess');
+  const btn = document.getElementById('regBtn');
+  errEl.style.display = 'none'; succEl.style.display = 'none';
+  if (!name || !phone || !password) { errEl.textContent = 'Name, phone, and password are required.'; errEl.style.display = 'block'; return; }
+  btn.textContent = 'Registering...'; btn.disabled = true;
+  try {
+const res = await fetch(`/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone, password, village, district, aadhar_number, bank_account, ifsc_code })
+    });
+    const data = await res.json();
+    if (data.success) {
+      succEl.textContent = '✅ Registration successful! You can now sign in.';
+      succEl.style.display = 'block';
+      setTimeout(() => switchTab('login'), 2000);
+    } else {
+      errEl.textContent = data.message || 'Registration failed.';
+      errEl.style.display = 'block';
+    }
+  } catch (e) {
+    errEl.textContent = 'Cannot connect to server.';
+    errEl.style.display = 'block';
+  }
+  btn.textContent = 'Register as Farmer'; btn.disabled = false;
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') { const lf = document.getElementById('loginForm'); if (lf.style.display !== 'none') doLogin(); } });
+
+// Check if already logged in
+const token = localStorage.getItem('agri_token');
+const user = JSON.parse(localStorage.getItem('agri_user') || 'null');
+if (token && user) {
+  const roleMap = { admin: 'pages/admin-dashboard.html', employee: 'pages/employee-dashboard.html', farmer: 'pages/farmer-dashboard.html' };
+  window.location.href = roleMap[user.role];
+}
+</script>
+</body>
+</html>
