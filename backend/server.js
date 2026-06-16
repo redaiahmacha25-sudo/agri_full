@@ -85,6 +85,17 @@ app.get('/test', (req, res) => {
   res.json({ ok: true });
 });
 
+const dns = require('dns');
+
+app.get('/dns-test', (req, res) => {
+  dns.lookup('sql106.infinityfree.com', (err, address) => {
+    res.json({
+      error: err ? err.message : null,
+      address
+    });
+  });
+});
+
 // Frontend fallback for SPA routes
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) return next();

@@ -6,7 +6,7 @@ const pool = mysql.createPool({
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'freedb_sxwTaPw4',
+  database: process.env.DB_NAME || 'if0_42193963_agri_full',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
