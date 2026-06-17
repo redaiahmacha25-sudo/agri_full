@@ -1,23 +1,17 @@
-const mysql = require('mysql2/promise');
+const { Pool } = require('pg');
 require('dotenv').config();
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'if0_42193963_agri_full',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  charset: 'utf8mb4'
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
-// Test connection on startup
-pool.getConnection()
-  .then(conn => {
-    console.log('✅ Database connected successfully');
-    conn.release();
+// Test connection
+pool.query('SELECT NOW()')
+  .then(() => {
+    console.log('✅ Neon PostgreSQL connected successfully');
   })
   .catch(err => {
     console.error('❌ Database connection failed:', err.message);

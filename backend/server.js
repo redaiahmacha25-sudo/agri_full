@@ -87,11 +87,11 @@ app.get('/test', (req, res) => {
 
 const dns = require('dns');
 
-app.get('/dns-test', (req, res) => {
-  dns.lookup('sql106.infinityfree.com', (err, address) => {
+app.get('/dns-test', async (req, res) => {
+  dns.resolve4('sql106.infinityfree.com', (err, addresses) => {
     res.json({
-      error: err ? err.message : null,
-      address
+      error: err?.message,
+      addresses
     });
   });
 });
