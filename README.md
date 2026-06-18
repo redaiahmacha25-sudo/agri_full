@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # 🌾 AgriConnect — E-Governance Platform
 ### Government of Andhra Pradesh | Department of Agriculture
 
