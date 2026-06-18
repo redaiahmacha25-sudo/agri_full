@@ -47,11 +47,17 @@ const getSellRequestById = async (req, res, next) => {
 const createSellRequest = async (req, res, next) => {
   try {
     const { crop_id, quantity, village, harvest_date, notes, geo_lat, geo_lng } = req.body;
+    const [crop] = await db.query(
+  'SELECT govt_price FROM crops WHERE id = ?',
+  [crop_id]
+);
+const expected_amount =
+  Number(quantity) * Number(crop[0].govt_price);
     if (!crop_id || !quantity) return res.status(400).json({ success: false, message: 'Crop and quantity required.' });
     const image_url = req.file ? `/uploads/${req.file.filename}` : null;
     const [result] = await db.query(
-      'INSERT INTO sell_requests (farmer_id, crop_id, quantity, image_url, village, harvest_date, notes, geo_lat, geo_lng) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [req.user.id, crop_id, quantity, image_url, village || null, harvest_date || null, notes || null, geo_lat || null, geo_lng || null]
+      'INSERT INTO sell_requests (farmer_id, crop_id, quantity, image_url, village, harvest_date, notes, geo_lat, geo_lng, expected_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [req.user.id, crop_id, quantity, image_url, village || null, harvest_date || null, notes || null, geo_lat || null, geo_lng || null, expected_amount]
     );
     await db.query('INSERT INTO notifications (user_id, title, message, type) SELECT id, "New Sell Request", "A new sell request requires verification.", "info" FROM users WHERE role = "employee"');
     res.status(201).json({ success: true, message: 'Sell request submitted successfully.', id: result.insertId });
