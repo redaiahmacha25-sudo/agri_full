@@ -11,3 +11,4 @@ router.get('/announcements', authenticate, ctrl.getAnnouncements);
 router.get('/users', authenticate, authorize('admin'), ctrl.getUsers);
 
 module.exports = router;
+  

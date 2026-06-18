@@ -231,3 +231,4 @@ INSERT INTO announcements (title, content, target_role, created_by) VALUES
 ('MSP Rates Updated for Kharif 2024-25', 'The Government has announced new Minimum Support Prices for Kharif crops 2024-25. All procurement will be done at revised rates. Please check the crop price section for updated rates.', 'all', 1),
 ('PM-KISAN 17th Installment Released', 'The 17th installment of PM-KISAN scheme has been released. Eligible farmers will receive ₹2000 directly to their bank accounts. Check your bank account within 3-5 working days.', 'farmer', 1),
 ('E-KYC Mandatory for All Farmers', 'E-KYC verification is now mandatory for all farmers to avail government benefits. Please visit your nearest Sachivalayam with Aadhar card to complete verification.', 'farmer', 1);
+

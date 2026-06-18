@@ -36,3 +36,4 @@ echo "5. Set environment variables (see DEPLOYMENT.md)"
 echo "6. Connect your database and custom domain"
 echo ""
 echo "📚 Full guide: https://yourdomain.com/DEPLOYMENT.md"
+

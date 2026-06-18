@@ -12,3 +12,4 @@ router.put('/:id/approve', authenticate, authorize('admin'), ctrl.approveSellReq
 router.put('/:id/payment', authenticate, authorize('admin'), ctrl.markPaymentDone);
 
 module.exports = router;
+

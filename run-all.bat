@@ -82,3 +82,4 @@ echo Frontend URL:  http://localhost:!FRONTEND_PORT!/
 echo.
 echo Done. Backend and frontend should now be running.\
 
+

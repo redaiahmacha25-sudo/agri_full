@@ -6,3 +6,4 @@ Notes:
 - Frontend code currently points to https://agri-full.onrender.com/api, so login/dashboard API calls may fail until that mismatch is fixed.
 - Script assumes MySQL is already running and accessible with backend .env defaults.
 
+

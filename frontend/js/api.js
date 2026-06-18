@@ -193,3 +193,4 @@ const fmt = {
   qty: (q, unit = 'qtl') => `${parseFloat(q).toFixed(2)} ${unit}`,
   phone: (p) => p ? p.replace(/(\d{5})(\d{5})/, '$1 $2') : '—',
 };
+
