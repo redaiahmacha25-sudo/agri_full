@@ -10,3 +10,6 @@ router.post('/register', register);
 router.get('/profile', authenticate, getProfile);
 
 module.exports = router;
+router.get('/test', (req, res) => {
+  res.json({ ok: true, message: "auth route working" });
+});
