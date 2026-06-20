@@ -114,7 +114,7 @@ const API_BASE = 'https://yourdomain.com/api';
 docker-compose up
 
 # In another terminal:
-curl http://localhost:5000/api/health
+curl https://agri-full.onrender.com/api/health
 
 # You should see:
 # {"success":true,"message":"AgriConnect API is running",...}
