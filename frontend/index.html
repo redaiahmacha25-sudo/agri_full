@@ -460,7 +460,7 @@ async function doLogin() {
   if (!phone || !password) { errEl.textContent = 'Please enter phone and password.'; errEl.style.display = 'block'; return; }
   btn.textContent = 'Signing in...'; btn.disabled = true;
   try {
-const res = await fetch(`/api/auth/login`, {
+const res = await fetch(`https://agri-full.onrender.com/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone, password })
@@ -498,7 +498,7 @@ async function doRegister() {
   if (!name || !phone || !password) { errEl.textContent = 'Name, phone, and password are required.'; errEl.style.display = 'block'; return; }
   btn.textContent = 'Registering...'; btn.disabled = true;
   try {
-const res = await fetch(`/api/auth/register`, {
+const res = await fetch(`https://agri-full.onrender.com/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, phone, password, village, district, aadhar_number, bank_account, ifsc_code })
