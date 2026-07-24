@@ -1,181 +1,159 @@
 const db = require('../config/database');
 
 
-const getAdminStats = async (req,res,next)=>{
+const getAdminStats = async (req, res, next) => {
 
-try{
+  try {
 
-
-const totalFarmers =
-(await db.query(
-`SELECT COUNT(*) AS "totalFarmers"
- FROM users
- WHERE role='farmer'`
-)).rows[0];
+    const [[{ totalFarmers }]] =
+      await db.query(
+        'SELECT COUNT(*) as totalFarmers FROM users WHERE role="farmer"'
+      );
 
 
-const totalEmployees =
-(await db.query(
-`SELECT COUNT(*) AS "totalEmployees"
- FROM users
- WHERE role='employee'`
-)).rows[0];
+    const [[{ totalEmployees }]] =
+      await db.query(
+        'SELECT COUNT(*) as totalEmployees FROM users WHERE role="employee"'
+      );
 
 
-const totalSellRequests =
-(await db.query(
-`SELECT COUNT(*) AS "totalSellRequests"
- FROM sell_requests`
-)).rows[0];
+    const [[{ totalSellRequests }]] =
+      await db.query(
+        'SELECT COUNT(*) as totalSellRequests FROM sell_requests'
+      );
 
 
-const pendingSell =
-(await db.query(
-`SELECT COUNT(*) AS "pendingSell"
- FROM sell_requests
- WHERE status='pending'`
-)).rows[0];
+    const [[{ pendingSell }]] =
+      await db.query(
+        'SELECT COUNT(*) as pendingSell FROM sell_requests WHERE status="pending"'
+      );
 
 
-const verifiedSell =
-(await db.query(
-`SELECT COUNT(*) AS "verifiedSell"
- FROM sell_requests
- WHERE status='verified'`
-)).rows[0];
+    const [[{ verifiedSell }]] =
+      await db.query(
+        'SELECT COUNT(*) as verifiedSell FROM sell_requests WHERE status="verified"'
+      );
 
 
-const approvedSell =
-(await db.query(
-`SELECT COUNT(*) AS "approvedSell"
- FROM sell_requests
- WHERE status='approved'`
-)).rows[0];
+    const [[{ approvedSell }]] =
+      await db.query(
+        'SELECT COUNT(*) as approvedSell FROM sell_requests WHERE status="approved"'
+      );
 
 
-const completedSell =
-(await db.query(
-`
-SELECT COUNT(*) AS "completedSell"
-FROM sell_requests
-WHERE status IN ('completed','payment_done')
-`
-)).rows[0];
+    const [[{ completedSell }]] =
+      await db.query(
+        `
+        SELECT COUNT(*) as completedSell 
+        FROM sell_requests 
+        WHERE status IN ("completed","payment_done")
+        `
+      );
 
 
 
-const totalServiceRequests =
-(await db.query(
-`SELECT COUNT(*) AS "totalServiceRequests"
- FROM service_requests`
-)).rows[0];
+    const [[{ totalServiceRequests }]] =
+      await db.query(
+        'SELECT COUNT(*) as totalServiceRequests FROM service_requests'
+      );
+
+
+    const [[{ pendingService }]] =
+      await db.query(
+        'SELECT COUNT(*) as pendingService FROM service_requests WHERE status="pending"'
+      );
+
+
+    const [[{ escalatedService }]] =
+      await db.query(
+        'SELECT COUNT(*) as escalatedService FROM service_requests WHERE status="escalated"'
+      );
 
 
 
-const pendingService =
-(await db.query(
-`SELECT COUNT(*) AS "pendingService"
- FROM service_requests
- WHERE status='pending'`
-)).rows[0];
+    const [[{ totalPayments }]] =
+      await db.query(
+        `
+        SELECT COALESCE(SUM(payment_amount),0) as totalPayments
+        FROM sell_requests
+        WHERE payment_status="done"
+        `
+      );
 
 
 
-const escalatedService =
-(await db.query(
-`SELECT COUNT(*) AS "escalatedService"
- FROM service_requests
- WHERE status='escalated'`
-)).rows[0];
+    const [recentActivity] =
+      await db.query(
+        `
+        SELECT 'sell' as type,id,status,created_at
+        FROM sell_requests
+
+        UNION ALL
+
+        SELECT 'service' as type,id,status,created_at
+        FROM service_requests
+
+        ORDER BY created_at DESC
+        LIMIT 10
+        `
+      );
 
 
 
-const totalPayments =
-(await db.query(
-`
-SELECT COALESCE(SUM(payment_amount),0) AS "totalPayments"
-FROM sell_requests
-WHERE payment_status='done'
-`
-)).rows[0];
+    const [cropStats] =
+      await db.query(
+        `
+        SELECT 
+        c.name,
+        COUNT(sr.id) as requests,
+        SUM(sr.quantity) as total_qty
+
+        FROM sell_requests sr
+
+        JOIN crops c 
+        ON sr.crop_id=c.id
+
+        GROUP BY c.id,c.name
+
+        ORDER BY requests DESC
+
+        LIMIT 6
+        `
+      );
 
 
 
+    res.json({
 
+      success:true,
 
-const recentActivity =
-(await db.query(
-`
-SELECT 'sell' AS type,id,status,created_at
-FROM sell_requests
+      stats:{
+        totalFarmers,
+        totalEmployees,
+        totalSellRequests,
+        pendingSell,
+        verifiedSell,
+        approvedSell,
+        completedSell,
+        totalServiceRequests,
+        pendingService,
+        escalatedService,
+        totalPayments
+      },
 
-UNION ALL
+      recentActivity,
 
-SELECT 'service' AS type,id,status,created_at
-FROM service_requests
+      cropStats
 
-ORDER BY created_at DESC
-LIMIT 10
-`
-)).rows;
-
-
-
-
-
-const cropStats =
-(await db.query(
-`
-SELECT c.name,
-COUNT(sr.id) AS requests,
-SUM(sr.quantity) AS total_qty
-
-FROM sell_requests sr
-
-JOIN crops c ON sr.crop_id=c.id
-
-GROUP BY c.id,c.name
-
-ORDER BY requests DESC
-
-LIMIT 6
-`
-)).rows;
+    });
 
 
 
+  } catch(err){
 
+    next(err);
 
-res.json({
-
-success:true,
-
-stats:{
-totalFarmers:Number(totalFarmers.totalFarmers),
-totalEmployees:Number(totalEmployees.totalEmployees),
-totalSellRequests:Number(totalSellRequests.totalSellRequests),
-pendingSell:Number(pendingSell.pendingSell),
-verifiedSell:Number(verifiedSell.verifiedSell),
-approvedSell:Number(approvedSell.approvedSell),
-completedSell:Number(completedSell.completedSell),
-totalServiceRequests:Number(totalServiceRequests.totalServiceRequests),
-pendingService:Number(pendingService.pendingService),
-escalatedService:Number(escalatedService.escalatedService),
-totalPayments:Number(totalPayments.totalPayments)
-},
-
-recentActivity,
-
-cropStats
-
-});
-
-
-}catch(err){
-
-next(err);
-
-}
+  }
 
 };
 
@@ -193,70 +171,68 @@ try{
 const id=req.user.id;
 
 
-const pending =
-(await db.query(
-`SELECT COUNT(*) AS pending
-FROM sell_requests
-WHERE status='pending'`
-)).rows[0];
+const [[{pending}]] =
+await db.query(
+'SELECT COUNT(*) as pending FROM sell_requests WHERE status="pending"'
+);
 
 
 
-const verified =
-(await db.query(
-`SELECT COUNT(*) AS verified
-FROM sell_requests
-WHERE verified_by=$1`,
+const [[{verified}]] =
+await db.query(
+'SELECT COUNT(*) as verified FROM sell_requests WHERE verified_by=?',
 [id]
-)).rows[0];
+);
 
 
 
-const serviceAssigned =
-(await db.query(
-`SELECT COUNT(*) AS "serviceAssigned"
-FROM service_requests
-WHERE handled_by=$1`,
+const [[{serviceAssigned}]] =
+await db.query(
+'SELECT COUNT(*) as serviceAssigned FROM service_requests WHERE handled_by=?',
 [id]
-)).rows[0];
+);
 
 
 
-const serviceResolved =
-(await db.query(
+const [[{serviceResolved}]] =
+await db.query(
 `
-SELECT COUNT(*) AS "serviceResolved"
+SELECT COUNT(*) as serviceResolved
 FROM service_requests
-WHERE handled_by=$1
-AND status='resolved'
+WHERE handled_by=?
+AND status="resolved"
 `,
 [id]
-)).rows[0];
+);
 
 
 
 
-
-const recentSell =
-(await db.query(
+const [recentSell] =
+await db.query(
 `
-SELECT sr.*,
-u.name AS farmer_name,
-c.name AS crop_name
+SELECT 
+sr.*,
+u.name as farmer_name,
+c.name as crop_name
 
 FROM sell_requests sr
 
-JOIN users u ON sr.farmer_id=u.id
+JOIN users u 
+ON sr.farmer_id=u.id
 
-JOIN crops c ON sr.crop_id=c.id
+JOIN crops c 
+ON sr.crop_id=c.id
 
-WHERE sr.status='pending'
+WHERE sr.status="pending"
 
 ORDER BY sr.created_at DESC
 
 LIMIT 5
 `
-)).rows;
+);
+
+
 
 
 
@@ -265,10 +241,10 @@ res.json({
 success:true,
 
 stats:{
-pending:Number(pending.pending),
-verified:Number(verified.verified),
-serviceAssigned:Number(serviceAssigned.serviceAssigned),
-serviceResolved:Number(serviceResolved.serviceResolved)
+pending,
+verified,
+serviceAssigned,
+serviceResolved
 },
 
 recentSell
@@ -290,6 +266,8 @@ next(err);
 
 
 
+
+
 const getFarmerStats = async(req,res,next)=>{
 
 try{
@@ -298,129 +276,137 @@ try{
 const id=req.user.id;
 
 
-const totalSell =
-(await db.query(
-`SELECT COUNT(*) AS "totalSell"
-FROM sell_requests
-WHERE farmer_id=$1`,
+
+const [[{totalSell}]] =
+await db.query(
+'SELECT COUNT(*) as totalSell FROM sell_requests WHERE farmer_id=?',
 [id]
-)).rows[0];
+);
 
 
-const pendingSell =
-(await db.query(
+
+const [[{pendingSell}]] =
+await db.query(
 `
-SELECT COUNT(*) AS "pendingSell"
-FROM sell_requests
-WHERE farmer_id=$1
-AND status='pending'
+SELECT COUNT(*) as pendingSell 
+FROM sell_requests 
+WHERE farmer_id=? 
+AND status="pending"
 `,
 [id]
-)).rows[0];
+);
 
 
 
-const approvedSell =
-(await db.query(
+
+const [[{approvedSell}]] =
+await db.query(
 `
-SELECT COUNT(*) AS "approvedSell"
+SELECT COUNT(*) as approvedSell
 FROM sell_requests
-WHERE farmer_id=$1
-AND status IN ('approved','scheduled')
+WHERE farmer_id=?
+AND status IN ("approved","scheduled")
 `,
 [id]
-)).rows[0];
+);
 
 
 
-const completedSell =
-(await db.query(
+
+const [[{completedSell}]] =
+await db.query(
 `
-SELECT COUNT(*) AS "completedSell"
+SELECT COUNT(*) as completedSell
 FROM sell_requests
-WHERE farmer_id=$1
-AND status IN ('completed','payment_done')
+WHERE farmer_id=?
+AND status IN ("completed","payment_done")
 `,
 [id]
-)).rows[0];
+);
 
 
 
-const totalEarned =
-(await db.query(
+
+const [[{totalEarned}]] =
+await db.query(
 `
-SELECT COALESCE(SUM(payment_amount),0) AS "totalEarned"
-
+SELECT COALESCE(SUM(payment_amount),0) as totalEarned
 FROM sell_requests
-
-WHERE farmer_id=$1
-AND payment_status='done'
+WHERE farmer_id=?
+AND payment_status="done"
 `,
 [id]
-)).rows[0];
+);
 
 
 
-const totalService =
-(await db.query(
+
+const [[{totalService}]] =
+await db.query(
 `
-SELECT COUNT(*) AS "totalService"
-
+SELECT COUNT(*) as totalService
 FROM service_requests
-
-WHERE farmer_id=$1
+WHERE farmer_id=?
 `,
 [id]
-)).rows[0];
+);
 
 
 
 
 
-const recentSell =
-(await db.query(
+const [recentSell] =
+await db.query(
 `
-SELECT sr.*,
-c.name AS crop_name,
+SELECT 
+sr.*,
+c.name as crop_name,
 c.govt_price
 
 FROM sell_requests sr
 
-JOIN crops c ON sr.crop_id=c.id
+JOIN crops c
+ON sr.crop_id=c.id
 
-WHERE sr.farmer_id=$1
+WHERE sr.farmer_id=?
 
 ORDER BY sr.created_at DESC
 
 LIMIT 5
 `,
 [id]
-)).rows;
+);
 
 
 
 
 
-const announcements =
-(await db.query(
+const [announcements] =
+await db.query(
 `
 SELECT *
 
 FROM announcements
 
-WHERE is_active=true
+WHERE is_active=1
 
-AND (target_role='all'
-OR target_role='farmer')
+AND (
+target_role="all"
+OR target_role="farmer"
+)
 
-AND (expires_at IS NULL
-OR expires_at >= CURRENT_DATE)
+AND (
+expires_at IS NULL
+OR expires_at >= CURDATE()
+)
 
 ORDER BY created_at DESC
 
 LIMIT 3
 `
-)).rows;
+);
+
+
 
 
 
@@ -429,12 +415,12 @@ res.json({
 success:true,
 
 stats:{
-totalSell:Number(totalSell.totalSell),
-pendingSell:Number(pendingSell.pendingSell),
-approvedSell:Number(approvedSell.approvedSell),
-completedSell:Number(completedSell.completedSell),
-totalEarned:Number(totalEarned.totalEarned),
-totalService:Number(totalService.totalService)
+totalSell,
+pendingSell,
+approvedSell,
+completedSell,
+totalEarned,
+totalService
 },
 
 recentSell,
@@ -457,26 +443,29 @@ next(err);
 
 
 
+
+
 const getNotifications = async(req,res,next)=>{
 
 try{
 
 
-const notifications =
-(await db.query(
+const [notifications] =
+await db.query(
 `
 SELECT *
 
 FROM notifications
 
-WHERE user_id=$1
+WHERE user_id=?
 
 ORDER BY created_at DESC
 
 LIMIT 20
 `,
 [req.user.id]
-)).rows;
+);
+
 
 
 
@@ -484,11 +473,11 @@ await db.query(
 `
 UPDATE notifications
 
-SET is_read=true
+SET is_read=1
 
-WHERE user_id=$1
+WHERE user_id=?
 
-AND is_read=false
+AND is_read=0
 `,
 [req.user.id]
 );
@@ -502,6 +491,7 @@ success:true,
 notifications
 
 });
+
 
 
 }catch(err){
@@ -526,29 +516,37 @@ try{
 const role=req.user.role;
 
 
-const announcements =
-(await db.query(
+const [announcements] =
+await db.query(
+
 `
-SELECT a.*,
-u.name AS created_by_name
+SELECT 
+a.*,
+u.name as created_by_name
 
 FROM announcements a
 
-JOIN users u ON a.created_by=u.id
+JOIN users u
+ON a.created_by=u.id
 
-WHERE a.is_active=true
+WHERE a.is_active=1
 
-AND (a.target_role='all'
-OR a.target_role=$1)
+AND (
+a.target_role="all"
+OR a.target_role=?
+)
 
-AND (a.expires_at IS NULL
-OR a.expires_at >= CURRENT_DATE)
+AND (
+a.expires_at IS NULL
+OR a.expires_at >= CURDATE()
+)
 
 ORDER BY a.created_at DESC
-
 `,
+
 [role]
-)).rows;
+
+);
 
 
 
@@ -559,6 +557,7 @@ success:true,
 announcements
 
 });
+
 
 
 }catch(err){
@@ -585,29 +584,41 @@ const {role}=req.query;
 
 let query=
 `
-SELECT id,name,phone,email,role,
-village,district,is_active,created_at
+SELECT 
+id,
+name,
+phone,
+email,
+role,
+village,
+district,
+is_active,
+created_at
 
 FROM users
 `;
 
+
+
 const params=[];
+
 
 
 if(role){
 
-query+=` WHERE role=$1`;
+query += ' WHERE role=?';
+
 params.push(role);
 
 }
 
 
-query+=` ORDER BY created_at DESC`;
+
+query += ' ORDER BY created_at DESC';
 
 
 
-const users =
-(await db.query(query,params)).rows;
+const [users]=await db.query(query,params);
 
 
 
@@ -618,6 +629,7 @@ success:true,
 users
 
 });
+
 
 
 }catch(err){
@@ -631,11 +643,14 @@ next(err);
 
 
 
+
 module.exports={
+
 getAdminStats,
 getEmployeeStats,
 getFarmerStats,
 getNotifications,
 getAnnouncements,
 getUsers
+
 };

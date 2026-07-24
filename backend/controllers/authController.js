@@ -3,135 +3,143 @@ const jwt = require('jsonwebtoken');
 const db = require('../config/database');
 
 
-/* =========================
-   LOGIN
-========================= */
-const login = async (req, res, next) => {
-  try {
+const login = async (req,res,next)=>{
 
-    let { phone, password } = req.body;
+try{
+
+let {phone,password}=req.body;
 
 
-    if (!phone || !password) {
-      return res.status(400).json({
-        success:false,
-        message:'Phone and password are required.'
-      });
-    }
+if(!phone || !password){
+
+return res.status(400).json({
+success:false,
+message:'Phone and password are required.'
+});
+
+}
 
 
-    phone = String(phone).trim();
-    password = String(password).trim();
+phone=String(phone).trim();
+password=String(password).trim();
 
 
-    console.log('[LOGIN] phone:', phone);
-    console.log('[LOGIN] password length:', password.length);
-
-
-
-    const result = await db.query(
-      'SELECT * FROM users WHERE phone = $1',
-      [phone]
-    );
-
-
-    if (result.rows.length === 0) {
-      return res.status(401).json({
-        success:false,
-        message:'Invalid credentials.'
-      });
-    }
-
-
-    const user = result.rows[0];
-
-
-    // PostgreSQL boolean check
-    if (user.is_active === false) {
-      return res.status(403).json({
-        success:false,
-        message:'Account is inactive.'
-      });
-    }
+console.log('[LOGIN] phone:',phone);
+console.log('[LOGIN] password length:',password.length);
 
 
 
-    const valid = await bcrypt.compare(
-      password,
-      user.password_hash
-    );
-
-
-    console.log('[LOGIN] bcrypt result:', valid);
+const [rows]=await db.query(
+'SELECT * FROM users WHERE phone=?',
+[phone]
+);
 
 
 
-    if(!valid){
-      return res.status(401).json({
-        success:false,
-        message:'Invalid credentials.'
-      });
-    }
+if(!rows.length){
+
+return res.status(401).json({
+success:false,
+message:'Invalid credentials.'
+});
+
+}
+
+
+const user=rows[0];
 
 
 
-    const token = jwt.sign(
-      {
-        id:user.id,
-        name:user.name,
-        phone:user.phone,
-        role:user.role
-      },
+if(user.is_active!==1){
 
-      process.env.JWT_SECRET || 'agriconnect_secret',
+return res.status(403).json({
+success:false,
+message:'Account is inactive.'
+});
 
-      {
-        expiresIn:'24h'
-      }
-    );
+}
 
 
 
-    return res.json({
-
-      success:true,
-
-      message:'Login successful',
-
-      token,
-
-      user:{
-        id:user.id,
-        name:user.name,
-        phone:user.phone,
-        role:user.role,
-        village:user.village,
-        district:user.district
-      }
-
-    });
+const valid=await bcrypt.compare(
+password,
+user.password_hash
+);
 
 
 
-  }catch(err){
-    next(err);
-  }
+console.log('[LOGIN] bcrypt result:',valid);
+
+
+
+if(!valid){
+
+return res.status(401).json({
+success:false,
+message:'Invalid credentials.'
+});
+
+}
+
+
+
+const token=jwt.sign(
+
+{
+id:user.id,
+name:user.name,
+phone:user.phone,
+role:user.role
+},
+
+process.env.JWT_SECRET || 'agriconnect_secret',
+
+{
+expiresIn:'24h'
+}
+
+);
+
+
+
+res.json({
+
+success:true,
+
+message:'Login successful',
+
+token,
+
+user:{
+id:user.id,
+name:user.name,
+phone:user.phone,
+role:user.role,
+village:user.village,
+district:user.district
+}
+
+});
+
+
+}catch(err){
+
+next(err);
+
+}
+
 };
 
 
 
 
 
-/* =========================
-   REGISTER
-========================= */
-
-const register = async(req,res,next)=>{
+const register=async(req,res,next)=>{
 
 try{
 
 
-let {
+const {
 name,
 phone,
 password,
@@ -140,7 +148,6 @@ district,
 aadhar_number,
 bank_account,
 ifsc_code
-
 }=req.body;
 
 
@@ -159,16 +166,9 @@ message:'Name, phone, and password are required.'
 
 
 
-phone=String(phone).trim();
-password=String(password).trim();
+const [existing]=await db.query(
 
-
-
-
-
-const existing = await db.query(
-
-'SELECT id FROM users WHERE phone=$1',
+'SELECT id FROM users WHERE phone=?',
 
 [phone]
 
@@ -176,7 +176,7 @@ const existing = await db.query(
 
 
 
-if(existing.rows.length){
+if(existing.length){
 
 return res.status(409).json({
 
@@ -190,16 +190,12 @@ message:'Phone number already registered.'
 
 
 
-
-
-const hashedPassword =
+const hashedPassword=
 await bcrypt.hash(password,10);
 
 
 
-
-
-const result = await db.query(
+const [result]=await db.query(
 
 `
 INSERT INTO users
@@ -217,20 +213,7 @@ is_active
 )
 
 VALUES
-(
-$1,
-$2,
-$3,
-'farmer',
-$4,
-$5,
-$6,
-$7,
-$8,
-true
-)
-
-RETURNING id
+(?,?,?,?,?,?,?,?,?,1)
 
 `,
 
@@ -238,6 +221,7 @@ RETURNING id
 name,
 phone,
 hashedPassword,
+'farmer',
 village || null,
 district || null,
 aadhar_number || null,
@@ -245,23 +229,19 @@ bank_account || null,
 ifsc_code || null
 ]
 
-
 );
 
 
 
-
-
-return res.status(201).json({
+res.status(201).json({
 
 success:true,
 
 message:'Registration successful',
 
-userId:result.rows[0].id
+userId:result.insertId
 
 });
-
 
 
 
@@ -277,38 +257,23 @@ next(err);
 
 
 
-
-
-/* =========================
-   PROFILE
-========================= */
-
-
-const getProfile = async(req,res,next)=>{
+const getProfile=async(req,res,next)=>{
 
 try{
 
 
-const result = await db.query(
+const [rows]=await db.query(
 
 `
-SELECT 
-id,
-name,
-phone,
-email,
-role,
-village,
-district,
-state,
-aadhar_number,
-bank_account,
-ifsc_code,
-created_at
+SELECT id,name,phone,email,role,
+village,district,state,
+aadhar_number,bank_account,
+ifsc_code,created_at
 
 FROM users
 
-WHERE id=$1
+WHERE id=?
+
 `,
 
 [req.user.id]
@@ -317,9 +282,7 @@ WHERE id=$1
 
 
 
-
-
-if(result.rows.length===0){
+if(!rows.length){
 
 return res.status(404).json({
 
@@ -333,18 +296,13 @@ message:'User not found'
 
 
 
-
-
-return res.json({
+res.json({
 
 success:true,
 
-user:result.rows[0]
+user:rows[0]
 
 });
-
-
-
 
 
 }catch(err){
@@ -354,6 +312,7 @@ next(err);
 }
 
 };
+
 
 
 

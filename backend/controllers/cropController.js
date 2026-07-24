@@ -1,25 +1,54 @@
 const db = require('../config/database');
 
 
+// GET ALL CROPS
 const getAllCrops = async (req, res, next) => {
   try {
 
-    const result = await db.query(
-      `
-      SELECT *
-      FROM crops
-      WHERE is_active = true
-      ORDER BY category, name
-      `
+    const [crops] = await db.query(
+      'SELECT * FROM crops WHERE is_active = 1 ORDER BY category, name'
     );
 
     res.json({
-      success:true,
-      crops:result.rows
+      success: true,
+      crops
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+
+// GET CROP BY ID
+const getCropById = async (req, res, next) => {
+  try {
+
+    const [rows] = await db.query(
+      'SELECT * FROM crops WHERE id = ?',
+      [req.params.id]
+    );
+
+
+    if (!rows.length) {
+
+      return res.status(404).json({
+        success: false,
+        message: 'Crop not found.'
+      });
+
+    }
+
+
+    res.json({
+      success: true,
+      crop: rows[0]
     });
 
 
-  } catch(err){
+  } catch (err) {
     next(err);
   }
 };
@@ -28,43 +57,117 @@ const getAllCrops = async (req, res, next) => {
 
 
 
-const getCropById = async(req,res,next)=>{
+// CREATE CROP
+const createCrop = async (req, res, next) => {
 
-try{
+  try {
 
-const result = await db.query(
-`
-SELECT *
-FROM crops
-WHERE id=$1
-`,
-[req.params.id]
-);
-
-
-
-if(result.rows.length===0){
-
-return res.status(404).json({
-success:false,
-message:'Crop not found.'
-});
-
-}
+    const {
+      name,
+      name_telugu,
+      category,
+      govt_price,
+      unit,
+      season
+    } = req.body;
 
 
 
-res.json({
-success:true,
-crop:result.rows[0]
-});
+    if (!name || !govt_price) {
+
+      return res.status(400).json({
+        success:false,
+        message:'Name and price required.'
+      });
+
+    }
 
 
-}catch(err){
 
-next(err);
 
-}
+    const [result] = await db.query(
+
+      `
+      INSERT INTO crops
+      (
+      name,
+      name_telugu,
+      category,
+      govt_price,
+      unit,
+      season,
+      updated_by
+      )
+
+      VALUES
+      (?,?,?,?,?,?,?)
+      `,
+
+      [
+        name,
+        name_telugu || null,
+        category || 'cereal',
+        govt_price,
+        unit || 'quintal',
+        season || 'all',
+        req.user.id
+      ]
+
+    );
+
+
+
+
+
+    await db.query(
+
+      `
+      INSERT INTO notifications
+      (
+      user_id,
+      title,
+      message,
+      type
+      )
+
+      SELECT 
+      id,
+      "New Crop MSP Added",
+      ?,
+      "info"
+
+      FROM users
+
+      WHERE role="farmer"
+      `,
+
+      [
+        `${name} has been added with MSP ₹${govt_price}/quintal`
+      ]
+
+    );
+
+
+
+
+
+    res.status(201).json({
+
+      success:true,
+
+      message:'Crop added successfully.',
+
+      id:result.insertId
+
+    });
+
+
+
+  } catch(err){
+
+    next(err);
+
+  }
 
 };
 
@@ -74,136 +177,7 @@ next(err);
 
 
 
-const createCrop = async(req,res,next)=>{
-
-try{
-
-
-const {
-name,
-name_telugu,
-category,
-govt_price,
-unit,
-season
-
-}=req.body;
-
-
-
-if(!name || !govt_price){
-
-return res.status(400).json({
-
-success:false,
-
-message:'Name and price required.'
-
-});
-
-}
-
-
-
-
-const result = await db.query(
-
-`
-INSERT INTO crops
-(
-name,
-name_telugu,
-category,
-govt_price,
-unit,
-season,
-updated_by
-)
-
-VALUES
-($1,$2,$3,$4,$5,$6,$7)
-
-RETURNING id
-
-`,
-
-[
-name,
-name_telugu || null,
-category || 'cereal',
-govt_price,
-unit || 'quintal',
-season || 'all',
-req.user.id
-]
-
-);
-
-
-
-
-
-await db.query(
-
-`
-INSERT INTO notifications
-(
-user_id,
-title,
-message,
-type
-)
-
-SELECT 
-id,
-'New Crop MSP Added',
-$1,
-'info'
-
-FROM users
-
-WHERE role='farmer'
-
-`,
-
-[
-`${name} has been added with MSP ₹${govt_price}/quintal`
-]
-
-);
-
-
-
-
-
-
-res.status(201).json({
-
-success:true,
-
-message:'Crop added successfully.',
-
-id:result.rows[0].id
-
-});
-
-
-
-}catch(err){
-
-next(err);
-
-}
-
-};
-
-
-
-
-
-
-
-
+// UPDATE CROP
 const updateCrop = async(req,res,next)=>{
 
 try{
@@ -217,21 +191,14 @@ govt_price,
 unit,
 season,
 is_active
-
 }=req.body;
 
 
 
 
+const [existing] = await db.query(
 
-const existing = await db.query(
-
-`
-SELECT *
-FROM crops
-WHERE id=$1
-
-`,
+'SELECT * FROM crops WHERE id=?',
 
 [req.params.id]
 
@@ -239,8 +206,7 @@ WHERE id=$1
 
 
 
-
-if(existing.rows.length===0){
+if(!existing.length){
 
 return res.status(404).json({
 
@@ -254,8 +220,7 @@ message:'Crop not found.'
 
 
 
-const crop=existing.rows[0];
-
+const crop=existing[0];
 
 
 
@@ -263,19 +228,18 @@ const crop=existing.rows[0];
 await db.query(
 
 `
-UPDATE crops
+UPDATE crops SET
 
-SET
-name=$1,
-name_telugu=$2,
-category=$3,
-govt_price=$4,
-unit=$5,
-season=$6,
-is_active=$7,
-updated_by=$8
+name=?,
+name_telugu=?,
+category=?,
+govt_price=?,
+unit=?,
+season=?,
+is_active=?,
+updated_by=?
 
-WHERE id=$9
+WHERE id=?
 
 `,
 
@@ -308,7 +272,6 @@ req.params.id
 
 
 
-
 res.json({
 
 success:true,
@@ -331,9 +294,11 @@ next(err);
 
 
 
-module.exports={
+module.exports = {
+
 getAllCrops,
 getCropById,
 createCrop,
 updateCrop
+
 };
