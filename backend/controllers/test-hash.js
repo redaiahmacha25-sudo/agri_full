@@ -1,5 +1,6 @@
-const bcrypt = require('bcryptjs');
-bcrypt.hash("Admin@123", 10).then(console.log);
+const bcrypt = require("bcryptjs");
 
-bcrypt.compare('Admin@123', hash)
-  .then(result => console.log(result));
+bcrypt.hash("Admin@123", 10)
+.then(hash => {
+    console.log(hash);
+});
