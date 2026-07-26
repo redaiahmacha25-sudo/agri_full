@@ -2,323 +2,186 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/database');
 
+const login = async (req, res, next) => {
+  try {
+    let { phone, password } = req.body;
 
-const login = async (req,res,next)=>{
+    if (!phone || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Phone and password are required.'
+      });
+    }
 
-try{
+    phone = String(phone).trim();
+    password = String(password).trim();
 
-let {phone,password}=req.body;
+    console.log('[LOGIN] phone:', phone);
+    console.log('[LOGIN] password length:', password.length);
 
+    const [rows] = await db.query(
+      'SELECT * FROM users WHERE phone = $1',
+      [phone]
+    );
 
-if(!phone || !password){
+    if (!rows.length) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials.'
+      });
+    }
 
-return res.status(400).json({
-success:false,
-message:'Phone and password are required.'
-});
+    const user = rows[0];
 
-}
+    if (!user.is_active) {
+      return res.status(403).json({
+        success: false,
+        message: 'Account is inactive.'
+      });
+    }
 
+    const valid = await bcrypt.compare(
+      password,
+      user.password_hash
+    );
 
-phone=String(phone).trim();
-password=String(password).trim();
+    console.log('[LOGIN] bcrypt result:', valid);
 
+    if (!valid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials.'
+      });
+    }
 
-console.log('[LOGIN] phone:',phone);
-console.log('[LOGIN] password length:',password.length);
+    const token = jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+        phone: user.phone,
+        role: user.role
+      },
+      process.env.JWT_SECRET || 'agriconnect_secret',
+      {
+        expiresIn: '24h'
+      }
+    );
 
+    res.json({
+      success: true,
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        phone: user.phone,
+        role: user.role,
+        village: user.village,
+        district: user.district
+      }
+    });
 
-
-const [rows]=await db.query(
-'SELECT * FROM users WHERE phone=?',
-[phone]
-);
-
-
-
-if(!rows.length){
-
-return res.status(401).json({
-success:false,
-message:'Invalid credentials.'
-});
-
-}
-
-
-const user=rows[0];
-
-
-
-if(user.is_active!==1){
-
-return res.status(403).json({
-success:false,
-message:'Account is inactive.'
-});
-
-}
-
-
-
-const valid=await bcrypt.compare(
-password,
-user.password_hash
-);
-
-
-
-console.log('[LOGIN] bcrypt result:',valid);
-
-
-
-if(!valid){
-
-return res.status(401).json({
-success:false,
-message:'Invalid credentials.'
-});
-
-}
-
-
-
-const token=jwt.sign(
-
-{
-id:user.id,
-name:user.name,
-phone:user.phone,
-role:user.role
-},
-
-process.env.JWT_SECRET || 'agriconnect_secret',
-
-{
-expiresIn:'24h'
-}
-
-);
-
-
-
-res.json({
-
-success:true,
-
-message:'Login successful',
-
-token,
-
-user:{
-id:user.id,
-name:user.name,
-phone:user.phone,
-role:user.role,
-village:user.village,
-district:user.district
-}
-
-});
-
-
-}catch(err){
-
-next(err);
-
-}
-
+  } catch (err) {
+    next(err);
+  }
 };
 
+const register = async (req, res, next) => {
+  try {
+    const {
+      name,
+      phone,
+      password,
+      village,
+      district,
+      aadhar_number,
+      bank_account,
+      ifsc_code
+    } = req.body;
 
+    if (!name || !phone || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, phone, and password are required.'
+      });
+    }
 
+    const [existing] = await db.query(
+      'SELECT id FROM users WHERE phone = $1',
+      [phone]
+    );
 
+    if (existing.length) {
+      return res.status(409).json({
+        success: false,
+        message: 'Phone number already registered.'
+      });
+    }
 
-const register=async(req,res,next)=>{
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-try{
+    // Calling PostgreSQL Stored Function sp_register_user
+    const [result] = await db.query(
+      `SELECT sp_register_user($1, $2, $3, $4::user_role, $5, $6, $7, $8, $9) AS id`,
+      [
+        name,
+        phone,
+        hashedPassword,
+        'farmer',
+        village || null,
+        district || null,
+        aadhar_number || null,
+        bank_account || null,
+        ifsc_code || null
+      ]
+    );
 
+    const userId = result[0]?.id;
 
-const {
-name,
-phone,
-password,
-village,
-district,
-aadhar_number,
-bank_account,
-ifsc_code
-}=req.body;
+    res.status(201).json({
+      success: true,
+      message: 'Registration successful',
+      userId
+    });
 
-
-
-if(!name || !phone || !password){
-
-return res.status(400).json({
-
-success:false,
-
-message:'Name, phone, and password are required.'
-
-});
-
-}
-
-
-
-const [existing]=await db.query(
-
-'SELECT id FROM users WHERE phone=?',
-
-[phone]
-
-);
-
-
-
-if(existing.length){
-
-return res.status(409).json({
-
-success:false,
-
-message:'Phone number already registered.'
-
-});
-
-}
-
-
-
-const hashedPassword=
-await bcrypt.hash(password,10);
-
-
-
-const [result]=await db.query(
-
-`
-INSERT INTO users
-(
-name,
-phone,
-password_hash,
-role,
-village,
-district,
-aadhar_number,
-bank_account,
-ifsc_code,
-is_active
-)
-
-VALUES
-(?,?,?,?,?,?,?,?,?,1)
-
-`,
-
-[
-name,
-phone,
-hashedPassword,
-'farmer',
-village || null,
-district || null,
-aadhar_number || null,
-bank_account || null,
-ifsc_code || null
-]
-
-);
-
-
-
-res.status(201).json({
-
-success:true,
-
-message:'Registration successful',
-
-userId:result.insertId
-
-});
-
-
-
-}catch(err){
-
-next(err);
-
-}
-
+  } catch (err) {
+    next(err);
+  }
 };
 
+const getProfile = async (req, res, next) => {
+  try {
+    const [rows] = await db.query(
+      `
+      SELECT id, name, phone, email, role,
+             village, district, state,
+             aadhar_number, bank_account,
+             ifsc_code, created_at
+      FROM users
+      WHERE id = $1
+      `,
+      [req.user.id]
+    );
 
+    if (!rows.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
 
+    res.json({
+      success: true,
+      user: rows[0]
+    });
 
-
-const getProfile=async(req,res,next)=>{
-
-try{
-
-
-const [rows]=await db.query(
-
-`
-SELECT id,name,phone,email,role,
-village,district,state,
-aadhar_number,bank_account,
-ifsc_code,created_at
-
-FROM users
-
-WHERE id=?
-
-`,
-
-[req.user.id]
-
-);
-
-
-
-if(!rows.length){
-
-return res.status(404).json({
-
-success:false,
-
-message:'User not found'
-
-});
-
-}
-
-
-
-res.json({
-
-success:true,
-
-user:rows[0]
-
-});
-
-
-}catch(err){
-
-next(err);
-
-}
-
+  } catch (err) {
+    next(err);
+  }
 };
 
-
-
-
-
-module.exports={
-login,
-register,
-getProfile
+module.exports = {
+  login,
+  register,
+  getProfile
 };

@@ -27,6 +27,7 @@ app.use('/api/crops', require('./routes/crops'));
 app.use('/api/sell-requests', require('./routes/sellRequests'));
 app.use('/api/service-requests', require('./routes/serviceRequests'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/admin/db', require('./routes/dbRoutes'));
 
 // TEMP DEBUG ROUTE
 app.get('/debug-db', (req, res) => {
@@ -38,23 +39,14 @@ app.get('/debug-db', (req, res) => {
   });
 });
 
-const mysql = require('mysql2/promise');
+const db = require('./config/database');
 
 app.get('/test-db', async (req, res) => {
   try {
-    const conn = await mysql.createConnection({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME
-    });
-
-    await conn.query('SELECT 1');
-    await conn.end();
-
+    await db.query('SELECT 1');
     res.json({
       success: true,
-      message: 'DB connection successful'
+      message: 'PostgreSQL DB connection successful'
     });
   } catch (err) {
     res.json({

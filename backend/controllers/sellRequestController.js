@@ -1,835 +1,306 @@
 const db = require('../config/database');
 
-
 // GET ALL SELL REQUESTS
 const getSellRequests = async (req, res, next) => {
-
   try {
-
     const { role, id } = req.user;
 
-
-    let query = `
+    let queryStr = `
       SELECT 
-      sr.*,
-      u.name as farmer_name,
-      u.phone as farmer_phone,
-      u.village as farmer_village,
-      c.name as crop_name,
-      c.govt_price,
-      c.unit,
-      v.name as verifier_name,
-      a.name as approver_name
-
+        sr.*,
+        u.name as farmer_name,
+        u.phone as farmer_phone,
+        u.village as farmer_village,
+        c.name as crop_name,
+        c.govt_price,
+        c.unit,
+        v.name as verifier_name,
+        a.name as approver_name
       FROM sell_requests sr
-
-      JOIN users u 
-      ON sr.farmer_id=u.id
-
-      JOIN crops c
-      ON sr.crop_id=c.id
-
-      LEFT JOIN users v
-      ON sr.verified_by=v.id
-
-      LEFT JOIN users a
-      ON sr.approved_by=a.id
+      JOIN users u ON sr.farmer_id = u.id
+      JOIN crops c ON sr.crop_id = c.id
+      LEFT JOIN users v ON sr.verified_by = v.id
+      LEFT JOIN users a ON sr.approved_by = a.id
     `;
 
+    const params = [];
 
-    const params=[];
-
-
-    if(role==='farmer'){
-
-      query += ' WHERE sr.farmer_id=?';
+    if (role === 'farmer') {
+      queryStr += ' WHERE sr.farmer_id = $1';
       params.push(id);
-
-    }
-    else if(role==='employee'){
-
-      query += ' WHERE sr.status IN ("pending","verified","rejected") OR sr.verified_by=?';
+    } else if (role === 'employee') {
+      queryStr += " WHERE sr.status IN ('pending', 'verified', 'rejected') OR sr.verified_by = $1";
       params.push(id);
-
     }
 
+    queryStr += ' ORDER BY sr.created_at DESC';
 
-    query += ' ORDER BY sr.created_at DESC';
-
-
-
-    const [requests] = await db.query(query,params);
-
-
+    const [requests] = await db.query(queryStr, params);
 
     res.json({
-
-      success:true,
-
+      success: true,
       requests
-
     });
 
-
-
-  }catch(err){
-
+  } catch (err) {
     next(err);
-
   }
-
 };
-
-
-
-
-
-
 
 // GET SELL REQUEST BY ID
+const getSellRequestById = async (req, res, next) => {
+  try {
+    const [rows] = await db.query(
+      `
+      SELECT 
+        sr.*,
+        u.name as farmer_name,
+        u.phone as farmer_phone,
+        u.village as farmer_village,
+        c.name as crop_name,
+        c.govt_price,
+        c.unit,
+        v.name as verifier_name,
+        a.name as approver_name
+      FROM sell_requests sr
+      JOIN users u ON sr.farmer_id = u.id
+      JOIN crops c ON sr.crop_id = c.id
+      LEFT JOIN users v ON sr.verified_by = v.id
+      LEFT JOIN users a ON sr.approved_by = a.id
+      WHERE sr.id = $1
+      `,
+      [req.params.id]
+    );
 
-const getSellRequestById = async(req,res,next)=>{
+    if (!rows.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'Request not found.'
+      });
+    }
 
-try{
+    const [remarks] = await db.query(
+      `
+      SELECT 
+        r.*,
+        u.name as author
+      FROM remarks r
+      JOIN users u ON r.created_by = u.id
+      WHERE r.entity_type = 'sell_request'
+        AND r.entity_id = $1
+      ORDER BY r.created_at ASC
+      `,
+      [req.params.id]
+    );
 
+    res.json({
+      success: true,
+      request: rows[0],
+      remarks
+    });
 
-const [rows] = await db.query(
-
-`
-SELECT 
-sr.*,
-u.name as farmer_name,
-u.phone as farmer_phone,
-u.village as farmer_village,
-c.name as crop_name,
-c.govt_price,
-c.unit,
-v.name as verifier_name,
-a.name as approver_name
-
-FROM sell_requests sr
-
-JOIN users u
-ON sr.farmer_id=u.id
-
-JOIN crops c
-ON sr.crop_id=c.id
-
-LEFT JOIN users v
-ON sr.verified_by=v.id
-
-LEFT JOIN users a
-ON sr.approved_by=a.id
-
-WHERE sr.id=?
-
-`,
-
-[req.params.id]
-
-);
-
-
-
-if(!rows.length){
-
-return res.status(404).json({
-
-success:false,
-
-message:'Request not found.'
-
-});
-
-}
-
-
-
-
-
-const [remarks] = await db.query(
-
-`
-SELECT 
-r.*,
-u.name as author
-
-FROM remarks r
-
-JOIN users u
-ON r.created_by=u.id
-
-WHERE r.entity_type='sell_request'
-
-AND r.entity_id=?
-
-ORDER BY r.created_at ASC
-
-`,
-
-[req.params.id]
-
-);
-
-
-
-res.json({
-
-success:true,
-
-request:rows[0],
-
-remarks
-
-});
-
-
-
-}catch(err){
-
-next(err);
-
-}
-
+  } catch (err) {
+    next(err);
+  }
 };
-
-
-
-
-
-
-
 
 // CREATE SELL REQUEST
-
-const createSellRequest = async(req,res,next)=>{
-
-try{
-
-
-const {
-crop_id,
-quantity,
-village,
-harvest_date,
-notes,
-geo_lat,
-geo_lng
-}=req.body;
-
-
-
-if(!crop_id || !quantity){
-
-return res.status(400).json({
-
-success:false,
-
-message:'Crop and quantity required.'
-
-});
-
-}
-
-
-
-
-
-const [crop] = await db.query(
-
-'SELECT govt_price FROM crops WHERE id=?',
-
-[crop_id]
-
-);
-
-
-
-const expected_amount =
-Number(quantity) *
-Number(crop[0].govt_price);
-
-
-
-
-
-const image_url=req.file
-? `/uploads/${req.file.filename}`
-: null;
-
-
-
-
-const [result] = await db.query(
-
-`
-INSERT INTO sell_requests
-
-(
-farmer_id,
-crop_id,
-quantity,
-image_url,
-village,
-harvest_date,
-notes,
-geo_lat,
-geo_lng,
-expected_amount
-)
-
-VALUES
-(?,?,?,?,?,?,?,?,?,?)
-
-`,
-
-[
-req.user.id,
-crop_id,
-quantity,
-image_url,
-village || null,
-harvest_date || null,
-notes || null,
-geo_lat || null,
-geo_lng || null,
-expected_amount
-]
-
-);
-
-
-
-
-
-
-await db.query(
-
-`
-INSERT INTO notifications
-(
-user_id,
-title,
-message,
-type
-)
-
-SELECT
-id,
-"New Sell Request",
-"A new sell request requires verification.",
-"info"
-
-FROM users
-
-WHERE role="employee"
-
-`
-
-);
-
-
-
-
-
-
-res.status(201).json({
-
-success:true,
-
-message:'Sell request submitted successfully.',
-
-id:result.insertId
-
-});
-
-
-
-}catch(err){
-
-next(err);
-
-}
-
+const createSellRequest = async (req, res, next) => {
+  try {
+    const {
+      crop_id,
+      quantity,
+      village,
+      harvest_date,
+      notes,
+      geo_lat,
+      geo_lng
+    } = req.body;
+
+    if (!crop_id || !quantity) {
+      return res.status(400).json({
+        success: false,
+        message: 'Crop and quantity required.'
+      });
+    }
+
+    const [crop] = await db.query(
+      'SELECT govt_price FROM crops WHERE id = $1',
+      [crop_id]
+    );
+
+    if (!crop.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'Crop not found.'
+      });
+    }
+
+    const expected_amount = Number(quantity) * Number(crop[0].govt_price);
+    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+
+    // Calling PostgreSQL Stored Function sp_create_sell_request
+    const [result] = await db.query(
+      `SELECT sp_create_sell_request($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) AS id`,
+      [
+        req.user.id,
+        crop_id,
+        quantity,
+        image_url,
+        village || null,
+        harvest_date || null,
+        notes || null,
+        geo_lat || null,
+        geo_lng || null,
+        expected_amount
+      ]
+    );
+
+    const requestId = result[0]?.id;
+
+    res.status(201).json({
+      success: true,
+      message: 'Sell request submitted successfully.',
+      id: requestId
+    });
+
+  } catch (err) {
+    next(err);
+  }
 };
-
-
-
-
-
-
-
-
 
 // VERIFY SELL REQUEST
-
-const verifySellRequest = async(req,res,next)=>{
-
-try{
-
-
-const {
-action,
-rejection_reason,
-remarks
-}=req.body;
-
-
-
-const [rows]=await db.query(
-
-'SELECT * FROM sell_requests WHERE id=?',
-
-[req.params.id]
-
-);
-
-
-
-if(!rows.length){
-
-return res.status(404).json({
-
-success:false,
-
-message:'Request not found.'
-
-});
-
-}
-
-
-
-if(rows[0].status!=='pending'){
-
-return res.status(400).json({
-
-success:false,
-
-message:'Request already processed.'
-
-});
-
-}
-
-
-
-
-const newStatus =
-action==='verify'
-?'verified'
-:'rejected';
-
-
-
-
-
-await db.query(
-
-`
-UPDATE sell_requests
-
-SET 
-status=?,
-verified_by=?,
-verified_at=NOW(),
-rejection_reason=?
-
-WHERE id=?
-
-`,
-
-[
-newStatus,
-req.user.id,
-rejection_reason || null,
-req.params.id
-]
-
-);
-
-
-
-
-
-if(remarks){
-
-await db.query(
-
-`
-INSERT INTO remarks
-(
-entity_type,
-entity_id,
-message,
-created_by
-)
-
-VALUES
-('sell_request',?,?,?)
-
-`,
-
-[
-req.params.id,
-remarks,
-req.user.id
-]
-
-);
-
-}
-
-
-
-
-const msg =
-action==='verify'
-?
-'Your sell request has been verified and forwarded for approval.'
-:
-`Your sell request was rejected. Reason: ${rejection_reason}`;
-
-
-
-await db.query(
-
-`
-INSERT INTO notifications
-(
-user_id,
-title,
-message,
-type
-)
-
-VALUES
-(?,?,?,?)
-
-`,
-
-[
-rows[0].farmer_id,
-action==='verify'
-?'Sell Request Verified'
-:'Sell Request Rejected',
-msg,
-action==='verify'
-?'success'
-:'error'
-]
-
-);
-
-
-
-
-
-res.json({
-
-success:true,
-
-message:`Request ${newStatus} successfully.`
-
-});
-
-
-
-}catch(err){
-
-next(err);
-
-}
-
+const verifySellRequest = async (req, res, next) => {
+  try {
+    const { action, rejection_reason, remarks } = req.body;
+
+    const [rows] = await db.query(
+      'SELECT * FROM sell_requests WHERE id = $1',
+      [req.params.id]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'Request not found.'
+      });
+    }
+
+    if (rows[0].status !== 'pending') {
+      return res.status(400).json({
+        success: false,
+        message: 'Request already processed.'
+      });
+    }
+
+    // Calling PostgreSQL Stored Function sp_verify_sell_request
+    const [resStatus] = await db.query(
+      `SELECT sp_verify_sell_request($1, $2, $3, $4, $5) AS status`,
+      [
+        req.params.id,
+        req.user.id,
+        action,
+        rejection_reason || null,
+        remarks || null
+      ]
+    );
+
+    const updatedStatus = resStatus[0]?.status;
+
+    res.json({
+      success: true,
+      message: `Request ${updatedStatus} successfully.`
+    });
+
+  } catch (err) {
+    next(err);
+  }
 };
-
-
-
-
-
-
-
-
 
 // APPROVE SELL REQUEST
+const approveSellRequest = async (req, res, next) => {
+  try {
+    const { action, procurement_date, rejection_reason, remarks } = req.body;
 
-const approveSellRequest = async(req,res,next)=>{
+    const [rows] = await db.query(
+      'SELECT * FROM sell_requests WHERE id = $1',
+      [req.params.id]
+    );
 
-try{
+    if (!rows.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'Request not found.'
+      });
+    }
 
+    // Calling PostgreSQL Stored Function sp_approve_sell_request
+    const [resStatus] = await db.query(
+      `SELECT sp_approve_sell_request($1, $2, $3, $4, $5, $6) AS status`,
+      [
+        req.params.id,
+        req.user.id,
+        action,
+        procurement_date || null,
+        rejection_reason || null,
+        remarks || null
+      ]
+    );
 
-const {
-action,
-procurement_date,
-rejection_reason,
-remarks
-}=req.body;
+    const updatedStatus = resStatus[0]?.status;
 
+    res.json({
+      success: true,
+      message: `Request ${updatedStatus} successfully.`
+    });
 
-
-const [rows]=await db.query(
-
-'SELECT * FROM sell_requests WHERE id=?',
-
-[req.params.id]
-
-);
-
-
-
-if(!rows.length){
-
-return res.status(404).json({
-
-success:false,
-
-message:'Request not found.'
-
-});
-
-}
-
-
-
-const newStatus =
-action==='approve'
-?'approved'
-:'rejected';
-
-
-
-
-
-await db.query(
-
-`
-UPDATE sell_requests
-
-SET
-status=?,
-approved_by=?,
-approved_at=NOW(),
-procurement_date=?,
-rejection_reason=?
-
-WHERE id=?
-
-`,
-
-[
-newStatus,
-req.user.id,
-procurement_date || null,
-rejection_reason || null,
-req.params.id
-]
-
-);
-
-
-
-
-
-if(action==='approve' && procurement_date){
-
-await db.query(
-
-'INSERT INTO procurement (request_id,schedule_date) VALUES (?,?)',
-
-[
-req.params.id,
-procurement_date
-]
-
-);
-
-}
-
-
-
-
-
-res.json({
-
-success:true,
-
-message:`Request ${newStatus} successfully.`
-
-});
-
-
-
-}catch(err){
-
-next(err);
-
-}
-
+  } catch (err) {
+    next(err);
+  }
 };
-
-
-
-
-
-
-
-
 
 // PAYMENT DONE
-
-const markPaymentDone = async(req,res,next)=>{
-
-try{
-
-
-const {
-payment_amount,
-transaction_ref
-}=req.body;
-
-
-
-const [rows]=await db.query(
-
-'SELECT * FROM sell_requests WHERE id=?',
-
-[req.params.id]
-
-);
-
-
-
-if(!rows.length){
-
-return res.status(404).json({
-
-success:false,
-
-message:'Request not found.'
-
-});
-
-}
-
-
-
-
-await db.query(
-
-`
-UPDATE sell_requests
-
-SET
-status="payment_done",
-payment_status="done",
-payment_amount=?,
-transaction_ref=?,
-payment_date=NOW()
-
-WHERE id=?
-
-`,
-
-[
-payment_amount,
-transaction_ref,
-req.params.id
-]
-
-);
-
-
-
-
-
-
-await db.query(
-
-`
-UPDATE procurement
-
-SET
-payment_status="done",
-payment_amount=?,
-transaction_ref=?,
-payment_date=NOW()
-
-WHERE request_id=?
-
-`,
-
-[
-payment_amount,
-transaction_ref,
-req.params.id
-]
-
-);
-
-
-
-
-
-
-await db.query(
-
-`
-INSERT INTO notifications
-(
-user_id,
-title,
-message,
-type
-)
-
-VALUES
-(?,?,?,?)
-
-`,
-
-[
-rows[0].farmer_id,
-'Payment Processed',
-`Payment of ₹${payment_amount} has been credited. Ref: ${transaction_ref}`,
-'success'
-]
-
-);
-
-
-
-
-
-res.json({
-
-success:true,
-
-message:'Payment marked successfully.'
-
-});
-
-
-
-}catch(err){
-
-next(err);
-
-}
-
+const markPaymentDone = async (req, res, next) => {
+  try {
+    const { payment_amount, transaction_ref } = req.body;
+
+    const [rows] = await db.query(
+      'SELECT * FROM sell_requests WHERE id = $1',
+      [req.params.id]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'Request not found.'
+      });
+    }
+
+    // Calling PostgreSQL Stored Function sp_mark_payment_done
+    await db.query(
+      `SELECT sp_mark_payment_done($1, $2, $3)`,
+      [
+        req.params.id,
+        payment_amount,
+        transaction_ref
+      ]
+    );
+
+    res.json({
+      success: true,
+      message: 'Payment marked successfully.'
+    });
+
+  } catch (err) {
+    next(err);
+  }
 };
 
-
-
-
-
-
 module.exports = {
-
-getSellRequests,
-getSellRequestById,
-createSellRequest,
-verifySellRequest,
-approveSellRequest,
-markPaymentDone
-
+  getSellRequests,
+  getSellRequestById,
+  createSellRequest,
+  verifySellRequest,
+  approveSellRequest,
+  markPaymentDone
 };

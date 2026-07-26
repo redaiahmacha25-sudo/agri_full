@@ -491,3 +491,246 @@ INSERT INTO notifications
 SELECT id, 'Welcome to AgriConnect','Thank you for registering with AgriConnect.','info'
 FROM users
 WHERE role = 'farmer';
+
+-- ============================================================
+-- POSTGRESQL STORED PROCEDURES & FUNCTIONS
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION sp_register_user(
+    p_name VARCHAR,
+    p_phone VARCHAR,
+    p_password_hash VARCHAR,
+    p_role user_role,
+    p_village VARCHAR,
+    p_district VARCHAR,
+    p_aadhar VARCHAR,
+    p_bank VARCHAR,
+    p_ifsc VARCHAR
+) RETURNS INTEGER AS $$
+DECLARE
+    new_id INTEGER;
+BEGIN
+    INSERT INTO users (name, phone, password_hash, role, village, district, aadhar_number, bank_account, ifsc_code, is_active)
+    VALUES (p_name, p_phone, p_password_hash, COALESCE(p_role, 'farmer'::user_role), p_village, p_district, p_aadhar, p_bank, p_ifsc, TRUE)
+    RETURNING id INTO new_id;
+    RETURN new_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION sp_create_sell_request(
+    p_farmer_id INTEGER,
+    p_crop_id INTEGER,
+    p_quantity NUMERIC,
+    p_image_url VARCHAR,
+    p_village VARCHAR,
+    p_harvest_date DATE,
+    p_notes TEXT,
+    p_geo_lat NUMERIC,
+    p_geo_lng NUMERIC,
+    p_expected_amount NUMERIC
+) RETURNS INTEGER AS $$
+DECLARE
+    new_id INTEGER;
+BEGIN
+    INSERT INTO sell_requests (
+        farmer_id, crop_id, quantity, image_url, village, harvest_date, notes, geo_lat, geo_lng, expected_amount
+    ) VALUES (
+        p_farmer_id, p_crop_id, p_quantity, p_image_url, p_village, p_harvest_date, p_notes, p_geo_lat, p_geo_lng, p_expected_amount
+    ) RETURNING id INTO new_id;
+
+    INSERT INTO notifications (user_id, title, message, type)
+    SELECT id, 'New Sell Request', 'A new sell request requires verification.', 'info'
+    FROM users WHERE role = 'employee';
+
+    RETURN new_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION sp_verify_sell_request(
+    p_request_id INTEGER,
+    p_user_id INTEGER,
+    p_action VARCHAR,
+    p_rejection_reason TEXT,
+    p_remarks TEXT
+) RETURNS VARCHAR AS $$
+DECLARE
+    v_status sell_status;
+    v_farmer_id INTEGER;
+    v_msg TEXT;
+    v_notif_title VARCHAR;
+    v_notif_type notification_type;
+BEGIN
+    v_status := CASE WHEN p_action = 'verify' THEN 'verified'::sell_status ELSE 'rejected'::sell_status END;
+
+    UPDATE sell_requests
+    SET status = v_status,
+        verified_by = p_user_id,
+        verified_at = CURRENT_TIMESTAMP,
+        rejection_reason = p_rejection_reason
+    WHERE id = p_request_id
+    RETURNING farmer_id INTO v_farmer_id;
+
+    IF p_remarks IS NOT NULL AND length(trim(p_remarks)) > 0 THEN
+        INSERT INTO remarks (entity_type, entity_id, message, created_by)
+        VALUES ('sell_request', p_request_id, p_remarks, p_user_id);
+    END IF;
+
+    IF p_action = 'verify' THEN
+        v_msg := 'Your sell request has been verified and forwarded for approval.';
+        v_notif_title := 'Sell Request Verified';
+        v_notif_type := 'success';
+    ELSE
+        v_msg := 'Your sell request was rejected. Reason: ' || COALESCE(p_rejection_reason, 'N/A');
+        v_notif_title := 'Sell Request Rejected';
+        v_notif_type := 'error';
+    END IF;
+
+    IF v_farmer_id IS NOT NULL THEN
+        INSERT INTO notifications (user_id, title, message, type)
+        VALUES (v_farmer_id, v_notif_title, v_msg, v_notif_type);
+    END IF;
+
+    RETURN v_status::VARCHAR;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION sp_approve_sell_request(
+    p_request_id INTEGER,
+    p_user_id INTEGER,
+    p_action VARCHAR,
+    p_procurement_date DATE,
+    p_rejection_reason TEXT,
+    p_remarks TEXT
+) RETURNS VARCHAR AS $$
+DECLARE
+    v_status sell_status;
+    v_farmer_id INTEGER;
+BEGIN
+    v_status := CASE WHEN p_action = 'approve' THEN 'approved'::sell_status ELSE 'rejected'::sell_status END;
+
+    UPDATE sell_requests
+    SET status = v_status,
+        approved_by = p_user_id,
+        approved_at = CURRENT_TIMESTAMP,
+        procurement_date = p_procurement_date,
+        rejection_reason = p_rejection_reason
+    WHERE id = p_request_id
+    RETURNING farmer_id INTO v_farmer_id;
+
+    IF p_action = 'approve' AND p_procurement_date IS NOT NULL THEN
+        INSERT INTO procurement (request_id, schedule_date)
+        VALUES (p_request_id, p_procurement_date)
+        ON CONFLICT (request_id) DO UPDATE SET schedule_date = EXCLUDED.schedule_date;
+    END IF;
+
+    RETURN v_status::VARCHAR;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION sp_mark_payment_done(
+    p_request_id INTEGER,
+    p_payment_amount NUMERIC,
+    p_transaction_ref VARCHAR
+) RETURNS BOOLEAN AS $$
+DECLARE
+    v_farmer_id INTEGER;
+BEGIN
+    UPDATE sell_requests
+    SET status = 'payment_done'::sell_status,
+        payment_status = 'done'::payment_status,
+        payment_amount = p_payment_amount,
+        transaction_ref = p_transaction_ref,
+        payment_date = CURRENT_TIMESTAMP
+    WHERE id = p_request_id
+    RETURNING farmer_id INTO v_farmer_id;
+
+    UPDATE procurement
+    SET payment_status = 'done'::payment_status,
+        payment_amount = p_payment_amount,
+        transaction_ref = p_transaction_ref,
+        payment_date = CURRENT_TIMESTAMP
+    WHERE request_id = p_request_id;
+
+    IF v_farmer_id IS NOT NULL THEN
+        INSERT INTO notifications (user_id, title, message, type)
+        VALUES (
+            v_farmer_id,
+            'Payment Processed',
+            'Payment of ₹' || p_payment_amount || ' has been credited. Ref: ' || COALESCE(p_transaction_ref, 'N/A'),
+            'success'
+        );
+    END IF;
+
+    RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION sp_create_service_request(
+    p_farmer_id INTEGER,
+    p_type service_type,
+    p_subject VARCHAR,
+    p_description TEXT,
+    p_media_url VARCHAR,
+    p_priority priority_level
+) RETURNS INTEGER AS $$
+DECLARE
+    new_id INTEGER;
+BEGIN
+    INSERT INTO service_requests (farmer_id, type, subject, description, media_url, priority)
+    VALUES (p_farmer_id, p_type, p_subject, p_description, p_media_url, COALESCE(p_priority, 'medium'::priority_level))
+    RETURNING id INTO new_id;
+
+    INSERT INTO notifications (user_id, title, message, type)
+    SELECT id, 'New Service Request', 'A new service request requires attention.', 'info'
+    FROM users WHERE role IN ('employee', 'admin');
+
+    RETURN new_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION sp_update_service_request(
+    p_request_id INTEGER,
+    p_user_id INTEGER,
+    p_action VARCHAR,
+    p_resolution_notes TEXT,
+    p_escalation_reason TEXT,
+    p_remarks TEXT
+) RETURNS VARCHAR AS $$
+DECLARE
+    v_status service_status;
+    v_farmer_id INTEGER;
+    v_title VARCHAR;
+    v_msg TEXT;
+    v_type notification_type;
+BEGIN
+    IF p_action = 'accept' THEN
+        v_status := 'in_progress'::service_status;
+        UPDATE service_requests SET status = v_status, handled_by = p_user_id, assigned_at = CURRENT_TIMESTAMP WHERE id = p_request_id RETURNING farmer_id INTO v_farmer_id;
+        v_title := 'Request Accepted'; v_msg := 'Your service request is now being processed.'; v_type := 'info';
+    ELSIF p_action = 'resolve' THEN
+        v_status := 'resolved'::service_status;
+        UPDATE service_requests SET status = v_status, resolved_at = CURRENT_TIMESTAMP, resolution_notes = p_resolution_notes WHERE id = p_request_id RETURNING farmer_id INTO v_farmer_id;
+        v_title := 'Request Resolved'; v_msg := 'Your service request has been resolved. ' || COALESCE(p_resolution_notes, ''); v_type := 'success';
+    ELSIF p_action = 'reject' THEN
+        v_status := 'rejected'::service_status;
+        UPDATE service_requests SET status = v_status, resolved_at = CURRENT_TIMESTAMP, resolution_notes = p_resolution_notes WHERE id = p_request_id RETURNING farmer_id INTO v_farmer_id;
+        v_title := 'Request Rejected'; v_msg := 'Your service request was rejected. ' || COALESCE(p_resolution_notes, ''); v_type := 'error';
+    ELSIF p_action = 'escalate' THEN
+        v_status := 'escalated'::service_status;
+        UPDATE service_requests SET status = v_status, escalated_at = CURRENT_TIMESTAMP, escalation_reason = p_escalation_reason WHERE id = p_request_id RETURNING farmer_id INTO v_farmer_id;
+        v_title := 'Request Escalated'; v_msg := 'Your service request has been escalated to admin for further action.'; v_type := 'warning';
+    END IF;
+
+    IF p_remarks IS NOT NULL AND length(trim(p_remarks)) > 0 THEN
+        INSERT INTO remarks (entity_type, entity_id, message, created_by)
+        VALUES ('service_request', p_request_id, p_remarks, p_user_id);
+    END IF;
+
+    IF v_farmer_id IS NOT NULL AND v_title IS NOT NULL THEN
+        INSERT INTO notifications (user_id, title, message, type)
+        VALUES (v_farmer_id, v_title, v_msg, v_type);
+    END IF;
+
+    RETURN v_status::VARCHAR;
+END;
+$$ LANGUAGE plpgsql;

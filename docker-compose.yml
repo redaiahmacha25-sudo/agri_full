@@ -1,21 +1,20 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
+  postgres:
+    image: postgres:15-alpine
     container_name: agriconnect_db
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: agriconnect
-      MYSQL_USER: agriconnect_user
-      MYSQL_PASSWORD: agriconnect_pass
+      POSTGRES_DB: agriconnect
+      POSTGRES_USER: agriconnect_user
+      POSTGRES_PASSWORD: agriconnect_pass
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
       - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "pg_isready -U agriconnect_user -d agriconnect"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,12 +25,12 @@ services:
       dockerfile: Dockerfile
     container_name: agriconnect_api
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
     environment:
       NODE_ENV: development
-      DB_HOST: mysql
-      DB_PORT: 3306
+      DB_HOST: postgres
+      DB_PORT: 5432
       DB_USER: agriconnect_user
       DB_PASSWORD: agriconnect_pass
       DB_NAME: agriconnect
@@ -46,6 +45,5 @@ services:
     command: npm run dev
 
 volumes:
-  mysql_data:
+  postgres_data:
     driver: local
-    

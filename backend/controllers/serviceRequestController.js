@@ -1,570 +1,195 @@
 const db = require('../config/database');
 
-
 // GET ALL SERVICE REQUESTS
 const getServiceRequests = async (req, res, next) => {
-
   try {
-
     const { role, id } = req.user;
-
-    let query = `
+    let queryStr = `
       SELECT 
-      sr.*,
-      u.name as farmer_name,
-      u.phone as farmer_phone,
-      u.village as farmer_village,
-      h.name as handler_name,
-      e.name as escalated_to_name
-
+        sr.*,
+        u.name as farmer_name,
+        u.phone as farmer_phone,
+        u.village as farmer_village,
+        h.name as handler_name,
+        e.name as escalated_to_name
       FROM service_requests sr
-
-      JOIN users u 
-      ON sr.farmer_id=u.id
-
-      LEFT JOIN users h
-      ON sr.handled_by=h.id
-
-      LEFT JOIN users e
-      ON sr.escalated_to=e.id
+      JOIN users u ON sr.farmer_id = u.id
+      LEFT JOIN users h ON sr.handled_by = h.id
+      LEFT JOIN users e ON sr.escalated_to = e.id
     `;
-
 
     const params = [];
 
-
-    if(role === 'farmer'){
-
-      query += ' WHERE sr.farmer_id=?';
+    if (role === 'farmer') {
+      queryStr += ' WHERE sr.farmer_id = $1';
       params.push(id);
-
-    }
-    else if(role === 'employee'){
-
-      query += ' WHERE sr.handled_by=? OR sr.status="pending"';
+    } else if (role === 'employee') {
+      queryStr += " WHERE sr.handled_by = $1 OR sr.status = 'pending'";
       params.push(id);
-
     }
 
+    queryStr += ' ORDER BY sr.created_at DESC';
 
-    query += ' ORDER BY sr.created_at DESC';
-
-
-
-    const [requests] = await db.query(query, params);
-
+    const [requests] = await db.query(queryStr, params);
 
     res.json({
-
-      success:true,
-
+      success: true,
       requests
-
     });
 
-
-  } catch(err){
-
+  } catch (err) {
     next(err);
-
   }
-
 };
-
-
-
-
-
-
 
 // GET SERVICE REQUEST BY ID
-const getServiceRequestById = async(req,res,next)=>{
+const getServiceRequestById = async (req, res, next) => {
+  try {
+    const [rows] = await db.query(
+      `
+      SELECT 
+        sr.*,
+        u.name as farmer_name,
+        u.phone as farmer_phone,
+        h.name as handler_name,
+        e.name as escalated_to_name
+      FROM service_requests sr
+      JOIN users u ON sr.farmer_id = u.id
+      LEFT JOIN users h ON sr.handled_by = h.id
+      LEFT JOIN users e ON sr.escalated_to = e.id
+      WHERE sr.id = $1
+      `,
+      [req.params.id]
+    );
 
-try{
+    if (!rows.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'Request not found.'
+      });
+    }
 
+    const [remarks] = await db.query(
+      `
+      SELECT 
+        r.*,
+        u.name as author
+      FROM remarks r
+      JOIN users u ON r.created_by = u.id
+      WHERE r.entity_type = 'service_request'
+        AND r.entity_id = $1
+      ORDER BY r.created_at ASC
+      `,
+      [req.params.id]
+    );
 
-const [rows] = await db.query(
+    res.json({
+      success: true,
+      request: rows[0],
+      remarks
+    });
 
-`
-SELECT 
-sr.*,
-u.name as farmer_name,
-u.phone as farmer_phone,
-h.name as handler_name,
-e.name as escalated_to_name
-
-FROM service_requests sr
-
-JOIN users u
-ON sr.farmer_id=u.id
-
-LEFT JOIN users h
-ON sr.handled_by=h.id
-
-LEFT JOIN users e
-ON sr.escalated_to=e.id
-
-WHERE sr.id=?
-
-`,
-
-[req.params.id]
-
-);
-
-
-
-if(!rows.length){
-
-return res.status(404).json({
-
-success:false,
-
-message:'Request not found.'
-
-});
-
-}
-
-
-
-
-const [remarks] = await db.query(
-
-`
-SELECT 
-r.*,
-u.name as author
-
-FROM remarks r
-
-JOIN users u
-ON r.created_by=u.id
-
-WHERE r.entity_type='service_request'
-
-AND r.entity_id=?
-
-ORDER BY r.created_at ASC
-
-`,
-
-[req.params.id]
-
-);
-
-
-
-res.json({
-
-success:true,
-
-request:rows[0],
-
-remarks
-
-});
-
-
-
-}catch(err){
-
-next(err);
-
-}
-
+  } catch (err) {
+    next(err);
+  }
 };
-
-
-
-
-
-
-
 
 // CREATE SERVICE REQUEST
-const createServiceRequest = async(req,res,next)=>{
+const createServiceRequest = async (req, res, next) => {
+  try {
+    const {
+      type,
+      subject,
+      description,
+      priority
+    } = req.body;
 
-try{
+    if (!type || !subject || !description) {
+      return res.status(400).json({
+        success: false,
+        message: 'Type, subject, and description required.'
+      });
+    }
 
+    const media_url = req.file ? `/uploads/${req.file.filename}` : null;
 
-const {
-type,
-subject,
-description,
-priority
-}=req.body;
+    // Calling PostgreSQL Stored Function sp_create_service_request
+    const [result] = await db.query(
+      `SELECT sp_create_service_request($1, $2::service_type, $3, $4, $5, $6::priority_level) AS id`,
+      [
+        req.user.id,
+        type,
+        subject,
+        description,
+        media_url,
+        priority || 'medium'
+      ]
+    );
 
+    const requestId = result[0]?.id;
 
+    res.status(201).json({
+      success: true,
+      message: 'Service request submitted successfully.',
+      id: requestId
+    });
 
-if(!type || !subject || !description){
-
-return res.status(400).json({
-
-success:false,
-
-message:'Type, subject, and description required.'
-
-});
-
-}
-
-
-
-const media_url=req.file
-? `/uploads/${req.file.filename}`
-: null;
-
-
-
-
-const [result] = await db.query(
-
-`
-INSERT INTO service_requests
-
-(
-farmer_id,
-type,
-subject,
-description,
-media_url,
-priority
-)
-
-VALUES
-(?,?,?,?,?,?)
-
-`,
-
-[
-req.user.id,
-type,
-subject,
-description,
-media_url,
-priority || 'medium'
-]
-
-);
-
-
-
-
-
-
-await db.query(
-
-`
-INSERT INTO notifications
-(
-user_id,
-title,
-message,
-type
-)
-
-SELECT 
-id,
-"New Service Request",
-"A new service request requires attention.",
-"info"
-
-FROM users
-
-WHERE role IN ("employee","admin")
-
-`
-
-);
-
-
-
-
-
-
-res.status(201).json({
-
-success:true,
-
-message:'Service request submitted successfully.',
-
-id:result.insertId
-
-});
-
-
-
-}catch(err){
-
-next(err);
-
-}
-
+  } catch (err) {
+    next(err);
+  }
 };
-
-
-
-
-
-
-
-
 
 // UPDATE SERVICE REQUEST
-const updateServiceRequest = async(req,res,next)=>{
-
-try{
-
-
-const {
-action,
-resolution_notes,
-escalation_reason,
-remarks
-}=req.body;
-
-
-
-const [rows]=await db.query(
-
-'SELECT * FROM service_requests WHERE id=?',
-
-[req.params.id]
-
-);
-
-
-
-if(!rows.length){
-
-return res.status(404).json({
-
-success:false,
-
-message:'Request not found.'
-
-});
-
-}
-
-
-
-const req_data=rows[0];
-
-
-let updateFields='';
-
-let params=[];
-
-
-
-if(action==='accept'){
-
-updateFields=
-'status=?, handled_by=?, assigned_at=NOW()';
-
-params.push(
-'in_progress',
-req.user.id
-);
-
-}
-
-else if(action==='resolve'){
-
-updateFields=
-'status=?, resolved_at=NOW(), resolution_notes=?';
-
-params.push(
-'resolved',
-resolution_notes || ''
-);
-
-}
-
-
-else if(action==='reject'){
-
-updateFields=
-'status=?, resolved_at=NOW(), resolution_notes=?';
-
-params.push(
-'rejected',
-resolution_notes || ''
-);
-
-}
-
-
-else if(action==='escalate'){
-
-updateFields=
-'status=?, escalated_at=NOW(), escalation_reason=?';
-
-params.push(
-'escalated',
-escalation_reason || ''
-);
-
-}
-
-
-
-params.push(req.params.id);
-
-
-
-await db.query(
-
-`
-UPDATE service_requests
-
-SET ${updateFields}
-
-WHERE id=?
-
-`,
-
-params
-
-);
-
-
-
-
-
-if(remarks){
-
-await db.query(
-
-`
-INSERT INTO remarks
-
-(
-entity_type,
-entity_id,
-message,
-created_by
-)
-
-VALUES
-('service_request',?,?,?)
-
-`,
-
-[
-req.params.id,
-remarks,
-req.user.id
-]
-
-);
-
-}
-
-
-
-
-
-const notifMap={
-
-accept:[
-'Request Accepted',
-'Your service request is now being processed.',
-'info'
-],
-
-
-resolve:[
-'Request Resolved',
-`Your service request has been resolved. ${resolution_notes || ''}`,
-'success'
-],
-
-
-reject:[
-'Request Rejected',
-`Your service request was rejected. ${resolution_notes || ''}`,
-'error'
-],
-
-
-escalate:[
-'Request Escalated',
-'Your service request has been escalated to admin for further action.',
-'warning'
-]
-
+const updateServiceRequest = async (req, res, next) => {
+  try {
+    const {
+      action,
+      resolution_notes,
+      escalation_reason,
+      remarks
+    } = req.body;
+
+    const [rows] = await db.query(
+      'SELECT * FROM service_requests WHERE id = $1',
+      [req.params.id]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'Request not found.'
+      });
+    }
+
+    // Calling PostgreSQL Stored Function sp_update_service_request
+    const [resStatus] = await db.query(
+      `SELECT sp_update_service_request($1, $2, $3, $4, $5, $6) AS status`,
+      [
+        req.params.id,
+        req.user.id,
+        action,
+        resolution_notes || null,
+        escalation_reason || null,
+        remarks || null
+      ]
+    );
+
+    const updatedStatus = resStatus[0]?.status;
+
+    res.json({
+      success: true,
+      message: `Service request ${action}d successfully.`,
+      status: updatedStatus
+    });
+
+  } catch (err) {
+    next(err);
+  }
 };
-
-
-
-
-if(notifMap[action]){
-
-
-const [title,message,type]=notifMap[action];
-
-
-await db.query(
-
-`
-INSERT INTO notifications
-(
-user_id,
-title,
-message,
-type
-)
-
-VALUES
-(?,?,?,?)
-
-`,
-
-[
-req_data.farmer_id,
-title,
-message,
-type
-]
-
-);
-
-}
-
-
-
-res.json({
-
-success:true,
-
-message:`Service request ${action}d successfully.`
-
-});
-
-
-
-}catch(err){
-
-next(err);
-
-}
-
-};
-
-
-
-
-
-
 
 module.exports = {
-
-getServiceRequests,
-getServiceRequestById,
-createServiceRequest,
-updateServiceRequest
-
+  getServiceRequests,
+  getServiceRequestById,
+  createServiceRequest,
+  updateServiceRequest
 };
