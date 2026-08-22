@@ -37,7 +37,6 @@ async function testDatabase() {
         );
     }
 }
-
 testDatabase();
 
 module.exports = pool;
