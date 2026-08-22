@@ -86,71 +86,29 @@ app.get('/test-db', async (req, res) => {
 // ============================================================
 // SAFE DATABASE ENVIRONMENT DEBUG
 // ============================================================
-
 app.get('/debug-db', (req, res) => {
-
     try {
-
-        if (!process.env.DATABASE_URL) {
-
-            return res.status(500).json({
-                exists: false,
-                error: 'DATABASE_URL is not configured'
-            });
-
-        }
-
-        const url = new URL(
-            process.env.DATABASE_URL
-        );
+        const url = new URL(process.env.NEON_DATABASE_URL);
 
         res.json({
-
             exists: true,
-
             host: url.hostname,
-
             port: url.port || '5432',
-
             database: url.pathname.replace('/', ''),
-
             user: url.username,
-
-            sslmode:
-                url.searchParams.get('sslmode'),
-
-            channel_binding:
-                url.searchParams.get('channel_binding'),
-
-            is_pooler:
-                url.hostname.includes('-pooler'),
-
-            url_length:
-                process.env.DATABASE_URL.length,
-
-            environment:
-                process.env.NODE_ENV || 'development'
-
+            sslmode: url.searchParams.get('sslmode'),
+            is_pooler: url.hostname.includes('-pooler'),
+            url_length: process.env.NEON_DATABASE_URL.length,
+            environment: process.env.NODE_ENV || 'development'
         });
 
     } catch (error) {
-
-        console.error(
-            '❌ DATABASE_URL DEBUG ERROR:',
-            error.message
-        );
-
         res.status(500).json({
-
             exists: false,
-
-            error:
-                'DATABASE_URL format is invalid'
-
+            error: 'NEON_DATABASE_URL is missing or invalid'
         });
     }
 });
-
 // ============================================================
 // HEALTH CHECK
 // ============================================================
