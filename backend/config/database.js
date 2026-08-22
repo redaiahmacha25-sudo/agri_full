@@ -2,6 +2,11 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
+
+    ssl: {
+        rejectUnauthorized: false
+    },
+
     max: 5,
     connectionTimeoutMillis: 10000,
     idleTimeoutMillis: 30000,
@@ -18,7 +23,9 @@ pool.on('error', (err) => {
 
 async function testDatabase() {
     try {
-        const result = await pool.query('SELECT NOW() AS current_time');
+        const result = await pool.query(
+            'SELECT NOW() AS current_time'
+        );
 
         console.log('✅ Neon PostgreSQL connected successfully');
         console.log('🕒 Database time:', result.rows[0].current_time);
