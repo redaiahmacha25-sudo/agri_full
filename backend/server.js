@@ -12,7 +12,7 @@ const db = require('./config/database');
 const app = express();
 
 // ============================================================
-// CORS
+// CORS CONFIGURATION
 // ============================================================
 
 const corsOptions = {
@@ -48,18 +48,20 @@ app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/admin/db', require('./routes/dbRoutes'));
 
 // ============================================================
-// DATABASE TEST
+// DATABASE TEST ROUTE
 // ============================================================
 
 app.get('/test-db', async (req, res) => {
 
     try {
 
+        console.log('🔄 Testing PostgreSQL connection...');
+
         const result = await db.query(
             'SELECT NOW() AS current_time'
         );
 
-        console.log('✅ TEST DB: PostgreSQL connection successful');
+        console.log('✅ PostgreSQL connection successful');
 
         res.json({
             success: true,
@@ -70,7 +72,7 @@ app.get('/test-db', async (req, res) => {
 
     } catch (err) {
 
-        console.error('❌ TEST DB ERROR:', err);
+        console.error('❌ TEST DB ERROR:', err.message);
 
         res.status(500).json({
             success: false,
@@ -82,86 +84,150 @@ app.get('/test-db', async (req, res) => {
 });
 
 // ============================================================
+// SAFE DATABASE ENVIRONMENT DEBUG
+// ============================================================
+
+app.get('/debug-db', (req, res) => {
+
+    try {
+
+        if (!process.env.DATABASE_URL) {
+
+            return res.status(500).json({
+                exists: false,
+                error: 'DATABASE_URL is not configured'
+            });
+
+        }
+
+        const url = new URL(
+            process.env.DATABASE_URL
+        );
+
+        res.json({
+
+            exists: true,
+
+            host: url.hostname,
+
+            port: url.port || '5432',
+
+            database: url.pathname.replace('/', ''),
+
+            user: url.username,
+
+            sslmode:
+                url.searchParams.get('sslmode'),
+
+            channel_binding:
+                url.searchParams.get('channel_binding'),
+
+            is_pooler:
+                url.hostname.includes('-pooler'),
+
+            url_length:
+                process.env.DATABASE_URL.length,
+
+            environment:
+                process.env.NODE_ENV || 'development'
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            '❌ DATABASE_URL DEBUG ERROR:',
+            error.message
+        );
+
+        res.status(500).json({
+
+            exists: false,
+
+            error:
+                'DATABASE_URL format is invalid'
+
+        });
+    }
+});
+
+// ============================================================
 // HEALTH CHECK
 // ============================================================
 
 app.get('/api/health', (req, res) => {
 
     res.json({
+
         success: true,
-        message: 'AgriConnect API is running',
-        timestamp: new Date().toISOString()
+
+        message:
+            'AgriConnect API is running',
+
+        timestamp:
+            new Date().toISOString()
+
     });
 
 });
 
 // ============================================================
-// ROOT
+// ROOT ROUTE
 // ============================================================
 
 app.get('/', (req, res) => {
 
     res.json({
+
         success: true,
-        message: 'AgriConnect Backend Running'
+
+        message:
+            'AgriConnect Backend Running'
+
     });
 
 });
 
 // ============================================================
-// SIMPLE TEST
+// SIMPLE SERVER TEST
 // ============================================================
 
 app.get('/test', (req, res) => {
 
     res.json({
+
         ok: true,
-        message: 'Server is working'
-    });
 
-});
-
-// ============================================================
-// DEBUG DATABASE ENVIRONMENT
-// ============================================================
-
-app.get('/debug-db', (req, res) => {
-
-    res.json({
-
-        database_url_exists:
-            !!process.env.DATABASE_URL,
-
-        database_url_length:
-            process.env.DATABASE_URL
-                ? process.env.DATABASE_URL.length
-                : 0,
-
-        node_environment:
-            process.env.NODE_ENV || 'development'
+        message:
+            'Server is working'
 
     });
 
 });
 
 // ============================================================
-// FRONTEND
+// SERVE FRONTEND
 // ============================================================
 
 app.use(
     express.static(
-        path.join(__dirname, '../frontend')
+        path.join(
+            __dirname,
+            '../frontend'
+        )
     )
 );
 
 // ============================================================
-// SPA FALLBACK
+// FRONTEND FALLBACK
 // ============================================================
 
 app.get('*', (req, res, next) => {
 
     if (req.path.startsWith('/api')) {
+
         return next();
+
     }
 
     res.sendFile(
@@ -178,15 +244,19 @@ app.get('*', (req, res, next) => {
 // ============================================================
 
 app.use(notFound);
+
 app.use(errorHandler);
 
 // ============================================================
-// SERVER
+// START SERVER
 // ============================================================
 
-const PORT = process.env.PORT || 5000;
+const PORT =
+    process.env.PORT || 5000;
 
-console.log("🔥 BACKEND VERSION 2.0 LOADED");
+console.log(
+    "🔥 BACKEND VERSION 3.0 LOADED"
+);
 
 app.listen(PORT, () => {
 
@@ -199,5 +269,9 @@ app.listen(PORT, () => {
 `);
 
 });
+
+// ============================================================
+// EXPORT APP
+// ============================================================
 
 module.exports = app;
