@@ -1,51 +1,42 @@
 const { Pool } = require('pg');
-require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+    connectionString: process.env.DATABASE_URL,
+
+    ssl: {
+        rejectUnauthorized: false
+    },
+
+    max: 5,
+
+    idleTimeoutMillis: 30000,
+
+    connectionTimeoutMillis: 10000,
+
+    keepAlive: true,
+
+    keepAliveInitialDelayMillis: 10000
+});
+
+// Test database connection
+pool.on('connect', () => {
+    console.log('✅ New PostgreSQL connection established');
 });
 
 pool.on('error', (err) => {
-  console.error('⚠️ Unexpected PostgreSQL pool error:', err);
+    console.error('❌ PostgreSQL pool error:', err.message);
 });
 
-pool.connect()
-  .then(client => {
-    console.log('✅ Connected to Neon PostgreSQL!');
-    client.release();
-  })
-  .catch(err => {
-    console.error('❌ Neon connection failed:', err.message);
-  });
+// Initial connection test
+(async () => {
+    try {
+        const result = await pool.query('SELECT NOW() AS current_time');
 
-const query = async (text, params = []) => {
-  // Convert MySQL ? placeholders to PostgreSQL $1, $2...
-  if (text.includes('?') && !/\$\d+/.test(text)) {
-    let i = 1;
-    text = text.replace(/\?/g, () => `$${i++}`);
-  }
+        console.log('✅ Neon PostgreSQL connected successfully');
+        console.log('🕒 Database time:', result.rows[0].current_time);
+    } catch (error) {
+        console.error('❌ Database connection failed:', error.message);
+    }
+})();
 
-  const result = await pool.query(text, params);
-
-  const rows = result.rows || [];
-
-  if (rows.length > 0 && rows[0].id !== undefined) {
-    rows.insertId = rows[0].id;
-  }
-
-  const response = [rows, result];
-  response.rows = rows;
-  response.rowCount = result.rowCount;
-  response.insertId = rows.insertId;
-
-  return response;
-};
-
-module.exports = {
-  pool,
-  query,
-  execute: query
-};
+module.exports = pool;
