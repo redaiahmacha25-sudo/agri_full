@@ -64,11 +64,19 @@
     </ul>
   </div>
   <div class="sidebar-divider"></div>
+  <div class="sidebar-divider"></div>
   <div class="sidebar-section">
     <div class="sidebar-section-label">Reports</div>
     <ul class="sidebar-nav">
       <li><a id="nav-payments" onclick="showSection('payments')"><span class="nav-icon">💰</span> Payment Management</a></li>
       <li><a id="nav-announcements" onclick="showSection('announcements')"><span class="nav-icon">📢</span> Announcements</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">System Database</div>
+    <ul class="sidebar-nav">
+      <li><a id="nav-database" onclick="showSection('database')"><span class="nav-icon">🗄️</span> Database Manager</a></li>
     </ul>
   </div>
 </aside>
@@ -314,6 +322,46 @@
         </table>
       </div>
     </div>
+  <!-- DATABASE MANAGER SECTION -->
+  <section id="section-database" style="display:none;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Admin Portal / System</div>
+        <h1>Database Manager (PostgreSQL)</h1>
+      </div>
+      <div>
+        <button class="btn btn-primary" onclick="initDatabaseSchema()"><span class="btn-icon">⚡</span> Reset / Seed Database</button>
+      </div>
+    </div>
+
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;">
+      <div class="stat-card"><div class="stat-icon blue">🐘</div><div class="stat-info"><div class="stat-value">PostgreSQL</div><div class="stat-label">Database Engine</div></div></div>
+      <div class="stat-card"><div class="stat-icon green">📊</div><div class="stat-info"><div class="stat-value" id="db-total-tables">—</div><div class="stat-label">Total Tables</div></div></div>
+      <div class="stat-card"><div class="stat-icon orange">☁️</div><div class="stat-info"><div class="stat-value" style="font-size:14px;word-break:break-all;">Render Cloud</div><div class="stat-label">Host Platform</div></div></div>
+      <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-info"><div class="stat-value" style="font-size:16px;">agriconnect</div><div class="stat-label">Active Database</div></div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <label style="font-weight:600;font-size:13px;">Select Table:</label>
+          <select id="dbTableSelect" class="form-control" style="width:220px;" onchange="loadSelectedTableData()">
+            <option value="">Select a table...</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary" onclick="openInsertModal()"><span class="btn-icon">➕</span> Insert Row Data</button>
+      </div>
+      <div class="card-body" style="padding:0;overflow-x:auto;">
+        <table class="table" id="dbDataTable" style="width:100%;">
+          <thead id="dbDataTableHead">
+            <tr><th>No Table Selected</th></tr>
+          </thead>
+          <tbody id="dbDataTableBody">
+            <tr><td style="text-align:center;padding:20px;color:var(--gray-500);">Select a table above to view schema and data records.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </section>
 
 </main>
@@ -535,7 +583,7 @@ function showSection(name) {
     approve: loadApproveQueue, 'all-sell': loadAdminSellRequests,
     procurement: loadProcurement, escalations: loadEscalations,
     'all-service': loadAllServiceRequests, payments: loadPayments,
-    announcements: loadAnnouncements
+    announcements: loadAnnouncements, database: loadDatabaseTables
   };
   loaders[name]?.();
 }
@@ -929,8 +977,131 @@ async function loadAnnouncements() {
     </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-500);">No announcements</td></tr>';
 }
 
+let currentDbTableColumns = [];
+
+async function loadDatabaseTables() {
+  const res = await Api.get('/admin/db/tables');
+  if (!res.success) { UI.toast(res.message || 'Failed to load database tables', 'error'); return; }
+  
+  const tables = res.tables || [];
+  document.getElementById('db-total-tables').textContent = tables.length;
+  
+  const select = document.getElementById('dbTableSelect');
+  select.innerHTML = '<option value="">Select a table...</option>' + 
+    tables.map(t => `<option value="${t.name}">${t.name} (${t.rowCount} rows)</option>`).join('');
+
+  if (tables.length > 0) {
+    select.value = tables[0].name;
+    loadSelectedTableData();
+  }
+}
+
+async function loadSelectedTableData() {
+  const tableName = document.getElementById('dbTableSelect').value;
+  if (!tableName) return;
+  
+  const res = await Api.get(`/admin/db/tables/${tableName}`);
+  if (!res.success) { UI.toast(res.message || 'Failed to load table data', 'error'); return; }
+
+  currentDbTableColumns = res.columns || [];
+  const rows = res.rows || [];
+
+  const headHtml = '<tr>' + currentDbTableColumns.map(c => `<th>${c.column_name} <div style="font-size:10px;color:var(--gray-500);">${c.data_type}</div></th>`).join('') + '</tr>';
+  document.getElementById('dbDataTableHead').innerHTML = headHtml;
+
+  if (rows.length === 0) {
+    document.getElementById('dbDataTableBody').innerHTML = `<tr><td colspan="${currentDbTableColumns.length}" style="text-align:center;padding:20px;color:var(--gray-500);">No rows found in table ${tableName}.</td></tr>`;
+    return;
+  }
+
+  const bodyHtml = rows.map(r => {
+    return '<tr>' + currentDbTableColumns.map(c => {
+      let val = r[c.column_name];
+      if (val === null || val === undefined) val = '<span style="color:var(--gray-400);font-style:italic;">NULL</span>';
+      else if (typeof val === 'object') val = JSON.stringify(val);
+      else val = String(val);
+      return `<td style="font-size:12px;">${val}</td>`;
+    }).join('') + '</tr>';
+  }).join('');
+
+  document.getElementById('dbDataTableBody').innerHTML = bodyHtml;
+}
+
+function openInsertModal() {
+  const tableName = document.getElementById('dbTableSelect').value;
+  if (!tableName) { UI.toast('Please select a table first.', 'error'); return; }
+  
+  document.getElementById('insertTableName').textContent = tableName;
+  
+  const fieldsHtml = currentDbTableColumns.filter(c => c.column_name !== 'id').map(c => `
+    <div class="form-group" style="margin-bottom:12px;">
+      <label class="form-label" style="font-weight:600;font-size:13px;display:block;margin-bottom:4px;">${c.column_name} <span style="font-size:11px;color:var(--gray-500);">(${c.data_type}${c.is_nullable === 'NO' ? ' *required' : ''})</span></label>
+      <input type="text" class="form-control db-insert-input" data-col="${c.column_name}" placeholder="Enter ${c.column_name}">
+    </div>
+  `).join('');
+  
+  document.getElementById('dbInsertFormFields').innerHTML = fieldsHtml;
+  UI.showModal('dbInsertModal');
+}
+
+async function submitInsertRow() {
+  const tableName = document.getElementById('dbTableSelect').value;
+  if (!tableName) return;
+  
+  const rowData = {};
+  document.querySelectorAll('.db-insert-input').forEach(input => {
+    const val = input.value.trim();
+    if (val !== '') {
+      rowData[input.dataset.col] = val;
+    }
+  });
+
+  const btn = document.getElementById('saveRowBtn');
+  UI.loading(btn, true);
+  const res = await Api.post(`/admin/db/tables/${tableName}/insert`, rowData);
+  UI.loading(btn, false);
+
+  if (res.success) {
+    UI.toast(`Record inserted successfully into ${tableName}!`, 'success');
+    UI.hideModal('dbInsertModal');
+    loadSelectedTableData();
+  } else {
+    UI.toast(res.message || 'Insert failed', 'error');
+  }
+}
+
+async function initDatabaseSchema() {
+  if (!confirm('Re-initializing the database will reload all default tables and seed data. Continue?')) return;
+  
+  UI.toast('Initializing database on Render...', 'info');
+  const res = await Api.post('/admin/db/init', {});
+  if (res.success) {
+    UI.toast('Database tables and seed data installed successfully!', 'success');
+    loadDatabaseTables();
+  } else {
+    UI.toast(res.message || 'Database initialization failed', 'error');
+  }
+}
+
 loadDashboard();
 </script>
+
+  <!-- DB INSERT MODAL -->
+  <div class="modal-overlay" id="dbInsertModal" style="display:none;">
+    <div class="modal" style="max-width:600px;">
+      <div class="modal-header">
+        <div class="modal-title">Insert Record into <span id="insertTableName"></span></div>
+        <button class="modal-close" onclick="UI.hideModal('dbInsertModal')">×</button>
+      </div>
+      <div class="modal-body" id="dbInsertFormFields" style="max-height:400px;overflow-y:auto;padding:16px;">
+        <!-- Dynamic fields -->
+      </div>
+      <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:10px;padding:12px 16px;">
+        <button class="btn btn-secondary" onclick="UI.hideModal('dbInsertModal')">Cancel</button>
+        <button class="btn btn-primary" id="saveRowBtn" onclick="submitInsertRow()">Insert Row</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
 

@@ -110,7 +110,7 @@ VALUES
 'System Administrator',
 '9000000001',
 'admin@agriconnect.gov.in',
-'$2b$10$rQZ8kHWnvhSGjOJ1BKYvIeXEXJPQIhVN4VqEYJBdKMHpGkWZe5pAm',
+'$2a$10$j/5Gq0xpIlfKPwq0ZZ.HPuUbJiCr5sOqBK4fURhfRdvQ54W6ufWjK',
 'admin',
 'Nellore',
 'Secretariat'
@@ -119,7 +119,7 @@ VALUES
 'Ramaiah Sachivalayam',
 '9000000002',
 'employee1@agriconnect.gov.in',
-'$2b$10$rQZ8kHWnvhSGjOJ1BKYvIeXEXJPQIhVN4VqEYJBdKMHpGkWZe5pAm',
+'$2a$10$j/5Gq0xpIlfKPwq0ZZ.HPuUbJiCr5sOqBK4fURhfRdvQ54W6ufWjK',
 'employee',
 'Nellore',
 'Kovur'
@@ -128,7 +128,7 @@ VALUES
 'Suresh Kumar',
 '9000000003',
 'farmer1@agriconnect.gov.in',
-'$2b$10$rQZ8kHWnvhSGjOJ1BKYvIeXEXJPQIhVN4VqEYJBdKMHpGkWZe5pAm',
+'$2a$10$j/5Gq0xpIlfKPwq0ZZ.HPuUbJiCr5sOqBK4fURhfRdvQ54W6ufWjK',
 'farmer',
 'Nellore',
 'Allur'
@@ -137,7 +137,7 @@ VALUES
 'Lakshmi Devi',
 '9000000004',
 'farmer2@agriconnect.gov.in',
-'$2b$10$rQZ8kHWnvhSGjOJ1BKYvIeXEXJPQIhVN4VqEYJBdKMHpGkWZe5pAm',
+'$2a$10$j/5Gq0xpIlfKPwq0ZZ.HPuUbJiCr5sOqBK4fURhfRdvQ54W6ufWjK',
 'farmer',
 'Nellore',
 'Kavali'
@@ -146,7 +146,7 @@ VALUES
 'Venkata Rao',
 '9000000005',
 'farmer3@agriconnect.gov.in',
-'$2b$10$rQZ8kHWnvhSGjOJ1BKYvIeXEXJPQIhVN4VqEYJBdKMHpGkWZe5pAm',
+'$2a$10$j/5Gq0xpIlfKPwq0ZZ.HPuUbJiCr5sOqBK4fURhfRdvQ54W6ufWjK',
 'farmer',
 'Nellore',
 'Gudur'
