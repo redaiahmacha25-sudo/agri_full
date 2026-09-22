@@ -55,20 +55,10 @@ const getAdminStats = async (req, res, next) => {
 
     // Recent activity
     const recentActivityResult = await db.query(`
-      SELECT
-        'sell' AS type,
-        id,
-        status,
-        created_at
+      SELECT 'sell' as type, id, status::TEXT, created_at
       FROM sell_requests
-
       UNION ALL
-
-      SELECT
-        'service' AS type,
-        id,
-        status,
-        created_at
+      SELECT 'service' as type, id, status::TEXT, created_at
       FROM service_requests
 
       ORDER BY created_at DESC
